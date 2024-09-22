@@ -1,0 +1,1 @@
+# plugins-woo-product-variation-swatches
