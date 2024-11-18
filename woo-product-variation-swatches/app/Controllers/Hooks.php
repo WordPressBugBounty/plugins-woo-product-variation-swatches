@@ -402,7 +402,9 @@ class Hooks {
 			$fields = Options::get_available_attributes_types( $attribute_taxonomy->attribute_type );
 
 			if ( ! empty( $fields ) ): ?>
-                <button class="button fr plus rtwpvs_add_new_attribute"
+                <!--<button class="button fr plus rtwpvs_add_new_attribute"-->
+                <!--        data-dialog_title="--><?php //printf( esc_html__( 'Add new %s', 'woo-product-variation-swatches' ), esc_attr( $attribute_taxonomy->attribute_label ) ) ?><!--">--><?php //esc_html_e( 'Add new', 'woo-product-variation-swatches' ); ?><!--</button>-->
+                <button class="button fr plus add_new_attribute"
                         data-dialog_title="<?php printf( esc_html__( 'Add new %s', 'woo-product-variation-swatches' ), esc_attr( $attribute_taxonomy->attribute_label ) ) ?>"><?php esc_html_e( 'Add new', 'woo-product-variation-swatches' ); ?></button>
 			<?php else: ?>
                 <button class="button fr plus add_new_attribute"><?php esc_html_e( 'Add new', 'woo-product-variation-swatches' ); ?></button>

@@ -245,7 +245,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
             window.history.pushState({}, '', that.setUrlParams(originalUrl, params));
           }
           if (that._is_archive && rtwpvs_params.enable_archive_variation_url) {
-            parent.find("a:not(.rtwpvs_add_to_cart)").attr("href", that.setUrlParams(originalUrl, params));
+            parent.find("a:not(.rtwpvs_add_to_cart,.rtsb-quick-checkout-btn)").attr("href", that.setUrlParams(originalUrl, params));
           }
         });
       }
