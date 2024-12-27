@@ -583,6 +583,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         product_image.wc_reset_variation_attr('title');
         product_image.wc_reset_variation_attr('alt');
       }
+      $(document).trigger('rtwpvs_archive_variation_image_updated', [this._wrapper, variation]);
     };
     this.isMatch = function (variation_attributes, attributes) {
       var match = true;

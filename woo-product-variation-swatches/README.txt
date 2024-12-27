@@ -4,7 +4,7 @@ Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variat
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.3.17
+Stable tag: 2.3.18
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -243,6 +243,9 @@ Yes, it is.
 
 
 == Changelog ==
+
+= 2.3.18 ( Dec 27, 2024 ) =
+* Support: Added Trigger After Variation Changes On archive Page
 
 = 2.3.17 ( Nov 18, 2024 ) =
 * Fixed:Compatible with latest version
