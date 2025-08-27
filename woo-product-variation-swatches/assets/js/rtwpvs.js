@@ -18,6 +18,10 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     this._is_mobile = $('body').hasClass('rtwpvs-is-mobile');
     this.start = function () {
       var that = this;
+      var attributeSelected = this._variation_form.find('.rtwpvs-variation-terms-wrapper').find('select').val();
+      if (attributeSelected) {
+        this._variation_form.find('.reset_variations').addClass('show');
+      }
       this._variation_form.find('.rtwpvs-terms-wrapper').each(function () {
         var attribute = $(this),
           wc_select = attribute.parent().find('select.rtwpvs-wc-select');
@@ -83,6 +87,17 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
             $(this).trigger('change');
           });
         }
+      });
+      this._variation_form.on('click.wc-variation-form', '.reset_variations', {
+        variationForm: this._variation_form
+      }, function (e) {
+        e.preventDefault();
+        $(this).removeClass('show');
+      });
+      this._variation_form.on('change.wc-variation-form', '.variations select', {
+        variationForm: this._variation_form
+      }, function (e) {
+        that._variation_form.find('.reset_variations').addClass('show');
       });
       setTimeout(function () {
         that._variation_form.trigger('reload_product_variations');
@@ -395,8 +410,8 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       }
     };
     this.init_trigger = function () {
+      var that = this;
       if (this._is_archive) {
-        var that = this;
         this._variation_form.on('found_variation.rtwpvs-archive-variation', {
           variationForm: this._variation_form
         }, function (event, variation) {
@@ -460,6 +475,18 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         }, function (event) {
           that.resetArchiveVariation();
         });
+        // Example: inside a class or plugin
+        this._variation_form.on('change.wc-variation-form', '.variations select', {
+          variationForm: this._variation_form
+        }, function (e) {
+          var product_image = that._wrapper.find(rtwpvs_params.archive_image_selector);
+          product_image.addClass('rtwpvs-image-load').one('webkitAnimationEnd oanimationend msAnimationEnd animationend webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function () {
+            $(this).removeClass('rtwpvs-image-load');
+          });
+        });
+        this._variation_form.on('check_variations.rtwpvs-wc-variation-form', {
+          that: this
+        }, this.term_change);
       }
       // Add to cart trigger
       this._cart_button_ajax.off('click.rtwpvs-archive-add-to-cart');
@@ -504,6 +531,31 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
           // Trigger event so themes can refresh other areas.
           $(document.body).trigger('added_to_cart', [response.fragments, response.cart_hash, $button]);
         });
+      });
+    };
+    this.term_change = function (e) {
+      $(this).find('.rtwpvs-variation-terms-wrapper').each(function () {
+        var attribute = $(this),
+          wc_select = attribute.find('select.rtwpvs-wc-select'),
+          selected = wc_select.find('option:selected').val() || '',
+          current = wc_select.find('option:selected'),
+          itemIndex = wc_select.find('option').eq(1),
+          wc_terms = [];
+        wc_select.find('option').each(function () {
+          if ($(this).val() !== '') {
+            wc_terms.push($(this).val());
+            selected = current ? current.val() : itemIndex.val();
+          }
+        });
+        // Code for product page term beside label.
+        var current_label = attribute.find('.rtwpvs-label');
+        current_label.find('span').remove();
+        if (selected.length > 0) {
+          var current_text = current.text();
+          var label_text = current_label.text().trim();
+          var selected_value = label_text + ' <span>' + current_text + '</span>';
+          current_label.html(selected_value);
+        }
       });
     };
     this.setUrlParams = function (url, query) {
@@ -563,9 +615,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     };
     this.variationsImageUpdate = function (variation) {
       var product_image = this._wrapper.find(rtwpvs_params.archive_image_selector);
-      product_image.addClass('rtwpvs-image-load').one('webkitAnimationEnd oanimationend msAnimationEnd animationend webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function () {
-        $(this).removeClass('rtwpvs-image-load');
-      });
+      // product_image.addClass('rtwpvs-image-load').one('webkitAnimationEnd oanimationend msAnimationEnd animationend webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function () {
+      //     $(this).removeClass('rtwpvs-image-load');
+      // });
       if (variation && variation.image && variation.image.thumb_src && variation.image.thumb_src.length > 1) {
         product_image.wc_set_variation_attr('src', variation.image.thumb_src);
         product_image.wc_set_variation_attr('height', variation.image.thumb_src_h);

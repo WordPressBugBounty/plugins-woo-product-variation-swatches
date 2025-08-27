@@ -1,6 +1,32 @@
 @charset "UTF-8";
-.rtwpvs .rtwpvs-wc-select {
+.rtwpvs {
+  --rtwpvs-border-color: #cccccc;
+}
+.rtwpvs .reset_variations {
   display: none !important;
+  padding: 5px 0 0 0;
+  font-size: 14px;
+}
+.rtwpvs .reset_variations.show {
+  display: block !important;
+}
+.rtwpvs .rtwpvs-label {
+  line-height: 1.4;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 5px;
+  text-transform: capitalize;
+}
+.rtwpvs .variations td, .rtwpvs .variations th {
+  background-color: transparent;
+}
+.rtwpvs .rtwpvs-variation-terms-wrapper + .rtwpvs-variation-terms-wrapper {
+  margin-top: 10px;
+}
+.rtwpvs .rtwpvs-wc-select {
+  border: 1px solid var(--rtwpvs-border-color);
+  outline: none;
+  padding: 8px 20px 8px 8px;
 }
 .rtwpvs .rtwpvs-wc-select + .select2,
 .rtwpvs .rtwpvs-wc-select + .select2-container,
@@ -14,7 +40,7 @@
   padding: 0;
   list-style: none;
   position: relative;
-  gap: 8px;
+  gap: 10px;
 }
 .rtwpvs .rtwpvs-terms-wrapper.custom-variable-wrapper .rtwpvs-term-span-dual-color {
   width: 100%;
@@ -70,7 +96,7 @@
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px var(--rtwpvs-border-color);
   padding: 2px;
 }
 .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term):last-of-type {
@@ -102,6 +128,9 @@
   border-radius: 2px;
   width: auto;
   height: inherit;
+  min-width: 40px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term span {
   color: #000000;
@@ -231,9 +260,6 @@
 .rtwpvs.rtwpvs-archive-align-left .rtwpvs-archive-variation-wrapper .rtwpvs-terms-wrapper {
   justify-content: flex-start;
 }
-.rtwpvs.rtwpvs-archive-align-left .rtwpvs-archive-variation-wrapper .reset_variations {
-  margin: 0;
-}
 .rtwpvs.rtwpvs-archive-align-center .rtwpvs-archive-variation-wrapper .variations {
   text-align: center;
 }
@@ -253,6 +279,9 @@
   margin: 0;
 }
 
+.rtwpvs-product .variations {
+  margin: 20px 0 5px;
+}
 .rtwpvs-product .variations tr {
   vertical-align: baseline;
 }
@@ -260,7 +289,7 @@
 .rtwpvs-product.rtwpvs-selected-term-beside-label .variations td.value {
   display: block;
   text-align: left;
-  padding: 0 0 5px 0;
+  padding: 0 0 10px 0;
   margin: 0;
 }
 
@@ -302,4 +331,7 @@
 .rtwpvs-product-loop-variation.rtwpvs_av_loading {
   opacity: 0;
   visibility: visible;
+}
+.rtwpvs-product-loop-variation .rtwpvs-archive-variation-wrapper .variations {
+  display: flex;
 }

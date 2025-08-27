@@ -10,6 +10,7 @@ class Options {
 			'image'  => esc_html__( 'Image', 'woo-product-variation-swatches' ),
 			'button' => esc_html__( 'Button', 'woo-product-variation-swatches' ),
 			'radio'  => esc_html__( 'Radio', 'woo-product-variation-swatches' ),
+			'select' => esc_html__( 'Select Field', 'woo-product-variation-swatches' ),
 		];
 
 		$types = apply_filters( 'rtwpvs_available_attributes_types', $types );
@@ -287,8 +288,8 @@ class Options {
 							'is_pro'  => true,
 							'type'    => 'color',
 							'title'   => esc_html__( 'Border color', 'woo-product-variation-swatches' ),
-							'desc'    => esc_html__( 'Swatches item border color. Default is: rgba(0, 0, 0, 0.3)', 'woo-product-variation-swatches' ),
-							'default' => 'rgba(0, 0, 0, 0.3)',
+							'desc'    => esc_html__( 'Swatches item border color. Default is: #eeeeee', 'woo-product-variation-swatches' ),
+							'default' => '#cccccc',
 							'alpha'   => true,
 						],
 						[
@@ -466,6 +467,14 @@ class Options {
 							'default' => false,
 						],
 						[
+							'id'      => 'archive_swatches_label',
+							'is_pro'  => true,
+							'type'    => 'checkbox',
+							'title'   => esc_html__( 'Show Variation Attribute Name', 'woo-product-variation-swatches' ),
+							'desc'    => esc_html__( 'Variation Attribute label show on archive / shop page.', 'woo-product-variation-swatches' ),
+							'default' => false,
+						],
+						[
 							'id'      => 'archive_product_wrapper_selector',
 							'is_pro'  => true,
 							'type'    => 'text',
@@ -586,6 +595,7 @@ class Options {
 							'is_pro'  => true,
 							'type'    => 'number',
 							'size'    => 'tiny',
+							'min'     => 0,
 							'title'   => esc_html__( 'Attribute display limit', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Catalog mode attribute display limit. Default is 0. Means no limit.', 'woo-product-variation-swatches' ),
 							'default' => 0,
@@ -661,14 +671,14 @@ class Options {
 							],
 							'html'       => Functions::get_product_list_html(
 								[
-                                    'rtsb-pro' => array(
-                                        'price'     => '$41.00 – $209.00',
-                                        'title'     => "ShopBuilder – Elementor WooCommerce Builder Addons",
-                                        'image_url' => rtwpvs()->get_images_uri('shopbuilde.png'),
-                                        'url'       => 'https://www.radiustheme.com/downloads/woocommerce-bundle/',
-                                        'demo_url'  => 'https://shopbuilderwp.com/',
-                                        'buy_url'   => 'https://www.radiustheme.com/downloads/woocommerce-bundle/',
-                                    ),
+									'rtsb-pro'   => [
+										'price'     => '$41.00 – $209.00',
+										'title'     => 'ShopBuilder – Elementor WooCommerce Builder Addons',
+										'image_url' => rtwpvs()->get_images_uri( 'shopbuilde.png' ),
+										'url'       => 'https://www.radiustheme.com/downloads/woocommerce-bundle/',
+										'demo_url'  => 'https://shopbuilderwp.com/',
+										'buy_url'   => 'https://www.radiustheme.com/downloads/woocommerce-bundle/',
+									],
 									'rtwpvs-pro' => [
 										'title'     => 'Variation Swatches for WooCommerce Pro',
 										'price'     => '$29.00 – $549.00',

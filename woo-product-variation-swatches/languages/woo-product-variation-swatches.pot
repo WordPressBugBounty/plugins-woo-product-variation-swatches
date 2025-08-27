@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Variation Swatches for WooCommerce
+# Copyright (C) 2025 Variation Swatches for WooCommerce
 # This file is distributed under the same license as the Variation Swatches for WooCommerce package.
 msgid ""
 msgstr ""
@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-27 06:15+0000\n"
+"POT-Creation-Date: 2025-08-27 10:33+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -14,35 +14,35 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../app/Controllers/Hooks.php:385, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:385
+#: ../app/Controllers/Hooks.php:388, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:388
 msgid "Select terms"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:398, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:398
+#: ../app/Controllers/Hooks.php:401, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:401
 msgid "Select all"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:399, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:399
+#: ../app/Controllers/Hooks.php:402, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:402
 msgid "Select none"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:410, ../app/Controllers/Hooks.php:408, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:410, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:408
+#: ../app/Controllers/Hooks.php:413, ../app/Controllers/Hooks.php:411, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:413, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:411
 msgid "Add new"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:408, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:408
+#: ../app/Controllers/Hooks.php:411, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:411
 msgid "Add new %s"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:446, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:446
+#: ../app/Controllers/Hooks.php:449, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:449
 msgid "View cart"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:447, ../app/Controllers/ThemeSupport.php:52, ../app/Controllers/ThemeSupport.php:72, ../app/Controllers/ThemeSupport.php:85, ../app/Controllers/ThemeSupport.php:104, ../app/Controllers/ThemeSupport.php:114, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:447, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:52, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:72, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:85, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:104, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:114
+#: ../app/Controllers/Hooks.php:450, ../app/Controllers/ThemeSupport.php:52, ../app/Controllers/ThemeSupport.php:72, ../app/Controllers/ThemeSupport.php:85, ../app/Controllers/ThemeSupport.php:104, ../app/Controllers/ThemeSupport.php:114, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:450, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:52, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:72, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:85, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:104, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:114
 msgid "Add to cart"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:448, ../app/Controllers/ThemeSupport.php:48, ../app/Controllers/ThemeSupport.php:68, ../app/Controllers/ThemeSupport.php:81, ../app/Controllers/ThemeSupport.php:100, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:448, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:48, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:68, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:81, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:100
+#: ../app/Controllers/Hooks.php:451, ../app/Controllers/ThemeSupport.php:48, ../app/Controllers/ThemeSupport.php:68, ../app/Controllers/ThemeSupport.php:81, ../app/Controllers/ThemeSupport.php:100, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:451, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:48, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:68, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:81, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:100
 msgid "Select options"
 msgstr ""
 
@@ -82,7 +82,7 @@ msgstr ""
 msgid "Please open a support ticket."
 msgstr ""
 
-#: ../app/Controllers/Offer.php:157, ../dist/woo-product-variation-swatches/app/Controllers/Offer.php:157
+#: ../app/Controllers/Offer.php:152, ../dist/woo-product-variation-swatches/app/Controllers/Offer.php:152
 msgid "Don't miss out on our biggest sale of the year! Get your "
 msgstr ""
 
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Color value"
 msgstr ""
 
-#: ../app/Controllers/ScriptLoader.php:122, ../app/Helpers/Options.php:48, ../dist/woo-product-variation-swatches/app/Controllers/ScriptLoader.php:122, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:48
+#: ../app/Controllers/ScriptLoader.php:122, ../app/Helpers/Options.php:49, ../dist/woo-product-variation-swatches/app/Controllers/ScriptLoader.php:122, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:49
 msgid "Choose an Image"
 msgstr ""
 
@@ -142,11 +142,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:114, ../app/Helpers/Functions.php:493, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:114, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:493
+#: ../app/Controllers/SettingsAPI.php:114, ../app/Helpers/Functions.php:521, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:114, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:521
 msgid "Demo"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:115, ../app/Helpers/Functions.php:494, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:115, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:494
+#: ../app/Controllers/SettingsAPI.php:115, ../app/Helpers/Functions.php:522, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:115, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:522
 msgid "Documentation"
 msgstr ""
 
@@ -222,23 +222,23 @@ msgstr ""
 msgid "Remove image"
 msgstr ""
 
-#: ../app/Helpers/Functions.php:123, ../app/Helpers/Functions.php:167, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:123, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:167
+#: ../app/Helpers/Functions.php:131, ../app/Helpers/Functions.php:174, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:131, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:174
 msgid "Choose an option"
 msgstr ""
 
-#: ../app/Helpers/Functions.php:492, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:492
+#: ../app/Helpers/Functions.php:520, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:520
 msgid "Buy"
 msgstr ""
 
-#: ../app/Helpers/Functions.php:559, ../app/Helpers/Functions.php:568, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:559, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:568
+#: ../app/Helpers/Functions.php:587, ../app/Helpers/Functions.php:596, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:587, ../dist/woo-product-variation-swatches/app/Helpers/Functions.php:596
 msgid "More"
 msgstr ""
 
-#: ../app/Helpers/Options.php:9, ../app/Helpers/Options.php:34, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:9, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:34
+#: ../app/Helpers/Options.php:9, ../app/Helpers/Options.php:35, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:9, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:35
 msgid "Color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:10, ../app/Helpers/Options.php:47, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:10, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:47
+#: ../app/Helpers/Options.php:10, ../app/Helpers/Options.php:48, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:10, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:48
 msgid "Image"
 msgstr ""
 
@@ -250,578 +250,590 @@ msgstr ""
 msgid "Radio"
 msgstr ""
 
-#: ../app/Helpers/Options.php:35, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:35
+#: ../app/Helpers/Options.php:13, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:13
+msgid "Select Field"
+msgstr ""
+
+#: ../app/Helpers/Options.php:36, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:36
 msgid "Choose a color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:71, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:71
+#: ../app/Helpers/Options.php:72, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:72
 msgid "General"
 msgstr ""
 
-#: ../app/Helpers/Options.php:72, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:72
+#: ../app/Helpers/Options.php:73, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:73
 msgid "Simple change some visual styles"
 msgstr ""
 
-#: ../app/Helpers/Options.php:80, ../app/Helpers/Options.php:506, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:80, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:506
+#: ../app/Helpers/Options.php:81, ../app/Helpers/Options.php:515, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:81, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:515
 msgid "Enable Tooltip"
 msgstr ""
 
-#: ../app/Helpers/Options.php:81, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:81
+#: ../app/Helpers/Options.php:82, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:82
 msgid "Enable / Disable plugin default tooltip on each product attribute."
 msgstr ""
 
-#: ../app/Helpers/Options.php:87, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:87
+#: ../app/Helpers/Options.php:88, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:88
 msgid "Shape style"
 msgstr ""
 
-#: ../app/Helpers/Options.php:88, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:88
+#: ../app/Helpers/Options.php:89, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:89
 msgid "Attribute Shape Style"
 msgstr ""
 
-#: ../app/Helpers/Options.php:90, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:90
+#: ../app/Helpers/Options.php:91, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:91
 msgid "Rounded Shape"
 msgstr ""
 
-#: ../app/Helpers/Options.php:91, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:91
+#: ../app/Helpers/Options.php:92, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:92
 msgid "Squared Shape"
 msgstr ""
 
-#: ../app/Helpers/Options.php:99, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:99
+#: ../app/Helpers/Options.php:100, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:100
 msgid "Shape style with checkmark"
 msgstr ""
 
-#: ../app/Helpers/Options.php:106, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:106
+#: ../app/Helpers/Options.php:107, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:107
 msgid "Auto Dropdown to Button"
 msgstr ""
 
-#: ../app/Helpers/Options.php:107, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:107
+#: ../app/Helpers/Options.php:108, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:108
 msgid "Convert default dropdowns to button type"
 msgstr ""
 
-#: ../app/Helpers/Options.php:114, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:114
+#: ../app/Helpers/Options.php:115, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:115
 msgid "Auto Dropdown to Image"
 msgstr ""
 
-#: ../app/Helpers/Options.php:115, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:115
+#: ../app/Helpers/Options.php:116, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:116
 msgid "Convert default dropdowns to Image type"
 msgstr ""
 
-#: ../app/Helpers/Options.php:122, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:122
+#: ../app/Helpers/Options.php:123, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:123
 msgid "Attribute on Click Behavior"
 msgstr ""
 
-#: ../app/Helpers/Options.php:123, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:123
+#: ../app/Helpers/Options.php:124, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:124
 msgid "Selected term will show beside label"
 msgstr ""
 
-#: ../app/Helpers/Options.php:131, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:131
+#: ../app/Helpers/Options.php:132, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:132
 msgid "Product Page Attribute display limit"
 msgstr ""
 
-#: ../app/Helpers/Options.php:132, ../app/Helpers/Options.php:590, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:132, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:590
+#: ../app/Helpers/Options.php:133, ../app/Helpers/Options.php:600, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:133, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:600
 msgid "Catalog mode attribute display limit. Default is 0. Means no limit."
 msgstr ""
 
-#: ../app/Helpers/Options.php:138, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:138
+#: ../app/Helpers/Options.php:139, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:139
 msgid "Attribute image size"
 msgstr ""
 
-#: ../app/Helpers/Options.php:139, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:139
+#: ../app/Helpers/Options.php:140, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:140
 msgid "<span style=\"color: red\">Attribute image size changed by <code>rtwpvs_product_attribute_image_size</code> hook. So this option will not apply any effect.</span>"
 msgstr ""
 
-#: ../app/Helpers/Options.php:146, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:146
+#: ../app/Helpers/Options.php:147, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:147
 msgid "Width"
 msgstr ""
 
-#: ../app/Helpers/Options.php:147, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:147
+#: ../app/Helpers/Options.php:148, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:148
 msgid "Variation item width"
 msgstr ""
 
-#: ../app/Helpers/Options.php:156, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:156
+#: ../app/Helpers/Options.php:157, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:157
 msgid "Height"
 msgstr ""
 
-#: ../app/Helpers/Options.php:157, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:157
+#: ../app/Helpers/Options.php:158, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:158
 msgid "Variation item height"
 msgstr ""
 
-#: ../app/Helpers/Options.php:166, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:166
+#: ../app/Helpers/Options.php:167, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:167
 msgid "Font Size"
 msgstr ""
 
-#: ../app/Helpers/Options.php:167, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:167
+#: ../app/Helpers/Options.php:168, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:168
 msgid "Single product variation item font size"
 msgstr ""
 
-#: ../app/Helpers/Options.php:176, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:176
+#: ../app/Helpers/Options.php:177, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:177
 msgid "Tooltip Options"
 msgstr ""
 
-#: ../app/Helpers/Options.php:177, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:177
+#: ../app/Helpers/Options.php:178, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:178
 msgid "Tooltip settings for single page and catalog mode on shop / archive pages"
 msgstr ""
 
-#: ../app/Helpers/Options.php:183, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:183
+#: ../app/Helpers/Options.php:184, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:184
 msgid "Tooltip image size"
 msgstr ""
 
-#: ../app/Helpers/Options.php:184, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:184
+#: ../app/Helpers/Options.php:185, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:185
 msgid "<span style=\"color: red\">Tooltip image size changed by <code>rtwpvs_tooltip_image_size</code> hook. So this option will not apply any effect.</span>"
 msgstr ""
 
-#: ../app/Helpers/Options.php:192, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:192
+#: ../app/Helpers/Options.php:193, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:193
 msgid "Tooltip Image Width"
 msgstr ""
 
-#: ../app/Helpers/Options.php:193, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:193
+#: ../app/Helpers/Options.php:194, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:194
 msgid "Tooltip Image width"
 msgstr ""
 
-#: ../app/Helpers/Options.php:204, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:204
+#: ../app/Helpers/Options.php:205, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:205
 msgid "Advanced"
 msgstr ""
 
-#: ../app/Helpers/Options.php:205, ../app/Helpers/Options.php:259, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:205, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:259
+#: ../app/Helpers/Options.php:206, ../app/Helpers/Options.php:260, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:206, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:260
 msgid "Advanced change some visual styles"
 msgstr ""
 
-#: ../app/Helpers/Options.php:213, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:213
+#: ../app/Helpers/Options.php:214, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:214
 msgid "Clear on Reselect"
 msgstr ""
 
-#: ../app/Helpers/Options.php:214, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:214
+#: ../app/Helpers/Options.php:215, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:215
 msgid "Clear selected attribute on select again"
 msgstr ""
 
-#: ../app/Helpers/Options.php:220, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:220
+#: ../app/Helpers/Options.php:221, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:221
 msgid "Ajax variation threshold"
 msgstr ""
 
-#: ../app/Helpers/Options.php:221, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:221
+#: ../app/Helpers/Options.php:222, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:222
 msgid "Default value is <code>30</code>, If you want all product variation set it to <code>1</code> then all variation will be load via ajax.<br><span style=\"color: red\">Note: It's recommended to keep this number between 30 - 40.</span>"
 msgstr ""
 
-#: ../app/Helpers/Options.php:229, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:229
+#: ../app/Helpers/Options.php:230, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:230
 msgid "Out of stock for variation"
 msgstr ""
 
-#: ../app/Helpers/Options.php:230, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:230
+#: ../app/Helpers/Options.php:231, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:231
 msgid "Disable out of stock for variation product attribute item<br><span style=\"color: red\">Note: Will not work if you set Ajax variation threshold to 1.</span>"
 msgstr ""
 
-#: ../app/Helpers/Options.php:237, ../app/Helpers/Options.php:456, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:237, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:456
+#: ../app/Helpers/Options.php:238, ../app/Helpers/Options.php:457, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:238, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:457
 msgid "Variation URL"
 msgstr ""
 
-#: ../app/Helpers/Options.php:238, ../app/Helpers/Options.php:457, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:238, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:457
+#: ../app/Helpers/Options.php:239, ../app/Helpers/Options.php:458, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:239, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:458
 msgid "Generate URL based on selected variation attributes."
 msgstr ""
 
-#: ../app/Helpers/Options.php:244, ../app/Helpers/Options.php:414, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:244, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:414
+#: ../app/Helpers/Options.php:245, ../app/Helpers/Options.php:415, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:245, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:415
 msgid "Attribute behavior"
 msgstr ""
 
-#: ../app/Helpers/Options.php:245, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:245
+#: ../app/Helpers/Options.php:246, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:246
 msgid "Disabled attribute will be hide / blur."
 msgstr ""
 
-#: ../app/Helpers/Options.php:245, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:245
+#: ../app/Helpers/Options.php:246, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:246
 msgid " Note: This feature will be operational for variation quantities below the \"Ajax variation threshold."
 msgstr ""
 
-#: ../app/Helpers/Options.php:247, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:247
+#: ../app/Helpers/Options.php:248, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:248
 msgid "Blur with cross"
 msgstr ""
 
-#: ../app/Helpers/Options.php:248, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:248
+#: ../app/Helpers/Options.php:249, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:249
 msgid "Blur without cross"
 msgstr ""
 
-#: ../app/Helpers/Options.php:249, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:249
+#: ../app/Helpers/Options.php:250, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:250
 msgid "Hide"
 msgstr ""
 
-#: ../app/Helpers/Options.php:258, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:258
+#: ../app/Helpers/Options.php:259, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:259
 msgid "Style"
 msgstr ""
 
-#: ../app/Helpers/Options.php:267, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:267
+#: ../app/Helpers/Options.php:268, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:268
 msgid "Tooltip background"
 msgstr ""
 
-#: ../app/Helpers/Options.php:268, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:268
+#: ../app/Helpers/Options.php:269, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:269
 msgid "Tooltip background color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:275, ../app/Helpers/Options.php:276, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:275, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:276
+#: ../app/Helpers/Options.php:276, ../app/Helpers/Options.php:277, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:276, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:277
 msgid "Tooltip text color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:282, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:282
+#: ../app/Helpers/Options.php:283, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:283
 msgid "Attribute item styling"
 msgstr ""
 
-#: ../app/Helpers/Options.php:283, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:283
+#: ../app/Helpers/Options.php:284, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:284
 msgid "Change attribute item display style"
 msgstr ""
 
-#: ../app/Helpers/Options.php:289, ../app/Helpers/Options.php:377, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:289, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:377
+#: ../app/Helpers/Options.php:290, ../app/Helpers/Options.php:378, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:290, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:378
 msgid "Border color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:290, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:290
-msgid "Swatches item border color. Default is: rgba(0, 0, 0, 0.3)"
+#: ../app/Helpers/Options.php:291, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:291
+msgid "Swatches item border color. Default is: #eeeeee"
 msgstr ""
 
-#: ../app/Helpers/Options.php:298, ../app/Helpers/Options.php:386, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:298, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:386
+#: ../app/Helpers/Options.php:299, ../app/Helpers/Options.php:387, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:299, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:387
 msgid "Border size"
 msgstr ""
 
-#: ../app/Helpers/Options.php:299, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:299
+#: ../app/Helpers/Options.php:300, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:300
 msgid "Swatches attribute item border size. Default is: 1"
 msgstr ""
 
-#: ../app/Helpers/Options.php:303, ../app/Helpers/Options.php:347, ../app/Helpers/Options.php:391, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:303, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:347, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:391
+#: ../app/Helpers/Options.php:304, ../app/Helpers/Options.php:348, ../app/Helpers/Options.php:392, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:304, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:348, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:392
 msgid "px"
 msgstr ""
 
-#: ../app/Helpers/Options.php:309, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:309
+#: ../app/Helpers/Options.php:310, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:310
 msgid "text color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:310, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:310
+#: ../app/Helpers/Options.php:311, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:311
 msgid "Swatches attribute item text color. Default is: #000000"
 msgstr ""
 
-#: ../app/Helpers/Options.php:318, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:318
+#: ../app/Helpers/Options.php:319, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:319
 msgid "background color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:319, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:319
+#: ../app/Helpers/Options.php:320, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:320
 msgid "Swatches attribute item background color. Default is: #FFFFFF"
 msgstr ""
 
-#: ../app/Helpers/Options.php:326, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:326
+#: ../app/Helpers/Options.php:327, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:327
 msgid "Attribute item Hover Styling"
 msgstr ""
 
-#: ../app/Helpers/Options.php:327, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:327
+#: ../app/Helpers/Options.php:328, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:328
 msgid "Change attribute item hover display style"
 msgstr ""
 
-#: ../app/Helpers/Options.php:333, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:333
+#: ../app/Helpers/Options.php:334, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:334
 msgid "Hover border color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:334, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:334
+#: ../app/Helpers/Options.php:335, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:335
 msgid "Swatches attribute item hover border color. Default is: #000000"
 msgstr ""
 
-#: ../app/Helpers/Options.php:342, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:342
+#: ../app/Helpers/Options.php:343, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:343
 msgid "Hover border size"
 msgstr ""
 
-#: ../app/Helpers/Options.php:343, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:343
+#: ../app/Helpers/Options.php:344, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:344
 msgid "Swatches attribute item hover border size. Default is: 3"
 msgstr ""
 
-#: ../app/Helpers/Options.php:353, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:353
+#: ../app/Helpers/Options.php:354, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:354
 msgid "Hover text color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:354, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:354
+#: ../app/Helpers/Options.php:355, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:355
 msgid "Swatches attribute item hover text color. Default is: #000000"
 msgstr ""
 
-#: ../app/Helpers/Options.php:362, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:362
+#: ../app/Helpers/Options.php:363, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:363
 msgid "Hover background color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:363, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:363
+#: ../app/Helpers/Options.php:364, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:364
 msgid "Swatches attribute item hover background color. Default is: #FFFFFF"
 msgstr ""
 
-#: ../app/Helpers/Options.php:370, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:370
+#: ../app/Helpers/Options.php:371, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:371
 msgid "Attribute item Selected Styling"
 msgstr ""
 
-#: ../app/Helpers/Options.php:371, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:371
+#: ../app/Helpers/Options.php:372, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:372
 msgid "Change attribute selected item display style"
 msgstr ""
 
-#: ../app/Helpers/Options.php:378, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:378
+#: ../app/Helpers/Options.php:379, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:379
 msgid "Swatches selected item border color. Default is: #000000"
 msgstr ""
 
-#: ../app/Helpers/Options.php:387, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:387
+#: ../app/Helpers/Options.php:388, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:388
 msgid "Swatches selected item border size. Default is: 2"
 msgstr ""
 
-#: ../app/Helpers/Options.php:397, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:397
+#: ../app/Helpers/Options.php:398, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:398
 msgid "Text color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:398, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:398
+#: ../app/Helpers/Options.php:399, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:399
 msgid "Swatches item selected text color. Default is: #000000"
 msgstr ""
 
-#: ../app/Helpers/Options.php:406, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:406
+#: ../app/Helpers/Options.php:407, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:407
 msgid "Background color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:407, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:407
+#: ../app/Helpers/Options.php:408, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:408
 msgid "Swatches item selected background color. Default is: #FFFFFF"
 msgstr ""
 
-#: ../app/Helpers/Options.php:415, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:415
+#: ../app/Helpers/Options.php:416, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:416
 msgid "This will work for (blur and blur-no-cross)"
 msgstr ""
 
-#: ../app/Helpers/Options.php:420, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:420
+#: ../app/Helpers/Options.php:421, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:421
 msgid "Cross background color"
 msgstr ""
 
-#: ../app/Helpers/Options.php:421, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:421
+#: ../app/Helpers/Options.php:422, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:422
 msgid "Cross background color for disabled item"
 msgstr ""
 
-#: ../app/Helpers/Options.php:427, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:427
+#: ../app/Helpers/Options.php:428, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:428
 msgid "Blur Opacity"
 msgstr ""
 
-#: ../app/Helpers/Options.php:428, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:428
+#: ../app/Helpers/Options.php:429, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:429
 msgid "Blur Opacity for disabled item range[.1 to 1]"
 msgstr ""
 
-#: ../app/Helpers/Options.php:439, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:439
+#: ../app/Helpers/Options.php:440, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:440
 msgid "Archive / Shop"
 msgstr ""
 
-#: ../app/Helpers/Options.php:440, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:440
+#: ../app/Helpers/Options.php:441, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:441
 msgid "Advanced settings on shop / archive pages"
 msgstr ""
 
-#: ../app/Helpers/Options.php:448, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:448
+#: ../app/Helpers/Options.php:449, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:449
 msgid "Enable Swatches"
 msgstr ""
 
-#: ../app/Helpers/Options.php:449, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:449
+#: ../app/Helpers/Options.php:450, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:450
 msgid "Show swatches on archive / shop page."
 msgstr ""
 
-#: ../app/Helpers/Options.php:464, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:464
+#: ../app/Helpers/Options.php:465, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:465
 msgid "Variation Ajaxify"
 msgstr ""
 
-#: ../app/Helpers/Options.php:465, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:465
+#: ../app/Helpers/Options.php:466, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:466
 msgid "Variation will load by ajax. This option will decrease loading time. Some Of Attribute behavior may not be work"
 msgstr ""
 
-#: ../app/Helpers/Options.php:472, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:472
-msgid "Product Wrapper Selector"
+#: ../app/Helpers/Options.php:473, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:473
+msgid "Show Variation Attribute Name"
 msgstr ""
 
-#: ../app/Helpers/Options.php:480, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:480
-msgid "Image Selector"
+#: ../app/Helpers/Options.php:474, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:474
+msgid "Variation Attribute label show on archive / shop page."
 msgstr ""
 
 #: ../app/Helpers/Options.php:481, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:481
+msgid "Product Wrapper Selector"
+msgstr ""
+
+#: ../app/Helpers/Options.php:489, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:489
+msgid "Image Selector"
+msgstr ""
+
+#: ../app/Helpers/Options.php:490, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:490
 msgid "Archive product image selector to show variation image. You can also use multiple selectors separated by comma (.attachment-woocommerce_thumbnail, .wp-post-image) "
 msgstr ""
 
-#: ../app/Helpers/Options.php:488, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:488
+#: ../app/Helpers/Options.php:497, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:497
 msgid "Swatches position"
 msgstr ""
 
-#: ../app/Helpers/Options.php:489, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:489
+#: ../app/Helpers/Options.php:498, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:498
 msgid "Show archive swatches position."
 msgstr ""
 
-#: ../app/Helpers/Options.php:489, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:489
+#: ../app/Helpers/Options.php:498, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:498
 msgid "<span style=\"color: red\">Some theme remove woocommerce default hook, in that case this may not work with some theme.</span>"
 msgstr ""
 
-#: ../app/Helpers/Options.php:497, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:497
+#: ../app/Helpers/Options.php:506, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:506
 msgid "Swatches align"
 msgstr ""
 
-#: ../app/Helpers/Options.php:498, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:498
+#: ../app/Helpers/Options.php:507, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:507
 msgid "Swatches align on archive page."
 msgstr ""
 
-#: ../app/Helpers/Options.php:507, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:507
+#: ../app/Helpers/Options.php:516, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:516
 msgid "Show tooltip on archive / shop page"
 msgstr ""
 
-#: ../app/Helpers/Options.php:514, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:514
+#: ../app/Helpers/Options.php:523, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:523
 msgid "Show clear link"
 msgstr ""
 
-#: ../app/Helpers/Options.php:515, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:515
+#: ../app/Helpers/Options.php:524, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:524
 msgid "Show clear link on archive / shop page."
 msgstr ""
 
-#: ../app/Helpers/Options.php:522, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:522
+#: ../app/Helpers/Options.php:531, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:531
 msgid "Item Width"
 msgstr ""
 
-#: ../app/Helpers/Options.php:523, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:523
+#: ../app/Helpers/Options.php:532, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:532
 msgid "Variation item width on archive / shop page"
 msgstr ""
 
-#: ../app/Helpers/Options.php:533, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:533
+#: ../app/Helpers/Options.php:542, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:542
 msgid "Item Height"
 msgstr ""
 
-#: ../app/Helpers/Options.php:534, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:534
+#: ../app/Helpers/Options.php:543, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:543
 msgid "Variation item height on archive / shop page"
 msgstr ""
 
-#: ../app/Helpers/Options.php:544, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:544
+#: ../app/Helpers/Options.php:553, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:553
 msgid "Item Font Size"
 msgstr ""
 
-#: ../app/Helpers/Options.php:545, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:545
+#: ../app/Helpers/Options.php:554, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:554
 msgid "Variation item font size on archive / shop page"
 msgstr ""
 
-#: ../app/Helpers/Options.php:554, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:554
+#: ../app/Helpers/Options.php:563, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:563
 msgid "Special Attribute"
 msgstr ""
 
-#: ../app/Helpers/Options.php:555, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:555
+#: ../app/Helpers/Options.php:564, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:564
 msgid "Show single attribute as catalog mode on shop / archive pages"
 msgstr ""
 
-#: ../app/Helpers/Options.php:561, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:561
+#: ../app/Helpers/Options.php:570, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:570
 msgid "Show Single Attribute"
 msgstr ""
 
-#: ../app/Helpers/Options.php:562, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:562
+#: ../app/Helpers/Options.php:571, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:571
 msgid "Show single attribute taxonomies on archive page."
 msgstr ""
 
-#: ../app/Helpers/Options.php:568, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:568
+#: ../app/Helpers/Options.php:577, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:577
 msgid "Chose Attribute"
 msgstr ""
 
-#: ../app/Helpers/Options.php:569, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:569
+#: ../app/Helpers/Options.php:578, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:578
 msgid "Choose an attribute to show on catalog mode"
 msgstr ""
 
-#: ../app/Helpers/Options.php:570, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:570
+#: ../app/Helpers/Options.php:579, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:579
 msgid " - Choose Attribute - "
 msgstr ""
 
-#: ../app/Helpers/Options.php:576, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:576
+#: ../app/Helpers/Options.php:585, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:585
 msgid "Catalog Mode Display Event"
 msgstr ""
 
-#: ../app/Helpers/Options.php:577, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:577
+#: ../app/Helpers/Options.php:586, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:586
 msgid "Show catalog mode image display event."
 msgstr ""
 
-#: ../app/Helpers/Options.php:579, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:579
+#: ../app/Helpers/Options.php:588, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:588
 msgid "on Click"
 msgstr ""
 
-#: ../app/Helpers/Options.php:580, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:580
+#: ../app/Helpers/Options.php:589, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:589
 msgid "on Hover"
 msgstr ""
 
-#: ../app/Helpers/Options.php:589, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:589
+#: ../app/Helpers/Options.php:599, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:599
 msgid "Attribute display limit"
 msgstr ""
 
-#: ../app/Helpers/Options.php:598, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:598
+#: ../app/Helpers/Options.php:608, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:608
 msgid "Tools"
 msgstr ""
 
-#: ../app/Helpers/Options.php:599, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:599
+#: ../app/Helpers/Options.php:609, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:609
 msgid "Tools define some system tasks"
 msgstr ""
 
-#: ../app/Helpers/Options.php:607, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:607
+#: ../app/Helpers/Options.php:617, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:617
 msgid "Enable to delete all data"
 msgstr ""
 
-#: ../app/Helpers/Options.php:608, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:608
+#: ../app/Helpers/Options.php:618, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:618
 msgid "Enable / Disable Allow to delete all data for WooCommerce Product variation plugin during delete this plugin"
 msgstr ""
 
-#: ../app/Helpers/Options.php:613, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:613
+#: ../app/Helpers/Options.php:623, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:623
 msgid "Performance"
 msgstr ""
 
-#: ../app/Helpers/Options.php:614, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:614
+#: ../app/Helpers/Options.php:624, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:624
 msgid "Improve your site performance."
 msgstr ""
 
-#: ../app/Helpers/Options.php:615, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:615
+#: ../app/Helpers/Options.php:625, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:625
 msgid "You can remove all cache from here. <a href=\"%s\">Clear all cache</a>"
 msgstr ""
 
-#: ../app/Helpers/Options.php:628, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:628
+#: ../app/Helpers/Options.php:638, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:638
 msgid "Load Scripts"
 msgstr ""
 
-#: ../app/Helpers/Options.php:629, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:629
+#: ../app/Helpers/Options.php:639, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:639
 msgid "Only <strong>Single product</strong> and <strong>Product archive</strong> pages. [if unchecked then it will load the scripts to all over the site]"
 msgstr ""
 
-#: ../app/Helpers/Options.php:635, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:635
+#: ../app/Helpers/Options.php:645, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:645
 msgid "Defer Load JS"
 msgstr ""
 
-#: ../app/Helpers/Options.php:636, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:636
+#: ../app/Helpers/Options.php:646, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:646
 msgid "Defer Load JS for PageSpeed Score"
 msgstr ""
 
-#: ../app/Helpers/Options.php:642, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:642
+#: ../app/Helpers/Options.php:652, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:652
 msgid "Use Cache"
 msgstr ""
 
-#: ../app/Helpers/Options.php:643, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:643
+#: ../app/Helpers/Options.php:653, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:653
 msgid "Use Transient Cache for PageSpeed Score"
 msgstr ""
 
-#: ../app/Helpers/Options.php:651, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:651
+#: ../app/Helpers/Options.php:661, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:661
 msgid "Related Plugins"
 msgstr ""
 
-#: ../app/Helpers/Options.php:652, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:652
+#: ../app/Helpers/Options.php:662, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:662
 msgid "You can try our premium plugins"
 msgstr ""
 
-#: ../app/Helpers/Options.php:711, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:711
+#: ../app/Helpers/Options.php:721, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:721
 msgid "After item title and price"
 msgstr ""
 
-#: ../app/Helpers/Options.php:712, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:712
+#: ../app/Helpers/Options.php:722, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:722
 msgid "Before item title and price"
 msgstr ""
 
-#: ../app/Helpers/Options.php:713, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:713
+#: ../app/Helpers/Options.php:723, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:723
 msgid "After select options button"
 msgstr ""
 
-#: ../app/Helpers/Options.php:722, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:722
+#: ../app/Helpers/Options.php:732, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:732
 msgid "Left"
 msgstr ""
 
-#: ../app/Helpers/Options.php:723, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:723
+#: ../app/Helpers/Options.php:733, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:733
 msgid "Right"
 msgstr ""
 
-#: ../app/Helpers/Options.php:724, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:724
+#: ../app/Helpers/Options.php:734, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:734
 msgid "Center"
 msgstr ""
 
-#: ../app/Helpers/Options.php:733, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:733
+#: ../app/Helpers/Options.php:743, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:743
 msgid "No"
 msgstr ""
 
-#: ../app/Helpers/Options.php:734, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:734
+#: ../app/Helpers/Options.php:744, ../dist/woo-product-variation-swatches/app/Helpers/Options.php:744
 msgid "Yes"
 msgstr ""

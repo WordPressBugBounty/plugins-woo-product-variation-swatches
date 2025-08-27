@@ -366,6 +366,9 @@ class Hooks {
 
 	static function product_option_terms( $attribute_taxonomy, $i ) {
 		global $thepostid;
+        if ( 'select' === $attribute_taxonomy->attribute_type ){
+            return;
+        }
 		if ( in_array( $attribute_taxonomy->attribute_type, array_keys( Options::get_available_attributes_types() ) ) ) {
 
 			$taxonomy = wc_attribute_taxonomy_name( $attribute_taxonomy->attribute_name );

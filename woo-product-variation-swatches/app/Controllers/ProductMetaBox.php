@@ -41,7 +41,6 @@ class ProductMetaBox
         }
         $product_id = absint($_POST['post_id']);
         parse_str($_REQUEST['data'], $data);
-         $data = [] ;
         if( ! empty( $data['rtwpvs'] ) ){ // Debug Log issue fixed 
             $data = $data['rtwpvs'];
             update_post_meta($product_id, '_rtwpvs', $data);

@@ -4,7 +4,7 @@ Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variat
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.3.18
+Stable tag: 2.3.19
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,14 +15,13 @@ Variation Swatches for WooCommerce change beautiful colors, images and buttons v
 [Woocommerce variation swatches](https://www.radiustheme.com/downloads/woocommerce-variation-swatches/) plugin converts the product variation select fields into radio, images, colors, and labels. By using this Variation swatches for WooCommerce Plugin, you can display your product variation attributes in images, colors, and label. As a result, dropdown product attribute fields are no longer necessary. This fantastic plugin by RadiusTheme is creatively crafted to give your customers have comfortable experiences and increase your sales. All these benefits are due to the many variation features and options.
 
 
-👉 [Plugin Demo](https://radiustheme.com/demo/wordpress/wooplugins/product/variable-product-test/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/getting-started/installations/) | [Pro Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Get Pro](https://www.radiustheme.com/downloads/woocommerce-variation-swatches/?utm_source=WordPress&utm_medium=swatches&utm_campaign=pro_click) 👈
+👉 [Plugin Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/) | [Get Pro](https://www.radiustheme.com/downloads/woocommerce-variation-swatches/?utm_source=WordPress&utm_medium=swatches&utm_campaign=pro_click) 👈
 
 Since [Woocommerce](https://wordpress.org/plugins/woocommerce/) Variation Swatches is fully responsive and mobile-friendly, your users will have the smoothest experiences. This plugin is comparable to our [Variation Images Gallery Plugin](https://wordpress.org/plugins/woo-product-variation-gallery/), and both plugins can be used together for even better results. This WooCommerce variation swatches plugin will work with WooCommerce [Variable Products](https://woocommerce.com/document/variable-product/).
 
 > [Click here to get Metro - Minimal WooCommerce WordPress Theme with Variation Swatches PRO ](https://www.radiustheme.com/downloads/metro-minimal-woocommerce-wordpress-theme/)
 
-[youtube https://www.youtube.com/watch?v=ZwUWTnamf_E]
-
+[youtube https://www.youtube.com/watch?v=Djv2_b27dGA]
 
 == WooCommerce Variation Swatches ==
 
@@ -47,38 +46,38 @@ You can easily convert the variation select drop-down option to button just chec
 
 == 🏆 Support color, image, button, and radio attributes 4 types ==
 You can showcase the product attributes you want to in either or a combination of 4 attribute types, including color, image, button, and radio. WooCommerce Variation Swatches Plugin allows you to add the custom attributes that you want.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/add-edit-attributes-terms/attributes-terms-types/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/attributes/configure-attributes/)
 
 == 🏆 Color Variation Swatches in Detail Page ==
 This plugin allows you to set the color variations of your product from the product attributes in the detail page as well as from each separate product.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/add-edit-attributes-terms/attributes-terms-types/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/attributes/configure-attributes/)
 
 == 🏆 Image Variation Swatches in Detail Page ==
 WooCommerce Variation Swatches allows you to set the image variation from the product attributes. You can also do the same from each individual product.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/image-variation-swatches-for-product/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/add-edit-attributes-terms/attributes-terms-types/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/image-variation-swatches-for-product/) | [https://www.radiustheme.com/docs/variation-swatches/docs/attributes/configure-attributes/)
 
 == 🏆 Button or Label Variation Swatches in Detail Page ==
 You can set the button or label variation from the product attributes with this plugin. It also allows you to set the variation from each product.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/add-edit-attributes-terms/attributes-terms-types/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/attributes/configure-attributes/)
 
 == 🏆 Radio Variation Swatches in Detail Page ==
 With Variation Swatches for WooCommerce, you can create and customize the radio button variation from the product attributes or from each product.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/jacket/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/add-edit-attributes-terms/attributes-terms-types/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/jacket/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/attributes/configure-attributes/)
 
 == 🏆 Variation Swatches in Quick View ==
 When you've enabled variation swatches in quick view, you enable your visitors to view products in quick view lightboxes. If you want to boost your products&#39; sales, you can enable the feature for viewing product swatches in quick view lightboxes. Therefore, they can buy your items from multiple points within your website.
 
 == 🏆 Rounded/ Square Variation Swatches in Detail Page ==
 If you want to set the style of the variation swatches to rounded or square, this plugin allows you to do it from the settings, shop, and detail pages.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/configurations/general-settings-woo-swatches/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/configurations/general-settings-woo-swatches/)
 
 == 🏆 Blur or hide out of product ==
 When a product or a product variation has run out of stock, all you have to do before restocking is to choose whether you want to hide or blur them.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/configurations/advanced-settings-woo-variation-swatches/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/configurations/advanced-settings-woo-variation-swatches/)
 
 == 🏆 Improve Loading Performance ==
 This plugin has a default WordPress cache system that facilitates caching for faster loading of your site.
-👉 [Documentation](https://www.radiustheme.com/docs/variation-swatches/configurations/tools/)
+👉 [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/configurations/tools/)
 
 == 🏆 Highlighted features ==
 * Enable color/ image/ label/ button swatches for variable product
@@ -94,35 +93,35 @@ This plugin has a default WordPress cache system that facilitates caching for fa
 
 == 🏆 Enable Swatches for Archive Pages ==
 Displaying swatches in your shop and archive pages boosts your sales by attracting and engaging potential shoppers.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/set-individual-variation/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
 
 == 🏆 Image Variation Tooltip in Archive/ Shop Page ==
 Since images are capable of drawing the attention of your visitors, using them shrewdly can improve your sales massively. This plugin has the image tooltip, a feature that empowers you by allowing you to choose the picture you want to showcase in the archive or shop page.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/set-individual-variation/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
 
 == 🏆 More Link in Archive/ Category Page ==
 You can showcase single attributes with a limit, such as two or three attributes, and then display a 'show more' link.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/configurations/archive-page-shop-page/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/configurations/archive-page-shop-page/)
 
 == 🏆 Variation customization for each product ==
 If you want each of your similar products to have distinctive variations, WooCommerce Variation Swatches allows you to customize the variations of individual products.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/set-individual-variation/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
 
 == 🏆 Custom Image/ Text Tooltip for Archive/ Product detail page ==
 WooCommerce Variation Swatches facilitates the display of images and text descriptions for products and their variations. With the image and text tooltip that comes with the plugin, you can easily add the custom images and textual descriptions.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/set-individual-variation/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
 
 == 🏆 Single Attributes Customization per Product ==
 You can display all the swatch attributes of each product on the shop page, but this would clutter your pages. Instead, this plugin gives you the option to select and showcase a single attribute in the archive or shop page.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/set-individual-variation/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
 
 == 🏆 Tooltip Text Customization Per Product/ attribute ==
 The ideal product attribute should have a written description. With this plugin, you can customize text descriptions to a particular product or attribute using the text tooltip.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/set-individual-variation/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
 
 == 🏆 Rounded/ Square Variation Swatches in Archive Page ==
 Your variation swatches can appear on the archive page in the style that you want, be it rounded or square. This plugin allows you to set this easily in its settings.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/configurations/general-settings-woo-swatches/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/configurations/general-settings-woo-swatches/)
 
 == 🏆 Generation Variation link ==
 You can add the links to attributes from the archive or shop page, which will be shown in theaddress bar when a user visits the detail page.
@@ -130,19 +129,19 @@ You can add the links to attributes from the archive or shop page, which will be
 
 == 🏆 Single Selected Attribute in Archive/ Shop Page ==
 Most products will have several swatch attributes. This plugin lets you have a more professional look by giving you the option to select a single attribute to showcase in the archive or shop page instead of showing all attributes available.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/configurations/archive-page-shop-page/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/shop/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/configurations/archive-page-shop-page/)
 
 == 🏆 Dual Color Variation Swatches ==
 If you have a dual-color product, you can showcase the two colors easily on the swatches. You can set the dual colors from individual products on the color attributes.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocommerce-variation-images-gallery/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/faqs/support-dual-color/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/woocommerce-variation-images-gallery/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/faqs/support-dual-color/)
 
 == 🏆 More Link in Archive/ Category Page ==
 The 'more link' in the archive and category pages allows you to display 2 or 3 attributes and hide the rest in the link. This gives your pages a professional and minimal feel.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product-category/t-shirt/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/configurations/archive-page-shop-page/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product-category/t-shirt/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/configurations/archive-page-shop-page/)
 
 == 🏆 Support Custom Attributes for product ==
 If you want to set custom attributes for individual products with different variations, you can customize that on single products.
-👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/custom-attributes/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/custom-attributes/add-custom-attributes/)
+👉 [Live Demo](https://radiustheme.com/demo/wordpress/woopluginspro/product/custom-attributes/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/custom-attributes/add-custom-attributes/)
 
 == 🏆 Highlighted Pro features ==
 * **Archive/ catalog/ shop/ category/ tag page swatches**
@@ -243,6 +242,14 @@ Yes, it is.
 
 
 == Changelog ==
+
+= 2.3.19 ( Aug 27, 2025 ) =
+* Fixed: Resolved spacing issue in the admin Settings tab.
+* Fixed: Corrected CSS issue with variation attribute buttons.
+* Fixed: Removed unwanted spacing of variation reset button.
+* Removed: Unnecessary plugin release notice.
+* Added: Support for Select field, allowing dropdown option usage.
+* Added: New settings for archive page, compatible with Pro version.
 
 = 2.3.18 ( Dec 27, 2024 ) =
 * Support: Added Trigger After Variation Changes On archive Page
