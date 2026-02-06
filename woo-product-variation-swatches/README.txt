@@ -2,9 +2,9 @@
 Contributors: techlabpro1
 Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variation swatches, woocommerce attributes
 Requires at least: 5.0
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.3.20
+Stable tag: 2.3.21
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -249,6 +249,10 @@ Yes, it is.
 
 
 == Changelog ==
+
+= 2.3.21 ( Nov 13, 2025 ) =
+* Added: Banner Image added.
+* Fixed: Code Optimization
 
 = 2.3.20 ( Sep 22, 2025 ) =
 * Fixed: Conflict With ShopBuilder

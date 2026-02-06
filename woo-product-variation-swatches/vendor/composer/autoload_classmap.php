@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Rtwpvs\\Controllers\\AppliedHook' => $baseDir . '/app/Controllers/AppliedHook.php',
+    'Rtwpvs\\Controllers\\BlackFridayV2' => $baseDir . '/app/Controllers/BlackFridayV2.php',
     'Rtwpvs\\Controllers\\Hooks' => $baseDir . '/app/Controllers/Hooks.php',
     'Rtwpvs\\Controllers\\InitHooks' => $baseDir . '/app/Controllers/InitHooks.php',
     'Rtwpvs\\Controllers\\Install' => $baseDir . '/app/Controllers/Install.php',

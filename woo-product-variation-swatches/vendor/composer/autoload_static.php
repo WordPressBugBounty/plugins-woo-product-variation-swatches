@@ -23,6 +23,7 @@ class ComposerStaticInitfbb707a75eeecdca1fc39e24f7e3a0d0
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Rtwpvs\\Controllers\\AppliedHook' => __DIR__ . '/../..' . '/app/Controllers/AppliedHook.php',
+        'Rtwpvs\\Controllers\\BlackFridayV2' => __DIR__ . '/../..' . '/app/Controllers/BlackFridayV2.php',
         'Rtwpvs\\Controllers\\Hooks' => __DIR__ . '/../..' . '/app/Controllers/Hooks.php',
         'Rtwpvs\\Controllers\\InitHooks' => __DIR__ . '/../..' . '/app/Controllers/InitHooks.php',
         'Rtwpvs\\Controllers\\Install' => __DIR__ . '/../..' . '/app/Controllers/Install.php',
