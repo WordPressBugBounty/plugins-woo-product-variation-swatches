@@ -4,7 +4,7 @@ Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variat
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.3.21
+Stable tag: 2.3.22
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -249,6 +249,13 @@ Yes, it is.
 
 
 == Changelog ==
+
+= 2.3.22 ( Mar 18, 2025 ) =
+* Fixed: Fatal error on settings save when Pro plugin is not active (SettingsAPI.php)
+* Fixed: Fatal error on new product screen when $post is null (ScriptLoader.php)
+* Fixed: Fatal error on AJAX add-to-cart with invalid product ID (Hooks.php)
+* Fixed: Fatal error on product page when a variation is trashed or deleted (Functions.php)
+* Fixed: Fatal error on attribute term list when attribute taxonomy is missing (TermMeta.php)
 
 = 2.3.21 ( Nov 13, 2025 ) =
 * Added: Banner Image added.

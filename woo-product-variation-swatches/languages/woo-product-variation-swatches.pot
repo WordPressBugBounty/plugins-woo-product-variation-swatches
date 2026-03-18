@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Variation Swatches for WooCommerce
+# Copyright (C) 2026 Variation Swatches for WooCommerce
 # This file is distributed under the same license as the Variation Swatches for WooCommerce package.
 msgid ""
 msgstr ""
@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-13 11:26+0000\n"
+"POT-Creation-Date: 2026-03-18 04:56+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -14,35 +14,35 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../app/Controllers/Hooks.php:388, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:388
+#: ../app/Controllers/Hooks.php:381, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:381
 msgid "Select terms"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:401, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:401
+#: ../app/Controllers/Hooks.php:394, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:394
 msgid "Select all"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:402, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:402
+#: ../app/Controllers/Hooks.php:395, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:395
 msgid "Select none"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:413, ../app/Controllers/Hooks.php:411, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:413, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:411
+#: ../app/Controllers/Hooks.php:406, ../app/Controllers/Hooks.php:404, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:406, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:404
 msgid "Add new"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:411, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:411
+#: ../app/Controllers/Hooks.php:404, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:404
 msgid "Add new %s"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:449, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:449
+#: ../app/Controllers/Hooks.php:442, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:442
 msgid "View cart"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:450, ../app/Controllers/ThemeSupport.php:52, ../app/Controllers/ThemeSupport.php:72, ../app/Controllers/ThemeSupport.php:85, ../app/Controllers/ThemeSupport.php:104, ../app/Controllers/ThemeSupport.php:114, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:450, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:52, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:72, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:85, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:104, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:114
+#: ../app/Controllers/Hooks.php:443, ../app/Controllers/ThemeSupport.php:52, ../app/Controllers/ThemeSupport.php:72, ../app/Controllers/ThemeSupport.php:85, ../app/Controllers/ThemeSupport.php:104, ../app/Controllers/ThemeSupport.php:114, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:443, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:52, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:72, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:85, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:104, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:114
 msgid "Add to cart"
 msgstr ""
 
-#: ../app/Controllers/Hooks.php:451, ../app/Controllers/ThemeSupport.php:48, ../app/Controllers/ThemeSupport.php:68, ../app/Controllers/ThemeSupport.php:81, ../app/Controllers/ThemeSupport.php:100, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:451, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:48, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:68, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:81, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:100
+#: ../app/Controllers/Hooks.php:444, ../app/Controllers/ThemeSupport.php:48, ../app/Controllers/ThemeSupport.php:68, ../app/Controllers/ThemeSupport.php:81, ../app/Controllers/ThemeSupport.php:100, ../dist/woo-product-variation-swatches/app/Controllers/Hooks.php:444, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:48, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:68, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:81, ../dist/woo-product-variation-swatches/app/Controllers/ThemeSupport.php:100
 msgid "Select options"
 msgstr ""
 
@@ -51,34 +51,34 @@ msgid "Please check PHP version requirement."
 msgstr ""
 
 #: ../app/Controllers/Notifications.php:20, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:20
-msgid "It's required to use latest version of PHP to use <strong>Variation Swatches for WooCommerce Pro</strong>."
+msgid "It's required to use latest version of PHP to use <strong>Variation Swatches for WooCommerce</strong>."
 msgstr ""
 
 #: ../app/Controllers/Notifications.php:31, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:31
 msgid "WooCommerce"
 msgstr ""
 
-#: ../app/Controllers/Notifications.php:39, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:39
-msgid "<strong>Variation Swatches for WooCommerce Pro</strong> is an add-on of "
+#: ../app/Controllers/Notifications.php:44, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:44
+msgid "<strong>Variation Swatches for WooCommerce</strong> is an add-on of "
 msgstr ""
 
-#: ../app/Controllers/Notifications.php:53, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:53
+#: ../app/Controllers/Notifications.php:58, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:58
 msgid "Currently, you are using older version of %s. It's recommended minimum version 2.2.0."
 msgstr ""
 
-#: ../app/Controllers/Notifications.php:49, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:49
+#: ../app/Controllers/Notifications.php:54, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:54
 msgid "Currently, you are using older version of WooCommerce. It's recommended to use latest version of WooCommerce to work with %s."
 msgstr ""
 
-#: ../app/Controllers/Notifications.php:49, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:49
-msgid "Variation Swatches for WooCommerce Pro"
+#: ../app/Controllers/Notifications.php:54, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:54
+msgid "Variation Swatches for WooCommerce"
 msgstr ""
 
-#: ../app/Controllers/Notifications.php:64, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:64
+#: ../app/Controllers/Notifications.php:69, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:69
 msgid "Facing issue?"
 msgstr ""
 
-#: ../app/Controllers/Notifications.php:64, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:64
+#: ../app/Controllers/Notifications.php:69, ../dist/woo-product-variation-swatches/app/Controllers/Notifications.php:69
 msgid "Please open a support ticket."
 msgstr ""
 
@@ -154,71 +154,71 @@ msgstr ""
 msgid "Get Pro"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:171, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:171
+#: ../app/Controllers/SettingsAPI.php:178, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:178
 msgid "Your license key expired on %s."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:179, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:179
+#: ../app/Controllers/SettingsAPI.php:186, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:186
 msgid "Your license key has been disabled."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:182, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:182
+#: ../app/Controllers/SettingsAPI.php:189, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:189
 msgid "Invalid license."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:186, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:186
+#: ../app/Controllers/SettingsAPI.php:193, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:193
 msgid "Your license is not active for this URL."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:189, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:189
-msgid "This appears to be an invalid license key for Classified Listing Pro."
+#: ../app/Controllers/SettingsAPI.php:196, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:196
+msgid "This appears to be an invalid license key for Variation Swatch Pro."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:192, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:192
+#: ../app/Controllers/SettingsAPI.php:199, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:199
 msgid "Your license key has reached its activation limit."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:195, ../app/Controllers/SettingsAPI.php:163, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:195, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:163
+#: ../app/Controllers/SettingsAPI.php:202, ../app/Controllers/SettingsAPI.php:169, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:202, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:169
 msgid "An error occurred, please try again."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:214, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:214
+#: ../app/Controllers/SettingsAPI.php:221, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:221
 msgid "Variation Swatches for WooCommerce Settings"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:347, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:347
+#: ../app/Controllers/SettingsAPI.php:354, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:354
 msgid "[Pro]"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:347, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:347
+#: ../app/Controllers/SettingsAPI.php:354, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:354
 msgid "This is premium field"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:496, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:496
+#: ../app/Controllers/SettingsAPI.php:503, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:503
 msgid "Deactivate License"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:496, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:496
+#: ../app/Controllers/SettingsAPI.php:503, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:503
 msgid "Activate License"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:703, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:703
+#: ../app/Controllers/SettingsAPI.php:710, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:710
 msgid "Pro field alert!"
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:704, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:704
+#: ../app/Controllers/SettingsAPI.php:711, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:711
 msgid "Sorry! this is a pro field. To use this field, you need to use pro plugin."
 msgstr ""
 
-#: ../app/Controllers/SettingsAPI.php:705, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:705
+#: ../app/Controllers/SettingsAPI.php:712, ../dist/woo-product-variation-swatches/app/Controllers/SettingsAPI.php:712
 msgid "Upgrade to pro"
 msgstr ""
 
-#: ../app/Controllers/TermMeta.php:257, ../app/Models/Field.php:125, ../dist/woo-product-variation-swatches/app/Controllers/TermMeta.php:257, ../dist/woo-product-variation-swatches/app/Models/Field.php:125
+#: ../app/Controllers/TermMeta.php:258, ../app/Models/Field.php:125, ../dist/woo-product-variation-swatches/app/Controllers/TermMeta.php:258, ../dist/woo-product-variation-swatches/app/Models/Field.php:125
 msgid "Upload / Add image"
 msgstr ""
 
-#: ../app/Controllers/TermMeta.php:260, ../app/Models/Field.php:128, ../dist/woo-product-variation-swatches/app/Controllers/TermMeta.php:260, ../dist/woo-product-variation-swatches/app/Models/Field.php:128
+#: ../app/Controllers/TermMeta.php:261, ../app/Models/Field.php:128, ../dist/woo-product-variation-swatches/app/Controllers/TermMeta.php:261, ../dist/woo-product-variation-swatches/app/Models/Field.php:128
 msgid "Remove image"
 msgstr ""
 

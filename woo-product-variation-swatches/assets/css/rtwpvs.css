@@ -10,6 +10,10 @@
 .rtwpvs .reset_variations.show {
   display: block !important;
 }
+.rtwpvs .rtwpvs-variation-terms-wrapper .rtwpvs-wc-select {
+  width: 100%;
+  padding-right: 25px !important;
+}
 .rtwpvs .rtwpvs-label {
   line-height: 1.4;
   font-weight: 500;

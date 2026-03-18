@@ -125,7 +125,7 @@ class ScriptLoader {
 				'reset_notice'    => esc_html__( 'Are you sure to reset', 'woo-product-variation-swatches' ),
 				'ajaxurl'         => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
 				'nonce'           => wp_create_nonce( 'rtwpvs_nonce' ),
-				'post_id'         => $screen_id === 'product' ? $post->ID : null,
+				'post_id'         => $screen_id === 'product' && $post ? $post->ID : null,
 				'attribute_types' => Options::get_available_attributes_types()
 			] );
 

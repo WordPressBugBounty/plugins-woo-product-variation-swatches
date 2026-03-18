@@ -605,7 +605,10 @@ class Functions {
 		$attributes_image = [];
 		$variation_ids    = $product->get_children();
 		foreach ( $variation_ids as $variation_id ) {
-			$variation            = wc_get_product( $variation_id );
+			$variation = wc_get_product( $variation_id );
+			if ( ! $variation ) {
+				continue;
+			}
 			$variation_attributes = array_values( $variation->get_variation_attributes() );
 			$image_size           = rtwpvs()->get_option( 'attribute_image_size' );
 			$image_size           = apply_filters( 'rtwpvs_product_attribute_image_size', $image_size );

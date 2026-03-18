@@ -143,6 +143,9 @@ class SettingsAPI {
 		$license_status = $this->get_option( 'license_status' );
 		$status         = ( ! empty( $license_status ) && $license_status === 'valid' ) ? true : false;
 		if ( $license_key && ! $status ) {
+			if ( ! class_exists( Licensing::class ) ) {
+				return;
+			}
 			$api_params = [
 				'edd_action' => 'activate_license',
 				'license'    => $license_key,
@@ -157,10 +160,14 @@ class SettingsAPI {
 					'body'      => $api_params,
 				]
 			);
-
-            if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-                $err = $response->get_error_message();
-                $message = ( is_wp_error( $response ) && ! empty( $err ) ) ? $err : __( 'An error occurred, please try again.', 'woo-product-variation-swatches' );
+			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				if ( is_wp_error( $response ) && ! empty( $response->get_error_message() ) ) {
+					$message = $response->get_error_message();
+				} elseif ( isset( $response['response'] ) && is_array( $response['response'] ) && isset( $response['response']['message'] ) ) {
+					$message = 'sss' . $response['response']['message'];
+				} else {
+					$message = esc_html__( 'An error occurred, please try again.', 'woo-product-variation-swatches' );
+				}
 			} else {
 				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
 
@@ -186,7 +193,7 @@ class SettingsAPI {
 							$message = esc_html__( 'Your license is not active for this URL.', 'woo-product-variation-swatches' );
 							break;
 						case 'item_name_mismatch':
-							$message = esc_html__( 'This appears to be an invalid license key for Classified Listing Pro.', 'woo-product-variation-swatches' );
+							$message = esc_html__( 'This appears to be an invalid license key for Variation Swatch Pro.', 'woo-product-variation-swatches' );
 							break;
 						case 'no_activations_left':
 							$message = esc_html__( 'Your license key has reached its activation limit.', 'woo-product-variation-swatches' );
@@ -591,7 +598,7 @@ class SettingsAPI {
 
 	/**
 	 * @param      $option
-	 * @param null   $givenDefault
+	 * @param null $givenDefault
 	 *
 	 * @return mixed|void
 	 */

@@ -178,6 +178,14 @@ class Hooks {
 
 		$product_id        = apply_filters( 'woocommerce_add_to_cart_product_id', absint( $data['product_id'] ) );
 		$product           = wc_get_product( $product_id );
+
+		if ( ! $product ) {
+			wp_send_json( [
+				'error'       => true,
+				'product_url' => apply_filters( 'woocommerce_cart_redirect_after_error', get_permalink( $product_id ), $product_id ),
+			] );
+		}
+
 		$quantity          = empty( $data['quantity'] ) ? 1 : wc_stock_amount( $data['quantity'] );
 		$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity );
 		$product_status    = get_post_status( $product_id );
@@ -314,21 +322,6 @@ class Hooks {
 		return absint( rtwpvs()->get_option( 'threshold', $threshold ) );
 	}
 
-
-	/**
-	 * Not used
-	 */
-	static function get_available_product_variations() {
-		if ( is_ajax() && isset( $_GET['product_id'] ) ) {
-			$product_id           = absint( $_GET['product_id'] );
-			$product              = wc_get_product( $product_id );
-			$available_variations = array_values( $product->get_available_variations() );
-
-			wp_send_json_success( wp_json_encode( $available_variations ) );
-		} else {
-			wp_send_json_error();
-		}
-	}
 
 	static function product_attributes_types( $selector ) {
 		$types = Options::get_available_attributes_types();
