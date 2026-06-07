@@ -28,12 +28,16 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         attribute.on('touchstart click', '.rtwpvs-term:not(.rtwpvs-radio-term)', function (e) {
           e.preventDefault();
           e.stopPropagation();
+
+          // Debounce rapid taps (touchstart + click fire together on mobile).
+          var now = Date.now();
+          if (attribute.data('_rtwpvs_last_click') && now - attribute.data('_rtwpvs_last_click') < 200) {
+            return;
+          }
+          attribute.data('_rtwpvs_last_click', now);
           var self = $(this),
             is_selected = self.hasClass('selected'),
             term = self.data('term');
-
-          // console.log( 'Hello' , term ); Working
-
           if (is_selected && rtwpvs_params.reselect_clear) {
             term = '';
           }
@@ -135,21 +139,27 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
             selected = current ? current.val() : itemIndex.val();
           }
         });
+        // Convert to a Set for O(1) lookup instead of indexOf.
+        var termsSet = new Set(wc_terms);
         setTimeout(function () {
           attribute.find('.rtwpvs-term').each(function () {
             var item = $(this),
-              term = item.attr('data-term');
-            item.removeClass('selected disabled').addClass('disabled');
-            if (wc_terms.indexOf(term) !== -1) {
-              item.removeClass('disabled').find('input.rtwpvs-radio-button-term:radio').prop('disabled', false);
-              if (term === selected) {
-                item.addClass('selected').find('input.rtwpvs-radio-button-term:radio').prop('checked', true);
-              }
-            } else {
-              item.find('input.rtwpvs-radio-button-term:radio').prop('disabled', true).prop('checked', false);
+              term = item.attr('data-term'),
+              isAvailable = termsSet.has(term),
+              isSelected = term === selected;
+
+            // Single className write per item.
+            item.removeClass('selected disabled');
+            if (isSelected) {
+              item.addClass('selected');
+            } else if (!isAvailable) {
+              item.addClass('disabled');
             }
-            if (term === selected) {
-              item.addClass('selected').find('input.rtwpvs-radio-button-term:radio').prop('disabled', false).prop('checked', true);
+            // Single radio prop write per item.
+            var radio = item.find('input.rtwpvs-radio-button-term:radio');
+            if (radio.length) {
+              radio.prop('disabled', !isAvailable && !isSelected);
+              radio.prop('checked', isSelected);
             }
           });
           attribute.trigger('rtwpvs-terms-updated');
@@ -282,12 +292,11 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       return data;
     };
     this.urlParamsToObj = function (search) {
-      var keys = Array.from(new URLSearchParams(search).keys());
+      var params = new URLSearchParams(search);
       var obj = {};
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        obj[key] = new URLSearchParams(search).get(key);
-      }
+      params.forEach(function (value, key) {
+        obj[key] = value;
+      });
       return obj;
     };
     this.setUrlParams = function (url, query) {
@@ -378,7 +387,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       this._cart_button_ajax = this._wrapper.find(rtwpvs_params.archive_add_to_cart_button_selector);
     }
     this.resetArchiveVariation = function () {
-      var $price = this._wrapper.find('.price'),
+      var $price = this._wrapper.find(rtwpvs_params.archive_product_price_selector),
         $view_cart_button = this._wrapper.find('.added_to_cart'),
         $view_cart_button2 = this._wrapper.find('.added_to_cart_button');
       $price.html(this._price_html);
@@ -421,7 +430,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
             $template_html = '',
             $view_cart_button = that._wrapper.find('.added_to_cart'),
             $view_cart_button2 = that._wrapper.find('.added_to_cart_button'),
-            $price = that._wrapper.find('.price');
+            $price = that._wrapper.find(rtwpvs_params.archive_product_price_selector);
           if (!variation.variation_is_visible) {
             template = wp.template('unavailable-variation-template');
           } else {
@@ -576,12 +585,11 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       return url;
     };
     this.urlParamsToObj = function (search) {
-      var keys = Array.from(new URLSearchParams(search).keys());
+      var params = new URLSearchParams(search);
       var obj = {};
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        obj[key] = new URLSearchParams(search).get(key);
-      }
+      params.forEach(function (value, key) {
+        obj[key] = value;
+      });
       return obj;
     };
     this.init = function () {
@@ -596,44 +604,32 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     this.setDefaultImages = function () {
       var that = this;
       _.delay(function () {
-        that._variation_form.find('.rtwpvs-terms-wrapper > .rtwpvs-term:not(.disabled)').each(function (i, el) {
-          $(this).off('rtwpvs-selected-item.archive-image-hover');
-          $(this).off('rtwpvs-selected-item.archive-image-click');
-          $(this).off('mouseenter.archive-image-hover');
-          $(this).off('mouseleave.archive-image-hover');
-          if (rtwpvs_params.archive_swatches_display_event === 'hover') {
-            $(this).on('mouseenter.archive-image-hover', function (event) {
-              event.stopPropagation();
-              $(this).trigger('click').trigger('focusin');
-              if (that._is_mobile) {
-                $(this).trigger('touchstart');
-              }
-            });
-          }
-        });
+        // Use event delegation from the form instead of per-element bindings.
+        that._variation_form.off('mouseenter.archive-image-hover');
+        if (rtwpvs_params.archive_swatches_display_event === 'hover') {
+          that._variation_form.on('mouseenter.archive-image-hover', '.rtwpvs-terms-wrapper > .rtwpvs-term:not(.disabled)', function (event) {
+            event.stopPropagation();
+            $(this).trigger('click').trigger('focusin');
+            if (that._is_mobile) {
+              $(this).trigger('touchstart');
+            }
+          });
+        }
       }, 2);
     };
     this.variationsImageUpdate = function (variation) {
       var product_image = this._wrapper.find(rtwpvs_params.archive_image_selector);
-      // product_image.addClass('rtwpvs-image-load').one('webkitAnimationEnd oanimationend msAnimationEnd animationend webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function () {
-      //     $(this).removeClass('rtwpvs-image-load');
-      // });
+      var attrs = ['src', 'height', 'width', 'srcset', 'sizes', 'title', 'alt'];
       if (variation && variation.image && variation.image.thumb_src && variation.image.thumb_src.length > 1) {
-        product_image.wc_set_variation_attr('src', variation.image.thumb_src);
-        product_image.wc_set_variation_attr('height', variation.image.thumb_src_h);
-        product_image.wc_set_variation_attr('width', variation.image.thumb_src_w);
-        product_image.wc_set_variation_attr('srcset', variation.image.thumb_srcset);
-        product_image.wc_set_variation_attr('sizes', variation.image.thumb_sizes);
-        product_image.wc_set_variation_attr('title', variation.image.title);
-        product_image.wc_set_variation_attr('alt', variation.image.alt);
+        var img = variation.image;
+        var vals = [img.thumb_src, img.thumb_src_h, img.thumb_src_w, img.thumb_srcset, img.thumb_sizes, img.title, img.alt];
+        for (var i = 0; i < attrs.length; i++) {
+          product_image.wc_set_variation_attr(attrs[i], vals[i]);
+        }
       } else {
-        product_image.wc_reset_variation_attr('src');
-        product_image.wc_reset_variation_attr('width');
-        product_image.wc_reset_variation_attr('height');
-        product_image.wc_reset_variation_attr('srcset');
-        product_image.wc_reset_variation_attr('sizes');
-        product_image.wc_reset_variation_attr('title');
-        product_image.wc_reset_variation_attr('alt');
+        for (var j = 0; j < attrs.length; j++) {
+          product_image.wc_reset_variation_attr(attrs[j]);
+        }
       }
       $(document).trigger('rtwpvs_archive_variation_image_updated', [this._wrapper, variation]);
     };
@@ -720,15 +716,18 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         }
       });
     }
-    var variationWrapper = document.querySelectorAll('.rtwpvs-archive-variation-wrapper:not(.rtwpvs_av_loaded):not(.rtwpvs_av_loading)');
-    for (var i = 0; i < variationWrapper.length; i++) {
-      var options = {
+
+    // Reuse a single IntersectionObserver for all archive wrappers.
+    if (!window._rtwpvs_archive_observer) {
+      window._rtwpvs_archive_observer = new IntersectionObserver(handleIntersect, {
         root: null,
         rootMargin: "0px",
         threshold: 0
-      };
-      var observer = new IntersectionObserver(handleIntersect, options);
-      observer.observe(variationWrapper[i]);
+      });
+    }
+    var variationWrapper = document.querySelectorAll('.rtwpvs-archive-variation-wrapper:not(.rtwpvs_av_loaded):not(.rtwpvs_av_loading)');
+    for (var i = 0; i < variationWrapper.length; i++) {
+      window._rtwpvs_archive_observer.observe(variationWrapper[i]);
     }
   };
   window.rtWpvsWithoutAjaxVariations = function () {
@@ -801,10 +800,74 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       rtWpvsLoadArchiveVariations();
     });
   };
+
+  /**
+   * Re-initialize archive variation swatches after the WooCommerce
+   * "Product Collection" block performs an Interactivity API (client-side)
+   * pagination / navigation.
+   *
+   * The block swaps the product grid in place without firing any of the
+   * jQuery events the plugin already listens to, so the freshly injected
+   * product cards never get their swatch handlers bound. A MutationObserver
+   * watches the Product Collection wrapper and re-runs the proper
+   * initializer once new swatch cards are detected.
+   *
+   * @return {void}
+   */
+  window.rtWpvsBlockPaginationSupport = function () {
+    if (typeof window.MutationObserver === 'undefined') {
+      return;
+    }
+    var containers = document.querySelectorAll('.wp-block-woocommerce-product-collection');
+    if (!containers.length) {
+      return;
+    }
+    var debounce = null;
+    var reinit = function reinit() {
+      clearTimeout(debounce);
+      debounce = setTimeout(function () {
+        if (rtwpvs_params.enable_ajax_archive_variation) {
+          rtWpvsLoadArchiveVariations();
+        } else {
+          rtWpvsVariationsFromInitialize();
+        }
+      }, 150);
+    };
+
+    // Only react to swapped-in product cards, never to our own price /
+    // availability DOM updates, to avoid an observer feedback loop.
+    var containsSwatch = function containsSwatch(nodes) {
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        if (1 !== node.nodeType) {
+          continue;
+        }
+        if (node.matches && node.matches('.rtwpvs-archive-variation-wrapper') || node.querySelector && node.querySelector('.rtwpvs-archive-variation-wrapper')) {
+          return true;
+        }
+      }
+      return false;
+    };
+    containers.forEach(function (container) {
+      var observer = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          if (mutations[i].addedNodes.length && containsSwatch(mutations[i].addedNodes)) {
+            reinit();
+            break;
+          }
+        }
+      });
+      observer.observe(container, {
+        childList: true,
+        subtree: true
+      });
+    });
+  };
   rtWpvsWithoutAjaxVariations();
   rtWpvsWithAjaxVariations();
   $(document).ready(function () {
     rtWpvsLoadArchiveVariations();
+    rtWpvsBlockPaginationSupport();
   });
   // Single Page Product Variation
   $(document).on("wc_variation_form", ".variations_form.cart", function () {

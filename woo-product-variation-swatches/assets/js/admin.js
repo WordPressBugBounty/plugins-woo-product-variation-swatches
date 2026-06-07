@@ -205,7 +205,8 @@
       url: rtwpvs_admin.ajaxurl,
       data: {
         action: 'rtwpvs_manage_licensing',
-        type: type
+        type: type,
+        _wpnonce: rtwpvs_admin.licensing_nonce
       },
       beforeSend: function beforeSend() {
         self.addClass('loading');

@@ -1,10 +1,10 @@
 === Variation Swatches for WooCommerce ===
-Contributors: techlabpro1
+Contributors: techlabpro1, mamunnu
 Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variation swatches, woocommerce attributes
 Requires at least: 5.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.3.22
+Stable tag: 2.3.23
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -250,165 +250,13 @@ Yes, it is.
 
 == Changelog ==
 
-= 2.3.22 ( Mar 18, 2025 ) =
-* Fixed: Fatal error on settings save when Pro plugin is not active (SettingsAPI.php)
-* Fixed: Fatal error on new product screen when $post is null (ScriptLoader.php)
-* Fixed: Fatal error on AJAX add-to-cart with invalid product ID (Hooks.php)
-* Fixed: Fatal error on product page when a variation is trashed or deleted (Functions.php)
-* Fixed: Fatal error on attribute term list when attribute taxonomy is missing (TermMeta.php)
+= 2.3.23 (Jun 07, 2026) =
+* Fixed: Variation price and content not updating on the Gutenberg Product Collection block shop page (frontend.js)
+* Fixed: Swatch click events not working after pagination on the Gutenberg Product Collection block (frontend.js)
+* Improvement: Optimized archive swatch initialization and image hover performance (frontend.js)
+* Improvement: Cached dynamic inline CSS for faster front-end loading (ScriptLoader.php)
+* Improvement: Button UI Improvement (SettingsAPI.php)
 
-= 2.3.21 ( Nov 13, 2025 ) =
-* Added: Banner Image added.
-* Fixed: Code Optimization
-
-= 2.3.20 ( Sep 22, 2025 ) =
-* Fixed: Conflict With ShopBuilder
-
-= 2.3.19 ( Aug 27, 2025 ) =
-* Fixed: Resolved spacing issue in the admin Settings tab.
-* Fixed: Corrected CSS issue with variation attribute buttons.
-* Fixed: Removed unwanted spacing of variation reset button.
-* Removed: Unnecessary plugin release notice.
-* Added: Support for Select field, allowing dropdown option usage.
-* Added: New settings for archive page, compatible with Pro version.
-
-= 2.3.18 ( Dec 27, 2024 ) =
-* Support: Added Trigger After Variation Changes On archive Page
-
-= 2.3.17 ( Nov 18, 2024 ) =
-* Fixed:Compatible with latest version
-
-= 2.3.16 ( June 24, 2024 ) =
-* Fixed: Button height for large text
-
-= 2.3.15 ( April 19, 2024 ) =
-* Fixed: Attribute on Click Behavior For Ajax
-
-= 2.3.14 ( April 17, 2024 ) =
-* Fixed: Attribute on Click Behavior
-
-= 2.3.13 ( March 15, 2024 ) =
-* Fixed: Save Settings
-
-= 2.3.12 ( November 20, 2023 ) =
-* Fixed: RTL issue
-
-= 2.3.11 ( November 07, 2023 ) =
-* Fixed: Threshold issue
-
-= 2.3.10 ( August 23, 2023 ) =
-* Fixed: HPOS Declare compatibility
-* Fixed: PHP 8.2.8 Compatibility
-
-= 2.3.9 ( July 04, 2023 ) =
-* Fixed: PHP 8.2.8 Compatibility
-
-= 2.3.8 ( July 04, 2023 ) =
-* Fixed: Vulnerability XSS in Variation
-
-= 2.3.7 ( April 18, 2023 ) =
-* Fixed: Radio Issue Fix.
-
-= 2.3.6 ( March 31, 2023 ) =
-* Added: Konte Theme Support.
-
-= 2.3.5 ( Feb 13, 2023 ) =
-* Added: Url Issue Fixed.
-
-= 2.3.4 ( Jan 04, 2023 ) =
-* Added: Issue Fixed.
-
-= 2.3.3 ( Jan 04, 2023 ) =
-* Added: Support Older version and modify notice.
-
-= 2.3.2 ( Dec 28, 2022 ) =
-* Added: Compatibility Issue Fixed.
-
-= 2.3.1 ( Dec 14, 2022 ) =
-* Added: Issue Fixed.
-
-= 2.3.0 ( Dec 14, 2022 ) =
-* Added: Added new settings for archive ajax load.
-
-= 2.2.2 ( Nov 21, 2022 ) =
-* Fixed: Support for Astra Pro Infinite Pagination Loaded.
-* Added: Added new settings.
-
-= 2.2.1 ( August 15, 2022 ) =
-* Fixed: Checkmark Issue Fixed.
-
-= 2.2.0 ( August 08, 2022 ) =
-* Added: Settings Default button To image.
-* Added: Settings Shape Style Checkmark.
-* Added: Single page variation button limit and more .
-
-= 2.1.3 (July 19, 2022) =
-* Fixed: Fixed Custom Attribute Doul Color.
-
-= 2.1.2 (July 15, 2022) =
-* Fixed: Fixed Text domain.
-* Added: New Settings For Archive Page Selected Variation Url.
-
-= 2.1.1.8 (July 07, 2022) =
-* Fixed: Default theme css support.
-* Added: New Hook added.
-
-= 2.1.1.7 (June 17, 2022) =
-* Fixed: Variation button type color issue fixed.
-
-= 2.1.1.6 (APR 06, 2022) =
-* Fixed: Variations Button alignment. And hover effect
-
-= 2.1.1.5 (FEB 16, 2022) =
-* Add WP 5.9 support
-
-= 2.1.1.4 (Dec 27, 2021) =
-* Fixed: PHP functional warning issue
-
-= 2.1.1.3 (Nov 23, 2021) =
-* Fixed: Some functional issue
-
-= 2.1.1.2 =
-* Fixed: Minor CSS issue
-* Fixed: Minor functional issue
-
-= 2.1.1.1 =
-* Added: Auto convert all WooCommerce Variation Dropdowns to Button Swatches
-
-= 2.0.1.1 =
-* Fixed: Minor CSS responsive issue
-* Fixed: Out of stock variation button border
-
-= 2.0.1 =
-* Fixed: Licensing tab error
-
-= 2.0.0 =
-* Add modular system
-* Update coding structure
-
-= 1.1.55.2 =
-* Add WordPress 5.7 Support
-
-= 1.1.55.1 =
-* Add WordPress 5.6 Support
-
-= 1.1.55 =
-* Compatible with Wordpress 5.5
-* Fix ColorPicker issue
-
-= 1.1.54 =
-* Update Plugin name
-
-= 1.1.53 =
-* Fix single product variation cache issue
-
-= 1.1.52 =
-* Add transient cache and increase page speed
-
-= 1.1.51 =
-* Fix some php error
-
-= 1.1.5 =
-* Make compatible with woocommerce 4.0
+[See changelog for all versions.](https://raw.githubusercontent.com/radiustheme/changelog/refs/heads/main/woo-product-variation-swatches.txt)
 
 == Upgrade Notice ==

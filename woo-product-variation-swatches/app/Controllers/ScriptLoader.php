@@ -44,7 +44,7 @@ class ScriptLoader {
 			'archive_add_to_cart_text'                 => apply_filters( 'rtwpvs_archive_add_to_cart_text', '' ),
 			'archive_add_to_cart_select_options'       => apply_filters( 'rtwpvs_archive_add_to_cart_select_options', '' ),
 			'archive_product_wrapper'                  => rtwpvs()->get_option( 'archive_product_wrapper_selector', '.rtwpvs-product' ),
-			'archive_product_price_selector'           => '.price',
+			'archive_product_price_selector'           => '.price, .wc-block-components-product-price',
 			// In the future it also come from settings.
 			'archive_add_to_cart_button_selector'      => '.rtwpvs_add_to_cart, .add_to_cart_button',
 			// In the future it also come from settings.
@@ -119,14 +119,15 @@ class ScriptLoader {
 			wp_enqueue_style( 'rtwpvs-admin', rtwpvs()->get_assets_uri( "/css/admin{$this->suffix}.css" ), '', $this->version );
 
 			wp_localize_script( 'rtwpvs-admin', 'rtwpvs_admin', [
-				'media_title'     => esc_html__( 'Choose an Image', 'woo-product-variation-swatches' ),
-				'button_title'    => esc_html__( 'Use Image', 'woo-product-variation-swatches' ),
-				'add_media'       => esc_html__( 'Add Media', 'woo-product-variation-swatches' ),
-				'reset_notice'    => esc_html__( 'Are you sure to reset', 'woo-product-variation-swatches' ),
-				'ajaxurl'         => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
-				'nonce'           => wp_create_nonce( 'rtwpvs_nonce' ),
-				'post_id'         => $screen_id === 'product' && $post ? $post->ID : null,
-				'attribute_types' => Options::get_available_attributes_types()
+				'media_title'      => esc_html__( 'Choose an Image', 'woo-product-variation-swatches' ),
+				'button_title'     => esc_html__( 'Use Image', 'woo-product-variation-swatches' ),
+				'add_media'        => esc_html__( 'Add Media', 'woo-product-variation-swatches' ),
+				'reset_notice'     => esc_html__( 'Are you sure to reset', 'woo-product-variation-swatches' ),
+				'ajaxurl'          => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
+				'nonce'            => wp_create_nonce( 'rtwpvs_nonce' ),
+				'licensing_nonce'  => wp_create_nonce( 'rtwpvs_manage_licensing' ),
+				'post_id'          => $screen_id === 'product' && $post ? $post->ID : null,
+				'attribute_types'  => Options::get_available_attributes_types()
 			] );
 
 		}
@@ -138,22 +139,25 @@ class ScriptLoader {
 		}
 		$width              = rtwpvs()->get_option( 'width' );
 		$height             = rtwpvs()->get_option( 'height' );
+		$button_min_width   = rtwpvs()->get_option( 'button_min_width', 40 );
+		$button_min_height  = rtwpvs()->get_option( 'button_min_height', 30 );
 		$font_size          = rtwpvs()->get_option( 'single_font_size', 16 );
 		$tooltip_background = rtwpvs()->get_option( 'tooltip_background' );
 
 		ob_start();
 		?>
         <style type="text/css">
-            .rtwpvs-term:not(.rtwpvs-radio-term) {
+            .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term):not(.rtwpvs-button-term) {
                 width: <?php echo esc_attr($width); ?>px;
                 height: <?php echo esc_attr($height); ?>px;
             }
 
-            .rtwpvs-squared .rtwpvs-button-term {
-                min-width: <?php echo esc_attr($width); ?>px;
+            .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term {
+                min-width: <?php echo esc_attr($button_min_width); ?>px;
+                min-height: <?php echo esc_attr($button_min_height); ?>px;
             }
 
-            .rtwpvs-button-term span {
+            .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term span {
                 font-size: <?php echo esc_attr($font_size); ?>px;
             }
 

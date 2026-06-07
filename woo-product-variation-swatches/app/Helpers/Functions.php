@@ -59,7 +59,7 @@ class Functions {
 			global $wpdb;
 
 			$attribute_name     = str_replace( 'pa_', '', wc_sanitize_taxonomy_name( $taxonomy_name ) );
-			$attribute_taxonomy = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . "woocommerce_attribute_taxonomies WHERE attribute_name='{$attribute_name}'" );
+			$attribute_taxonomy = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}woocommerce_attribute_taxonomies WHERE attribute_name = %s", $attribute_name ) );
 			set_transient( $transient_name, $attribute_taxonomy, HOUR_IN_SECONDS );
 		}
 
@@ -234,6 +234,9 @@ class Functions {
 			$display_count = 0;
 			if ( taxonomy_exists( $attribute ) ) {
 				$terms = wc_get_product_terms( $product->get_id(), $attribute, [ 'fields' => 'all' ] );
+				// Prime term meta cache in a single query to avoid N+1 get_term_meta calls inside the loop.
+				$term_ids = wp_list_pluck( $terms, 'term_id' );
+				update_termmeta_cache( $term_ids );
 				foreach ( $terms as $term ) {
 					if ( in_array( $term->slug, $options ) ) {
 						if ( $is_archive && self::archive_swatches_has_more( $display_count ) ) {
@@ -604,14 +607,20 @@ class Functions {
 	public static function swatches_attribute_first_image( $product ) {
 		$attributes_image = [];
 		$variation_ids    = $product->get_children();
+		if ( empty( $variation_ids ) ) {
+			return $attributes_image;
+		}
+		// Prime post + meta caches in bulk to avoid N+1 queries in the loop.
+		_prime_post_caches( $variation_ids, true, true );
+
+		$image_size = rtwpvs()->get_option( 'attribute_image_size' );
+		$image_size = apply_filters( 'rtwpvs_product_attribute_image_size', $image_size );
 		foreach ( $variation_ids as $variation_id ) {
 			$variation = wc_get_product( $variation_id );
 			if ( ! $variation ) {
 				continue;
 			}
 			$variation_attributes = array_values( $variation->get_variation_attributes() );
-			$image_size           = rtwpvs()->get_option( 'attribute_image_size' );
-			$image_size           = apply_filters( 'rtwpvs_product_attribute_image_size', $image_size );
 			$image_url            = wp_get_attachment_image_url( $variation->get_image_id(), $image_size );
 			$fill_keys            = array_fill_keys( $variation_attributes, $image_url );
 			$diff                 = array_diff_key( $fill_keys, $attributes_image );

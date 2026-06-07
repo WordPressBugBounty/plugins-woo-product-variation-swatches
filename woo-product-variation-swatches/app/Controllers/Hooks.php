@@ -125,7 +125,10 @@ class Hooks {
 	}
 
 	static function delete_transient_at_save_or_update_product_variation( $variation_id ) {
-		$product        = wc_get_product( $variation_id );
+		$product = wc_get_product( $variation_id );
+		if ( ! $product ) {
+			return;
+		}
 		$product_id     = $product->get_parent_id();
 		$attribute_keys = array_keys( $product->get_variation_attributes() );
 		foreach ( $attribute_keys as $attribute_id ) {
@@ -138,7 +141,10 @@ class Hooks {
 	}
 
 	static function delete_transient_at_rtwpvs_save_or_reset_product_attributes( $product_id ) {
-		$product        = wc_get_product( $product_id );
+		$product = wc_get_product( $product_id );
+		if ( ! $product || ! $product->is_type( 'variable' ) ) {
+			return;
+		}
 		$attribute_keys = array_keys( $product->get_variation_attributes() );
 		foreach ( $attribute_keys as $attribute_id ) {
 			$transient_id           = $product_id . "_" . wc_variation_attribute_name( $attribute_id );
