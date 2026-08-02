@@ -32,18 +32,8 @@ if ( ! class_exists( 'WooProductVariationSwatches' ) ) :
 		}
 
 		public function __construct() {
-			$this->define_constants();
 			$this->hooks();
 			do_action( 'rtwpvs_loaded', $this );
-		}
-
-		/**
-		 * Declared all plugin constants.
-		 */
-		public function define_constants() {
-			$this->define( 'RTWPVS_PLUGIN_URI', plugin_dir_url( RTWPVS_PLUGIN_FILE ) );
-			$this->define( 'RTWPVS_PLUGIN_DIRNAME', dirname( plugin_basename( RTWPVS_PLUGIN_FILE ) ) ); // plugin-slug
-			$this->define( 'RTWPVS_PLUGIN_BASENAME', plugin_basename( RTWPVS_PLUGIN_FILE ) ); // plugin-slug/plugin-slug.php
 		}
 
 		public function hooks() {
@@ -53,6 +43,7 @@ if ( ! class_exists( 'WooProductVariationSwatches' ) ) :
 			new BlackFridayV2();
 			Review::init();
 			if ( $this->is_valid_php_version() && $this->is_wc_active() ) {
+				add_action( 'admin_init', [ Install::class, 'maybe_migrate_dropdown_setting' ] );
 				add_action( 'init', [ $this, 'settings_api' ], 5 );
 				new ScriptLoader();
 				new ProductMetaBox();
@@ -69,31 +60,6 @@ if ( ! class_exists( 'WooProductVariationSwatches' ) ) :
 			}
 
 			return $this->_settings_api;
-		}
-
-		/**
-		 * @param      $name
-		 * @param      $value
-		 */
-		public function define( $name, $value ) {
-			if ( ! defined( $name ) ) {
-				define( $name, $value );
-			}
-		}
-
-		public function basename() {
-			return RTWPVS_PLUGIN_BASENAME;
-		}
-
-		/**
-		 * @return string
-		 */
-		public function dirname() {
-			return RTWPVS_PLUGIN_DIRNAME;
-		}
-
-		public function version() {
-			return RTWPVS_VERSION;
 		}
 
 		public function get_transient_name( $id, $type ) {
@@ -140,7 +106,7 @@ if ( ! class_exists( 'WooProductVariationSwatches' ) ) :
 			$locale = apply_filters( 'plugin_locale', $locale, 'woo-product-variation-swatches' );
 			unload_textdomain( 'woo-product-variation-swatches' );
 			load_textdomain( 'woo-product-variation-swatches', WP_LANG_DIR . '/woo-product-variation-swatches/woo-product-variation-swatches-' . $locale . '.mo' );
-			load_plugin_textdomain( 'woo-product-variation-swatches', false, trailingslashit( $this->dirname() ) . 'languages' );
+			load_plugin_textdomain( 'woo-product-variation-swatches', false, trailingslashit( RTWPVS_PLUGIN_DIRNAME ) . 'languages' );
 		}
 
 		/**

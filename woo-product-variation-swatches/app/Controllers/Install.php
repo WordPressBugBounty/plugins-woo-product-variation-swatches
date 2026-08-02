@@ -136,6 +136,43 @@ class Install {
 		delete_transient( 'wc_attribute_taxonomies' );
 	}
 
+	/**
+	 * Migrate legacy dropdown-conversion checkboxes to the single radio option.
+	 *
+	 * Legacy keys: `default_to_button` (free), `default_to_image` (pro).
+	 * New key    : `default_dropdown_to` with values none|button|image.
+	 *
+	 * Runs once for existing installs (in-place updates skip the activation
+	 * hook); guarded by the `rtwpvs_dropdown_migrated` option flag.
+	 *
+	 * @return void
+	 */
+	public static function maybe_migrate_dropdown_setting() {
+		if ( 'yes' === get_option( 'rtwpvs_dropdown_migrated' ) ) {
+			return;
+		}
+
+		$options = get_option( 'rtwpvs' );
+
+		if ( is_array( $options )
+			&& ! isset( $options['default_dropdown_to'] )
+			&& ( array_key_exists( 'default_to_button', $options ) || array_key_exists( 'default_to_image', $options ) )
+		) {
+			if ( ! empty( $options['default_to_image'] ) ) {
+				$options['default_dropdown_to'] = 'image';
+			} elseif ( ! empty( $options['default_to_button'] ) ) {
+				$options['default_dropdown_to'] = 'button';
+			} else {
+				$options['default_dropdown_to'] = 'none';
+			}
+
+			unset( $options['default_to_button'], $options['default_to_image'] );
+			update_option( 'rtwpvs', $options );
+		}
+
+		update_option( 'rtwpvs_dropdown_migrated', 'yes' );
+	}
+
 	private static function remove_unused_transient() {
 		global $wpdb;
 		$wpdb->query( "DELETE FROM $wpdb->options WHERE `option_name` LIKE ('_transient_rtwpvs_get_wc_attribute_taxonomy_%')" );

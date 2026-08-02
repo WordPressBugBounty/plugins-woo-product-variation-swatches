@@ -379,6 +379,8 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     this._cart_button_html = this._cart_button.clone().html();
     this._price = this._wrapper.find(rtwpvs_params.archive_product_price_selector);
     this._price_html = this._price.clone().html();
+    this._reveal_price = this._variation_form.find('.rtwpvs-reveal-price');
+    this._reveal_price_html = this._reveal_price.html();
     this._product_id = this._cart_button.data('product_id');
     this.attributeData = {};
     this.selectedData = {};
@@ -391,6 +393,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         $view_cart_button = this._wrapper.find('.added_to_cart'),
         $view_cart_button2 = this._wrapper.find('.added_to_cart_button');
       $price.html(this._price_html);
+      if (this._reveal_price && this._reveal_price.length) {
+        this._reveal_price.html(this._reveal_price_html);
+      }
       this._cart_button.data('variation_id', '');
       this._cart_button.data('variation', '');
 
@@ -417,6 +422,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       if ($view_cart_button2.length > 0) {
         $view_cart_button2.remove();
       }
+
+      // Hide the reveal-on-hover in-panel Add to cart button.
+      this._variation_form.removeClass('rtwpvs-variation-selected');
     };
     this.init_trigger = function () {
       var that = this;
@@ -443,6 +451,11 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
           $template_html = $template_html.replace('/*<![CDATA[*/', '');
           $template_html = $template_html.replace('/*]]>*/', '');
           $price.html($template_html);
+
+          // Reveal-on-hover: show the selected variation price inside the panel.
+          if (that._reveal_price.length) {
+            that._reveal_price.html(variation.price_html || that._reveal_price_html);
+          }
           that._cart_button.data('variation_id', variation.variation_id);
           that._cart_button.data('variation', that.getChosenAttributes());
           if (!rtwpvs_params.archive_swatches_enable_single_attribute) {
@@ -472,6 +485,14 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
           }
           if ($view_cart_button2.length > 0) {
             $view_cart_button2.remove();
+          }
+
+          // Reveal-on-hover: show the in-panel Add to cart button only
+          // when the selected variation is purchasable and in stock.
+          if (variation.variation_id && variation.is_purchasable && variation.is_in_stock) {
+            that._variation_form.addClass('rtwpvs-variation-selected');
+          } else {
+            that._variation_form.removeClass('rtwpvs-variation-selected');
           }
         });
         this._variation_form.on('reset_image.rtwpvs-archive-variation', {
@@ -865,9 +886,29 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   };
   rtWpvsWithoutAjaxVariations();
   rtWpvsWithAjaxVariations();
+
+  // Reveal-on-hover: mirror the product card's own padding onto the panel
+  // wrapper so the panel always aligns with the card content (image/title)
+  // instead of spanning edge-to-edge and breaking out on padded themes.
+  window.rtWpvsSyncRevealWrapperPadding = function () {
+    $('.rtwpvs-reveal-hover-wrapper').each(function () {
+      var parent = this.offsetParent;
+      if (!parent) {
+        return;
+      }
+      var cs = window.getComputedStyle(parent);
+      this.style.padding = cs.paddingTop + ' ' + cs.paddingRight + ' ' + cs.paddingBottom + ' ' + cs.paddingLeft;
+    });
+  };
+  var rtWpvsRevealResizeTimer = null;
+  $(window).on('resize.rtwpvs-reveal', function () {
+    clearTimeout(rtWpvsRevealResizeTimer);
+    rtWpvsRevealResizeTimer = setTimeout(window.rtWpvsSyncRevealWrapperPadding, 150);
+  });
   $(document).ready(function () {
     rtWpvsLoadArchiveVariations();
     rtWpvsBlockPaginationSupport();
+    window.rtWpvsSyncRevealWrapperPadding();
   });
   // Single Page Product Variation
   $(document).on("wc_variation_form", ".variations_form.cart", function () {

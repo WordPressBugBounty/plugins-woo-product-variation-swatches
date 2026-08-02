@@ -159,10 +159,17 @@ class Functions {
 		$type                   = $attribute_type ? $attribute_type : $global_attribute_type;
 		$args['attribute_type'] = $type;
 		if ( empty( $meta_data[ $attribute ]['type'] ) && ( ! $type || 'select' === $type ) ) {
-			if ( rtwpvs()->get_option( 'default_to_button' ) ) {
+			if ( 'button' === rtwpvs()->get_option( 'default_dropdown_to' ) ) {
 				$type = 'button';
 			}
 			$type = apply_filters( 'rtwpvs_variation_attribute_default_type', $type, $args );
+		}
+		// Custom (non-taxonomy) attributes have no configured swatch type. On the
+		// single product page WooCommerce's native dropdown is used as the fallback
+		// ($html), but on archive/showcase loops $html is null — so default to a
+		// select swatch, otherwise the attribute renders nothing (label only).
+		if ( ! $type && is_null( $html ) ) {
+			$type = 'select';
 		}
 		if ( $type ) {
 			$options               = $args['options'];

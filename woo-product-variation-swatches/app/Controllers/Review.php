@@ -81,10 +81,10 @@ class Review {
                     <h3>Enjoying Variation Swatches for WooCommerce?</h3>
                     <p>Thank you for choosing Variation Swatches for WooCommerce. If you have found our plugin useful and makes you smile, please consider giving us a 5-star rating on WordPress.org. It will help us to grow.</p>
                     <div class="rtvs-review-notice_actions">
-                        <a href="%s" class="rtvs-review-button rtvs-review-button--cta" target="_blank"><span>⭐ Yes, You Deserve It!</span></a>
+                        <a href="%s" class="rtvs-review-button rtrs-review-button-action rtvs-review-button--cta" target="_blank"><span>⭐ Yes, You Deserve It!</span></a>
                         <a href="%s" class="rtvs-review-button rtvs-review-button--cta rtvs-review-button--outline"><span>😀 Already Rated!</span></a>
                         <a href="%s" class="rtvs-review-button rtvs-review-button--cta rtvs-review-button--outline"><span>🔔 Remind Me Later</span></a>
-                        <a href="%s" class="rtvs-review-button rtvs-review-button--cta rtvs-review-button--error rtvs-review-button--outline"><span>😐 No Thanks</span></a>
+                      
                     </div>
                 </div> 
             </div>'), $reviewurl, $rated, $remind_me, $dont_disturb);
@@ -152,8 +152,12 @@ class Review {
                 color: #fff;
                 vertical-align: middle;
                 text-align: center;
-                text-decoration: none;
+                text-decoration: none !important;
                 white-space: nowrap; 
+            }
+            .rtvs-review-button.rtrs-review-button-action {
+                color: #fff;
+                 text-decoration: none;
             }
             .rtvs-review-button:active {
                 background: var(--e-button-context-color-dark);

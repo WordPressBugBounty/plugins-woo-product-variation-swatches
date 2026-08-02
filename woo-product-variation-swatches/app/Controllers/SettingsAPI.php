@@ -16,7 +16,7 @@ class SettingsAPI {
 		$this->sections = Options::get_settings_sections();
 		add_action( 'init', [ $this, 'set_defaults' ], 8 );
 		add_filter(
-			'plugin_action_links_' . rtwpvs()->basename(),
+			'plugin_action_links_' . RTWPVS_PLUGIN_BASENAME,
 			[
 				$this,
 				'plugin_action_links',
@@ -444,6 +444,11 @@ class SettingsAPI {
 		$options = apply_filters( "rtwpvs_settings_{$args[ 'id' ]}_radio_options", $args['options'] );
 		$value   = esc_attr( $this->get_option( $args['id'] ) );
 
+		// Fall back to the field default when the stored value is empty or not a valid option.
+		if ( ! array_key_exists( $value, $options ) ) {
+			$value = isset( $args['default'] ) ? $args['default'] : '';
+		}
+
 		$attrs = isset( $args['attrs'] ) ? $this->make_implode_html_attributes( $args['attrs'] ) : '';
 
 		if ( ( isset( $args['is_pro'] ) && $args['is_pro'] ) && ! function_exists( 'rtwpvsp' ) ) {
@@ -455,7 +460,7 @@ class SettingsAPI {
 			'<br />',
 			array_map(
 				function ( $key, $option ) use ( $attrs, $args, $value ) {
-					return sprintf( '<label><input %1$s type="radio" id="%2$s-field" name="%4$s[%2$s]" value="%3$s" %5$s/> %6$s</label>', $attrs, $args['id'], $key, $this->setting_id, checked( $value, $key, false ), $option );
+					return sprintf( '<label class="rtwpvs-radio-label"><input %1$s type="radio" id="%2$s-field" name="%4$s[%2$s]" value="%3$s" %5$s/> %6$s</label>', $attrs, $args['id'], $key, $this->setting_id, checked( $value, $key, false ), $option );
 				},
 				array_keys( $options ),
 				$options

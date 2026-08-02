@@ -12,7 +12,7 @@ class ScriptLoader {
 
 	public function __construct() {
 		$this->suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$this->version = defined( 'WP_DEBUG' ) ? time() : rtwpvs()->version();
+		$this->version = defined( 'WP_DEBUG' ) ? time() : RTWPVS_VERSION;
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 15 );
 	}
@@ -142,7 +142,14 @@ class ScriptLoader {
 		$button_min_width   = rtwpvs()->get_option( 'button_min_width', 40 );
 		$button_min_height  = rtwpvs()->get_option( 'button_min_height', 30 );
 		$font_size          = rtwpvs()->get_option( 'single_font_size', 16 );
-		$tooltip_background = rtwpvs()->get_option( 'tooltip_background' );
+		$tooltip_background  = rtwpvs()->get_option( 'tooltip_background' );
+		// Note: do NOT pass a fallback to get_option() here — it treats 0 as empty
+		// and would replace a saved 0 with the fallback. The field's registered
+		// default is returned when unset; guard only truly empty values.
+		$reveal_panel_radius  = rtwpvs()->get_option( 'reveal_panel_radius' );
+		$reveal_panel_radius  = is_numeric( $reveal_panel_radius ) ? $reveal_panel_radius : 3;
+		$reveal_panel_padding = rtwpvs()->get_option( 'reveal_panel_padding' );
+		$reveal_panel_padding = is_numeric( $reveal_panel_padding ) ? $reveal_panel_padding : 16;
 
 		ob_start();
 		?>
@@ -159,6 +166,11 @@ class ScriptLoader {
 
             .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term span {
                 font-size: <?php echo esc_attr($font_size); ?>px;
+            }
+
+            .rtwpvs-product .rtwpvs-archive-variation-wrapper.rtwpvs-reveal-hover {
+                border-radius: <?php echo esc_attr($reveal_panel_radius); ?>px <?php echo esc_attr($reveal_panel_radius); ?>px 0 0;
+                padding: <?php echo esc_attr($reveal_panel_padding); ?>px;
             }
 
             <?php if($tooltip_background): ?>

@@ -226,6 +226,10 @@ class Hooks {
 
 	static function simple_product_cart_url( $url, $product ) {
 
+		if ( ! $product instanceof \WC_Product ) {
+			return $url;
+		}
+
 		if ( 'simple' === $product->get_type() ) {
 			$url = $product->is_purchasable() && $product->is_in_stock() ? remove_query_arg( 'added-to-cart', add_query_arg( 'add-to-cart', $product->get_id(), Functions::get_current_url() ) ) : get_permalink( $product->get_id() );
 		}
@@ -234,6 +238,10 @@ class Hooks {
 	}
 
 	static function loop_add_to_cart_args( $args, $product ) {
+
+		if ( ! $product instanceof \WC_Product ) {
+			return $args;
+		}
 
 		if ( $product->is_type( 'variable' ) ) {
 

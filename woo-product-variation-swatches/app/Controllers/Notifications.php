@@ -28,7 +28,7 @@ class Notifications {
 
 			$class = 'notice notice-error';
 
-			$text    = esc_html__( 'WooCommerce', 'woo-product-variation-swatches' );
+			$text    = esc_html__( 'install and activate WooCommerce', 'woo-product-variation-swatches' );
 			$link    = esc_url(
 				add_query_arg(
 					[
@@ -41,9 +41,9 @@ class Notifications {
 					admin_url( 'plugin-install.php' )
 				)
 			);
-			$message = wp_kses( __( '<strong>Variation Swatches for WooCommerce</strong> is an add-on of ', 'woo-product-variation-swatches' ), [ 'strong' => [] ] );
+			$message = wp_kses( __( '<strong>Variation Swatches for WooCommerce</strong> requires WooCommerce to be installed and active. Please', 'woo-product-variation-swatches' ), [ 'strong' => [] ] );
 
-			printf( '<div class="%1$s"><p>%2$s <a class="thickbox open-plugin-details-modal" href="%3$s"><strong>%4$s</strong></a></p></div>', $class, $message, $link, $text );
+			printf( '<div class="%1$s"><p>%2$s <a class="thickbox open-plugin-details-modal" href="%3$s"><strong>%4$s</strong></a>.</p></div>', $class, $message, $link, $text );
 		}
 	}
 
@@ -63,7 +63,7 @@ class Notifications {
 	}
 
 	public static function plugin_row_meta( $links, $file ) {
-		if ( $file == rtwpvs()->basename() ) {
+		if ( $file == RTWPVS_PLUGIN_BASENAME ) {
 
 			$report_url         = 'https://www.radiustheme.com/contact/';
 			$row_meta['issues'] = sprintf( '%2$s <a target="_blank" href="%1$s">%3$s</a>', esc_url( $report_url ), esc_html__( 'Facing issue?', 'woo-product-variation-swatches' ), '<span style="color: red">' . esc_html__( 'Please open a support ticket.', 'woo-product-variation-swatches' ) . '</span>' );
