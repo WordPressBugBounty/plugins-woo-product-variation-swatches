@@ -1,10 +1,10 @@
 === Variation Swatches for WooCommerce ===
 Contributors: techlabpro1, mamunnu
 Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variation swatches, woocommerce attributes
-Requires at least: 5.0
-Tested up to: 7.0
+Requires at least: 6.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.4.0
+Stable tag: 2.5.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -95,6 +95,12 @@ This plugin has a default WordPress cache system that facilitates caching for fa
 Displaying swatches in your shop and archive pages boosts your sales by attracting and engaging potential shoppers.
 👉 [Live Demo](https://radiustheme.com/demo/wooplugins/variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
 
+== 🏆 Swatches Display Mode (Default/ Modal/ On Hover) ==
+Choose how swatches appear on the shop and archive pages. Default shows them inline under each product. On Hover keeps the listing clean and slides the swatches up from the bottom of the product when a shopper hovers it. Modal keeps your "Select options" button and opens the swatches in a popup when the button is clicked.
+
+== 🏆 Swatch Groups ==
+Create your own attribute groups and assign each attribute term to one, so long swatch lists are displayed neatly grouped under their group name instead of one flat row. Groups can be assigned globally from the attribute term, or overridden per product. Renaming a group never breaks the terms already assigned to it.
+
 == 🏆 Image Variation Tooltip in Archive/ Shop Page ==
 Since images are capable of drawing the attention of your visitors, using them shrewdly can improve your sales massively. This plugin has the image tooltip, a feature that empowers you by allowing you to choose the picture you want to showcase in the archive or shop page.
 👉 [Live Demo](https://radiustheme.com/demo/wooplugins/variation-swatches/) | [Documentation](https://www.radiustheme.com/docs/variation-swatches/docs/variations/set-individual-variation/)
@@ -145,6 +151,8 @@ If you want to set custom attributes for individual products with different vari
 
 == 🏆 Highlighted Pro features ==
 * **Archive/ catalog/ shop/ category/ tag page swatches**
+* **Swatches display mode — inline, on hover, or in a modal popup**
+* **Swatch groups — group attribute terms under custom group names**
 * **Dual color**
 * **Add to cart in category/ archive page**
 * **Catalog mode attribute display limit (more option).**
@@ -250,16 +258,17 @@ Yes, it is.
 
 == Changelog ==
 
-= 2.4.0 (Aug 02, 2026) =
-* Refactor: Centralized all plugin constants in the main plugin file.
-* Improvement: Fixed admin notice button styling.
-
-= 2.3.23 (Jun 07, 2026) =
-* Fixed: Variation price and content not updating on the Gutenberg Product Collection block shop page (frontend.js)
-* Fixed: Swatch click events not working after pagination on the Gutenberg Product Collection block (frontend.js)
-* Improvement: Optimized archive swatch initialization and image hover performance (frontend.js)
-* Improvement: Cached dynamic inline CSS for faster front-end loading (ScriptLoader.php)
-* Improvement: Button UI Improvement (SettingsAPI.php)
+= 2.5.0 (Sep 08, 2026) =
+* New: Div-based variations layout — option to replace WooCommerce's variations <table> with <div> markup on the single product page (Advanced settings, enabled by default).
+* New: Separate single-product and archive/shop swatch sizing so each context's size/font controls work independently, including reveal-on-hover and modal display.
+* New: Style tab reorganized into Global / Archive / Product cards.
+* New: Dedicated style controls — Color Swatch Label Area, Radio Swatch, Image Swatch padding, and Select field.
+* New: Select Field style controls added.
+* New: Clear link (reset variations) style controls added — font size, padding, and margin.
+* New: Reset button for padding controls; plugin icon shown in the settings sidebar.
+* Fixed: Square outline around the selected color-with-label swatch when the checkmark shape was active.
+* Fixed: Select field style controls being overridden by WooCommerce default CSS.
+* Improvement: Redesigned Settings page with a fixed sidebar.
 
 [See changelog for all versions.](https://raw.githubusercontent.com/radiustheme/changelog/refs/heads/main/woo-product-variation-swatches.txt)
 

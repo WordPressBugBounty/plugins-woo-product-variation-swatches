@@ -12,6 +12,7 @@ class Hooks {
 		add_action( 'admin_init', [ __CLASS__, 'add_product_taxonomy_meta' ] );
 		add_action( 'woocommerce_product_option_terms', [ __CLASS__, 'product_option_terms' ], 20, 2 );
 		add_action( 'dokan_product_option_terms', [ __CLASS__, 'product_option_terms' ], 20, 2 );
+		add_action( 'after_rtwpvs_product_option_terms_button', [ __CLASS__, 'product_option_group_fields' ], 10, 3 );
 		add_filter( 'woocommerce_dropdown_variation_attribute_options_html', [
 			__CLASS__,
 			'variation_attribute_options_html'
@@ -20,6 +21,12 @@ class Hooks {
 		if ( ! is_admin() ) {
 			add_filter( 'woocommerce_ajax_variation_threshold', [ __CLASS__, 'ajax_variation_threshold' ], 99 );
 		}
+
+		// Optionally replace WooCommerce's variations <table> with a <div> layout.
+		// Registered unconditionally; the setting is checked inside the callback so we
+		// don't call get_option() this early (that would force the settings API to
+		// build during its own construction and recurse).
+		add_filter( 'woocommerce_locate_template', [ __CLASS__, 'override_variable_template' ], 20, 3 );
 		add_action( 'admin_init', [ __CLASS__, 'after_plugin_active' ] );
 
 		add_filter( 'wp_get_attachment_image_attributes', [
@@ -61,7 +68,30 @@ class Hooks {
 		add_action( 'woocommerce_attribute_added', [ __CLASS__, 'delete_transient_at_attribute_added' ], 20, 2 );
 
 		add_filter( 'pre_update_option_rtwpvs', [ __CLASS__, 'delete_transient_at_update_option' ], 10, 2 );
+		add_action( 'rtwpvs_after_term_meta_saved', [ __CLASS__, 'delete_transient_at_term_meta_saved' ], 20, 2 );
 		add_action( 'init', [ __CLASS__, 'delete_transient_at_force' ] );
+	}
+
+	/**
+	 * Point WooCommerce at the plugin's div-based variable add-to-cart template.
+	 *
+	 * Only the variations add-to-cart template is redirected; every other template
+	 * keeps its normal resolution (theme override → WooCommerce core).
+	 *
+	 * @param string $template      Located template path.
+	 * @param string $template_name Template name being located.
+	 * @param string $template_path Base template path.
+	 * @return string
+	 */
+	static function override_variable_template( $template, $template_name, $template_path ) {
+		if ( 'single-product/add-to-cart/variable.php' === $template_name && rtwpvs()->get_option( 'remove_variations_table' ) ) {
+			$override = RTWPVS_PLUGIN_PATH . 'templates/' . $template_name;
+			if ( file_exists( $override ) ) {
+				return $override;
+			}
+		}
+
+		return $template;
 	}
 
 	static function delete_transient_at_force() {
@@ -79,16 +109,43 @@ class Hooks {
 		$old_single_attribute = isset( $old_value['archive_swatches_single_attribute'] ) ? $old_value['archive_swatches_single_attribute'] : '';
 		$new_display_limit    = isset( $new_value['archive_swatches_display_limit'] ) ? absint( $new_value['archive_swatches_display_limit'] ) : '';
 		$old_display_limit    = isset( $old_value['archive_swatches_display_limit'] ) ? absint( $old_value['archive_swatches_display_limit'] ) : '';
+		// Renaming/adding/removing groups changes the rendered grouping headings.
+		$groups_changed       = wp_json_encode( isset( $new_value['groups'] ) ? $new_value['groups'] : [] ) !== wp_json_encode( isset( $old_value['groups'] ) ? $old_value['groups'] : [] );
+		// Toggling the color-swatch label (single or archive) changes the markup.
+		$label_changed        = ( ( isset( $new_value['color_swatch_label'] ) ? $new_value['color_swatch_label'] : '' ) !== ( isset( $old_value['color_swatch_label'] ) ? $old_value['color_swatch_label'] : '' ) )
+			|| ( ( isset( $new_value['archive_color_swatch_label'] ) ? $new_value['archive_color_swatch_label'] : '' ) !== ( isset( $old_value['archive_color_swatch_label'] ) ? $old_value['archive_color_swatch_label'] : '' ) );
 
-		if ( ( $new_single_attribute !== $old_single_attribute ) || ( $new_display_limit !== $old_display_limit ) ) {
-			$archive_transient_name = "_transient_" . rtwpvs()->get_transient_name( "archive_%", 'attribute-html' );
-			$product_transient_name = "_transient_" . rtwpvs()->get_transient_name( "%", 'attribute-html' );
-			global $wpdb;
-			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE `option_name` LIKE (%s) OR `option_name` LIKE (%s) ", $archive_transient_name, $product_transient_name ) );
+		if ( ( $new_single_attribute !== $old_single_attribute ) || ( $new_display_limit !== $old_display_limit ) || $groups_changed || $label_changed ) {
+			self::clear_all_attribute_html_transients();
 			do_action( 'rtwpvs_clear_all_transient_at_update_option' );
 		}
 
 		return $new_value;
+	}
+
+	/**
+	 * Invalidate cached swatch HTML when a term's meta (e.g. its group, color,
+	 * tooltip) is saved, so products that were not re-saved reflect the change.
+	 *
+	 * @param int    $term_id  The edited term id.
+	 * @param string $taxonomy The attribute taxonomy.
+	 *
+	 * @return void
+	 */
+	static function delete_transient_at_term_meta_saved( $term_id, $taxonomy ) {
+		self::clear_all_attribute_html_transients();
+	}
+
+	/**
+	 * Delete every cached attribute-html transient (single + archive).
+	 *
+	 * @return void
+	 */
+	private static function clear_all_attribute_html_transients() {
+		global $wpdb;
+		$archive_transient_name = '_transient_' . rtwpvs()->get_transient_name( 'archive_%', 'attribute-html' );
+		$product_transient_name = '_transient_' . rtwpvs()->get_transient_name( '%', 'attribute-html' );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE `option_name` LIKE (%s) OR `option_name` LIKE (%s)", $archive_transient_name, $product_transient_name ) );
 	}
 
 	static function delete_transient_at_attribute_added( $attribute_id, $attribute ) {
@@ -422,6 +479,96 @@ class Hooks {
 			<?php
 			do_action( 'after_rtwpvs_product_option_terms_button', $attribute_taxonomy, $taxonomy, $product_id );
 		}
+	}
+
+	/**
+	 * Render a per-term "Group" override selector under each attribute in the
+	 * product Attributes panel.
+	 *
+	 * The value overrides the term's global group for this product only and is
+	 * stored inside `_rtwpvs[<taxonomy>][data][<slug>][group_key]`, which is
+	 * persisted by ProductMetaBox::process_product_switches_meta() on product
+	 * update and consumed by Functions::get_variable_items_contents().
+	 *
+	 * @param object $attribute_taxonomy The WooCommerce attribute taxonomy object.
+	 * @param string $taxonomy           Full taxonomy name, e.g. `pa_color`.
+	 * @param int    $product_id         Current product id (0 for a new product).
+	 *
+	 * @return void
+	 */
+	static function product_option_group_fields( $attribute_taxonomy, $taxonomy, $product_id = 0 ) {
+		// Pro provides a richer per-term override (with a Group select) in its
+		// "Product Swatches" tab, so skip this fallback UI when Pro is active.
+		if ( function_exists( 'rtwpvsp' ) ) {
+			return;
+		}
+
+		$groups = Options::get_groups();
+		if ( empty( $groups ) ) {
+			return;
+		}
+
+		$product_id = absint( $product_id );
+		$terms      = $product_id ? wc_get_product_terms( $product_id, $taxonomy, [ 'fields' => 'all' ] ) : [];
+
+		echo '<div class="rtwpvs-attribute-groups" style="width:100%;margin-top:8px;clear:both;">';
+		printf(
+			'<details><summary style="cursor:pointer;font-weight:600;padding:6px 0;">%s</summary>',
+			esc_html__( 'Swatch groups (per-product override)', 'woo-product-variation-swatches' )
+		);
+
+		if ( empty( $terms ) ) {
+			printf(
+				'<p class="description" style="margin:6px 0;">%s</p>',
+				esc_html__( 'Select terms and update the product to assign per-product groups. Terms use their global group by default.', 'woo-product-variation-swatches' )
+			);
+			echo '</details></div>';
+			return;
+		}
+
+		$options   = Options::get_group_options();
+		$group_map = Options::get_groups_map();
+		$meta      = get_post_meta( $product_id, '_rtwpvs', true );
+		$overrides = ( is_array( $meta ) && isset( $meta[ $taxonomy ]['data'] ) && is_array( $meta[ $taxonomy ]['data'] ) ) ? $meta[ $taxonomy ]['data'] : [];
+
+		echo '<table class="widefat striped" style="margin:8px 0;"><tbody>';
+		foreach ( $terms as $term ) {
+			$override_id  = isset( $overrides[ $term->slug ]['group_key'] ) ? sanitize_key( $overrides[ $term->slug ]['group_key'] ) : '';
+			$global_id    = sanitize_key( (string) get_term_meta( $term->term_id, 'rtwpvs_term_group', true ) );
+			$global_label = ( '' !== $global_id && isset( $group_map[ $global_id ] ) ) ? $group_map[ $global_id ]['name'] : esc_html__( 'None', 'woo-product-variation-swatches' );
+
+			$field_name = sprintf( 'rtwpvs[%s][data][%s][group_key]', esc_attr( $taxonomy ), esc_attr( $term->slug ) );
+
+			echo '<tr>';
+			printf( '<td style="width:40%%;">%s</td>', esc_html( $term->name ) );
+			echo '<td>';
+			printf( '<select name="%s" class="rtwpvs-term-group-select" style="width:100%%;">', esc_attr( $field_name ) );
+			printf(
+				'<option value="">%s</option>',
+				sprintf(
+					/* translators: %s: global group name. */
+					esc_html__( 'Use global group (%s)', 'woo-product-variation-swatches' ),
+					esc_html( $global_label )
+				)
+			);
+			foreach ( $options as $id => $name ) {
+				printf(
+					'<option value="%s" %s>%s</option>',
+					esc_attr( $id ),
+					selected( $override_id, $id, false ),
+					esc_html( $name )
+				);
+			}
+			echo '</select>';
+			echo '</td>';
+			echo '</tr>';
+		}
+		echo '</tbody></table>';
+		printf(
+			'<p class="description" style="margin:6px 0;">%s</p>',
+			esc_html__( 'Overrides apply to this product only and are saved when you update the product.', 'woo-product-variation-swatches' )
+		);
+		echo '</details></div>';
 	}
 
 	static function variation_attribute_options_html( $html, $args ) {

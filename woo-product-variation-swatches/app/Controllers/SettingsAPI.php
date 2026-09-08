@@ -26,12 +26,13 @@ class SettingsAPI {
 		add_action( 'woocommerce_settings_tabs_' . $this->setting_id, [ $this, 'settings_tab' ] );
 		add_action( 'woocommerce_update_options_' . $this->setting_id, [ $this, 'update_settings' ] );
 		add_action( 'woocommerce_admin_field_' . $this->setting_id, [ $this, 'global_settings' ] );
+		add_action( 'wp_ajax_rtwpvs_save_settings', [ $this, 'ajax_save_settings' ] );
+		add_action( 'wp_ajax_rtwpvs_clear_cache', [ $this, 'ajax_clear_cache' ] );
+		add_action( 'admin_menu', [ $this, 'register_submenu' ], 60 );
+		add_action( 'admin_init', [ $this, 'maybe_redirect_legacy_tab' ] );
+		add_action( 'in_admin_header', [ $this, 'suppress_admin_notices' ], PHP_INT_MAX );
 		if ( apply_filters( 'rtwpvs_settings_link_on_admin_bar', false ) ) {
 			add_action( 'wp_before_admin_bar_render', [ $this, 'add_admin_bar' ], 999 );
-		}
-
-		if ( ( isset( $_GET['page'] ) && $_GET['page'] == 'wc-settings' ) && ( isset( $_GET['tab'] ) && $_GET['tab'] == 'rtwpvs' ) ) {
-			add_action( 'admin_footer', [ $this, 'pro_alert_html' ] );
 		}
 	}
 
@@ -42,14 +43,7 @@ class SettingsAPI {
 			[
 				'id'    => $this->setting_id,
 				'title' => esc_html__( 'Product Swatches', 'woo-product-variation-swatches' ),
-				'href'  => add_query_arg(
-					[
-						'page'    => 'wc-settings',
-						'tab'     => 'rtwpvs',
-						'section' => 'general',
-					],
-					admin_url( 'admin.php' )
-				),
+				'href'  => admin_url( 'admin.php?page=' . self::PAGE_SLUG ),
 				'meta'  => [
 					'class' => sprintf( '%s-admin-toolbar', $this->setting_id ),
 				],
@@ -110,7 +104,7 @@ class SettingsAPI {
 
 	public function plugin_action_links( $links ) {
 		$new_links = [
-			'<a href="' . admin_url( '/admin.php?page=wc-settings&tab=' . $this->setting_id ) . '">' . __( 'Settings', 'woo-product-variation-swatches' ) . '</a>',
+			'<a href="' . admin_url( 'admin.php?page=' . self::PAGE_SLUG ) . '">' . __( 'Settings', 'woo-product-variation-swatches' ) . '</a>',
 			'<a target="_blank" href="' . esc_url( 'https://radiustheme.com/demo/wordpress/woopluginspro/product/woocoommerce-variation-swatches/' ) . '">' . esc_html__( 'Demo', 'woo-product-variation-swatches' ) . '</a>',
 			'<a target="_blank" href="' . esc_url( 'https://www.radiustheme.com/docs/variation-swatches/' ) . '">' . esc_html__( 'Documentation', 'woo-product-variation-swatches' ) . '</a>',
 		];
@@ -254,80 +248,389 @@ class SettingsAPI {
 		<?php
 	}
 
+	/**
+	 * Slug of the dedicated settings page under the WooCommerce menu.
+	 */
+	const PAGE_SLUG = 'rtwpvs-settings';
+
+	/**
+	 * Register the "Product Swatches" submenu under the WooCommerce menu.
+	 */
+	public function register_submenu() {
+		add_submenu_page(
+			'woocommerce',
+			esc_html__( 'Product Swatches', 'woo-product-variation-swatches' ),
+			esc_html__( 'Product Swatches', 'woo-product-variation-swatches' ),
+			'manage_woocommerce',
+			self::PAGE_SLUG,
+			[ $this, 'render_settings_page' ]
+		);
+	}
+
+	/**
+	 * Redirect the legacy WooCommerce settings tab (wc-settings&tab=rtwpvs) to
+	 * the dedicated submenu page so both entry points land in the same place.
+	 */
+	public function maybe_redirect_legacy_tab() {
+		if ( ! is_admin() || wp_doing_ajax() ) {
+			return;
+		}
+
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		$tab  = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+
+		if ( 'wc-settings' === $page && $this->setting_id === $tab ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE_SLUG ) );
+			exit;
+		}
+	}
+
+	/**
+	 * Keep the dedicated settings screen clean by removing third-party admin
+	 * notices (theme license, TGM "required plugin" prompts, etc.) that
+	 * WordPress otherwise injects below our React header.
+	 */
+	public function suppress_admin_notices() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'woocommerce_page_' . self::PAGE_SLUG !== $screen->id ) {
+			return;
+		}
+
+		remove_all_actions( 'admin_notices' );
+		remove_all_actions( 'all_admin_notices' );
+		remove_all_actions( 'user_admin_notices' );
+	}
+
+	/**
+	 * Render the dedicated submenu settings page.
+	 */
+	public function render_settings_page() {
+		echo '<div class="rtwpvs-settings-page">';
+		$this->render_settings_app();
+		echo '</div>';
+	}
+
+	/**
+	 * WooCommerce settings-tab field callback (kept as a fallback in case the
+	 * redirect is short-circuited). Hides the WooCommerce save button and
+	 * renders the same React app.
+	 */
 	function global_settings() {
+		$GLOBALS['hide_save_button'] = true;
+		$this->render_settings_app();
+	}
+
+	/**
+	 * Print the React mount point, its data and the module bundle.
+	 *
+	 * The old server-rendered fields were replaced by a React 19 UI that reads
+	 * its schema/values from `rtwpvsSettings` and saves via the
+	 * `rtwpvs_save_settings` AJAX action. The bundle is printed directly (not
+	 * enqueued) so optimization/security plugins can't strip it, and loaded as
+	 * a module because it relies on `import.meta`. JSON_HEX_TAG keeps any HTML
+	 * in the data from breaking out of the inline <script>.
+	 */
+	private function render_settings_app() {
+		$data    = $this->get_react_data();
+		$version = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? time() : RTWPVS_VERSION;
+		$src     = rtwpvs()->get_assets_uri( 'js/settings.js' ) . '?ver=' . rawurlencode( (string) $version );
 		?>
-		<div id="rtwpvs-settings-container">
-			<div id="rtwpvs-settings-wrapper">
-				<?php $this->options_tabs(); ?>
-				<div id="settings-tabs">
-					<?php
-					foreach ( $this->sections as $section ) :
-						if ( ! isset( $section['active'] ) ) {
-							$section['active'] = false;
-						}
-
-						$last_active_tab = $this->get_last_active_tab();
-
-						if ( $last_active_tab == 'license' && ! function_exists( 'rtwpvsp' ) && $section['id'] == 'general' ) {
-							$last_active_tab = 'general';
-						}
-
-						$is_active = ( $last_active_tab == $section['id'] );
-						?>
-						<div id="<?php echo esc_attr( $section['id'] ); ?>"
-							 class="settings-tab rtwpvs-setting-tab"
-							 style="<?php echo ( ! $is_active ) ? 'display: none' : ''; ?>">
-							<div class="section-heading">
-								<h2><?php echo esc_html( $section['title'] ); ?></h2>
-								<?php echo $this->get_field_description( $section ); ?>
-							</div>
-							<div class="rtwpvs-setting-fields-wrapper"><?php $this->do_settings_fields( $section['fields'] ); ?></div>
-						</div>
-					<?php endforeach; ?>
-				</div>
-				<?php $this->last_tab_input(); ?>
-			</div>
-			<div class="rtwpvs-doc-wrapper rt-doc-wrapper">
-				<div class="rt-doc-box">
-					<div class="item-header">
-						<div class="item-icon"><span class="dashicons dashicons-media-document"></span></div>
-						<h3 class="item-title">Documentation</h3>
-					</div>
-					<div class="item-content">
-						<p>Get started by spending some time with the documentation.</p>
-						<a target="_blank"
-						   href="https://www.radiustheme.com/docs/variation-swatches/"
-						   class="rt-admin-btn">Documentation</a>
-					</div>
-				</div>
-				<div class="rt-doc-box">
-					<div class="item-header">
-						<div class="item-icon"><span class="dashicons dashicons-sos"></span></div>
-						<h3 class="item-title">Need Help?</h3>
-					</div>
-					<div class="item-content">
-						<p>Stuck with something? Please create a
-							<a target="_blank" href="https://www.radiustheme.com/contact/">ticket here</a>.
-							For emergency case join our <a target="_blank" href="https://www.radiustheme.com/">live
-								chat</a>.</p>
-						<a target="_blank" href="https://www.radiustheme.com/contact/" class="rt-admin-btn">Get Support</a>
-					</div>
-				</div>
-				<div class="rt-doc-box">
-					<div class="item-header">
-						<div class="item-icon"><span class="dashicons dashicons-smiley"></span></div>
-						<h3 class="item-title">Happy Our Work?</h3>
-					</div>
-					<div class="item-content">
-						<p>Thank you for choosing Variation Swatches for WooCommerce. If you have found our plugin useful and makes you smile, please consider giving us a 5-star rating on WordPress.org. It will help us to grow.</p>
-						<a target="_blank"
-						   href="https://wordpress.org/support/plugin/woo-product-variation-swatches/reviews/?filter=5#new-post"
-						   class="rt-admin-btn">Yes, You Deserve It</a>
-					</div>
-				</div>
-			</div>
+		<div class="rtwpvs-settings">
+			<div id="rtwpvs-settings-root"></div>
 		</div>
+		<script type="text/javascript">
+			window.rtwpvsSettings = <?php echo wp_json_encode( $data, JSON_HEX_TAG | JSON_HEX_AMP ); ?>;
+		</script>
+		<script type="module" id="rtwpvs-settings-js" src="<?php echo esc_url( $src ); ?>"></script>
 		<?php
+	}
+
+	/**
+	 * Build the data object consumed by the React settings app.
+	 *
+	 * @return array
+	 */
+	public function get_react_data() {
+		$is_pro = function_exists( 'rtwpvsp' );
+
+		$values = [];
+		foreach ( $this->get_saveable_fields() as $field ) {
+			$values[ $field['id'] ] = $this->get_option( $field['id'] );
+		}
+
+		return [
+			'sections'   => array_values( $this->sections ),
+			'values'     => $values,
+			'isPro'      => $is_pro,
+			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+			'nonce'      => wp_create_nonce( 'rtwpvs_nonce' ),
+			'saveAction' => 'rtwpvs_save_settings',
+			'licenseStatus' => (string) $this->get_option( 'license_status' ),
+			'licenseNonce'  => wp_create_nonce( 'rtwpvs_manage_licensing' ),
+			'licenseAction' => 'rtwpvs_manage_licensing',
+			'logoUrl'    => rtwpvs()->get_images_uri( 'icon-256x256.png' ),
+			'proUrl'     => 'https://www.radiustheme.com/downloads/woocommerce-variation-swatches/',
+			'docUrl'     => 'https://www.radiustheme.com/docs/variation-swatches/',
+			'supportUrl' => 'https://www.radiustheme.com/contact/',
+			'reviewUrl'  => 'https://wordpress.org/support/plugin/woo-product-variation-swatches/reviews/#new-post',
+			'version'    => RTWPVS_VERSION,
+			'strings'    => [
+				'pageTitle' => esc_html__( 'Variation Swatches', 'woo-product-variation-swatches' ),
+				'save'      => esc_html__( 'Save Changes', 'woo-product-variation-swatches' ),
+				'saving'    => esc_html__( 'Saving…', 'woo-product-variation-swatches' ),
+				'saved'     => esc_html__( 'Changes Saved', 'woo-product-variation-swatches' ),
+				'requiredField' => esc_html__( '%s is required.', 'woo-product-variation-swatches' ),
+				'requiredError' => esc_html__( 'Please fill the required fields before saving.', 'woo-product-variation-swatches' ),
+				'upgrade'   => esc_html__( 'Upgrade to Pro', 'woo-product-variation-swatches' ),
+				'licenseActive'  => esc_html__( 'License Active', 'woo-product-variation-swatches' ),
+				'licenseInvalid' => esc_html__( 'Invalid Licence', 'woo-product-variation-swatches' ),
+				'pro'       => esc_html__( 'Pro', 'woo-product-variation-swatches' ),
+				'proField'  => esc_html__( 'This is a premium field. Upgrade to Pro to use it.', 'woo-product-variation-swatches' ),
+				'cancel'          => esc_html__( 'Cancel', 'woo-product-variation-swatches' ),
+				'proAlertTitle'   => esc_html__( 'Pro field alert!', 'woo-product-variation-swatches' ),
+				'proAlertMessage' => esc_html__( 'Sorry! this is a pro field. To use this field, you need to use pro plugin.', 'woo-product-variation-swatches' ),
+			],
+		];
+	}
+
+	/**
+	 * Flat list of persistable fields (excludes layout-only field types).
+	 *
+	 * @return array
+	 */
+	private function get_saveable_fields() {
+		$skip   = [ 'title', 'feature', 'card' ];
+		$fields = [];
+		foreach ( $this->sections as $section ) {
+			foreach ( $section['fields'] as $field ) {
+				if ( empty( $field['id'] ) || in_array( $field['type'], $skip, true ) ) {
+					continue;
+				}
+				$fields[ $field['id'] ] = $field;
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * AJAX handler: persist settings sent by the React app to the `rtwpvs`
+	 * option. Unknown keys are ignored and existing keys not present in the
+	 * payload are preserved (no data migration).
+	 */
+	public function ajax_save_settings() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Permission denied.', 'woo-product-variation-swatches' ) ], 403 );
+		}
+
+		$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'rtwpvs_nonce' ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Invalid or expired request. Please reload the page.', 'woo-product-variation-swatches' ) ], 403 );
+		}
+
+		$payload = isset( $_POST['payload'] ) ? json_decode( wp_unslash( $_POST['payload'] ), true ) : null;
+		if ( ! is_array( $payload ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Invalid payload.', 'woo-product-variation-swatches' ) ], 400 );
+		}
+
+		$is_pro    = function_exists( 'rtwpvsp' );
+		$allowed   = $this->get_saveable_fields();
+		$sanitized = [];
+		foreach ( $payload as $key => $value ) {
+			if ( ! isset( $allowed[ $key ] ) ) {
+				continue;
+			}
+			// Never let a free user overwrite Pro-only values.
+			if ( ! empty( $allowed[ $key ]['is_pro'] ) && ! $is_pro ) {
+				continue;
+			}
+			if ( isset( $allowed[ $key ]['type'] ) && 'repeater' === $allowed[ $key ]['type'] ) {
+				$sanitized[ $key ] = $this->sanitize_groups( $value );
+				continue;
+			}
+			if ( isset( $allowed[ $key ]['type'] ) && 'spacing' === $allowed[ $key ]['type'] ) {
+				$sanitized[ $key ] = $this->sanitize_spacing( $value );
+				continue;
+			}
+			$sanitized[ $key ] = $this->sanitize_setting_value( $value );
+		}
+
+		$existing = get_option( $this->setting_id );
+		$existing = is_array( $existing ) ? $existing : [];
+		$merged   = array_merge( $existing, $sanitized );
+
+		// Reject the save when a visible required field is left empty.
+		$errors = $this->get_required_errors( $merged, $allowed );
+		if ( ! empty( $errors ) ) {
+			wp_send_json_error(
+				[
+					'message' => implode( ' ', $errors ),
+					'errors'  => $errors,
+				],
+				422
+			);
+		}
+
+		update_option( $this->setting_id, apply_filters( 'rtwpvs_update_option', $merged ) );
+
+		// License activation is handled explicitly by the "Activate" button
+		// (pro `rtwpvs_manage_licensing`), so we no longer hit the EDD API on
+		// every auto-save.
+
+		do_action( 'rtwpvs_settings_saved', $merged, $sanitized );
+
+		wp_send_json_success( [ 'message' => esc_html__( 'Settings saved.', 'woo-product-variation-swatches' ) ] );
+	}
+
+	/**
+	 * Collect "required" validation errors for the given (merged) settings.
+	 *
+	 * A field is only enforced when it is currently visible — i.e. it has no
+	 * `condition`, or its `condition` field/value matches the merged data.
+	 *
+	 * @param array $values  Merged settings that would be persisted.
+	 * @param array $allowed Flat map of saveable field definitions.
+	 *
+	 * @return array Map of field id => error message.
+	 */
+	private function get_required_errors( $values, $allowed ) {
+		$errors = [];
+
+		foreach ( $allowed as $id => $field ) {
+			if ( empty( $field['required'] ) ) {
+				continue;
+			}
+
+			// Respect conditional visibility: skip hidden required fields.
+			if ( ! empty( $field['condition'] ) ) {
+				$dep      = $field['condition']['field'];
+				$expected = $field['condition']['value'];
+				$actual   = isset( $values[ $dep ] ) ? $values[ $dep ] : '';
+
+				if ( is_bool( $expected ) ) {
+					$actual_bool = ! in_array( (string) $actual, [ '', '0', 'false' ], true );
+					if ( $actual_bool !== $expected ) {
+						continue;
+					}
+				} elseif ( (string) $actual !== (string) $expected ) {
+					continue;
+				}
+			}
+
+			$value = isset( $values[ $id ] ) ? trim( (string) $values[ $id ] ) : '';
+			if ( '' === $value ) {
+				$errors[ $id ] = sprintf(
+					/* translators: %s: field label. */
+					esc_html__( '%s is required.', 'woo-product-variation-swatches' ),
+					isset( $field['title'] ) ? $field['title'] : $id
+				);
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * AJAX handler: clear all swatch attribute-html transient caches.
+	 */
+	public function ajax_clear_cache() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Permission denied.', 'woo-product-variation-swatches' ) ], 403 );
+		}
+
+		$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'rtwpvs_nonce' ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Invalid or expired request. Please reload the page.', 'woo-product-variation-swatches' ) ], 403 );
+		}
+
+		global $wpdb;
+		$archive_transient_name = '_transient_' . rtwpvs()->get_transient_name( 'archive_%', 'attribute-html' );
+		$product_transient_name = '_transient_' . rtwpvs()->get_transient_name( '%', 'attribute-html' );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE `option_name` LIKE (%s) OR `option_name` LIKE (%s)", $archive_transient_name, $product_transient_name ) );
+
+		do_action( 'rtwpvs_clear_all_transient' );
+
+		wp_send_json_success( [ 'message' => esc_html__( 'Cache cleared.', 'woo-product-variation-swatches' ) ] );
+	}
+
+	/**
+	 * Recursively sanitize a setting value coming from the React app.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	private function sanitize_setting_value( $value ) {
+		if ( is_array( $value ) ) {
+			return array_map( [ $this, 'sanitize_setting_value' ], $value );
+		}
+
+		return sanitize_text_field( wp_unslash( (string) $value ) );
+	}
+
+	/**
+	 * Sanitize the attribute-groups repeater value.
+	 *
+	 * Each row is normalized to `[ 'id' => <stable id>, 'name' => <text> ]`. The
+	 * CSS slug is derived from the name on read (see Options::get_groups()), so
+	 * only the id and name are persisted. Rows without a name are dropped and
+	 * duplicate ids are removed (first occurrence wins).
+	 *
+	 * @param mixed $value Raw repeater rows from the React app.
+	 *
+	 * @return array
+	 */
+	/**
+	 * Sanitize a four-side spacing value to `[ top, right, bottom, left ]` of
+	 * numeric px strings (blank sides preserved as '').
+	 *
+	 * @param mixed $value Raw spacing object from the React app.
+	 *
+	 * @return array
+	 */
+	private function sanitize_spacing( $value ) {
+		$value = is_array( $value ) ? $value : [];
+		$out   = [];
+		foreach ( [ 'top', 'right', 'bottom', 'left' ] as $side ) {
+			$raw          = isset( $value[ $side ] ) ? trim( (string) $value[ $side ] ) : '';
+			$out[ $side ] = ( '' !== $raw && is_numeric( $raw ) ) ? (string) absint( $raw ) : '';
+		}
+
+		return $out;
+	}
+
+	private function sanitize_groups( $value ) {
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$groups  = [];
+		$seen_id = [];
+		foreach ( $value as $row ) {
+			if ( ! is_array( $row ) ) {
+				continue;
+			}
+			$name = isset( $row['name'] ) ? sanitize_text_field( $row['name'] ) : '';
+			if ( '' === $name ) {
+				continue;
+			}
+			// Stable id keeps term assignments intact when the name changes; falls
+			// back to a slug of the name for rows saved before ids existed.
+			$id = isset( $row['id'] ) ? sanitize_key( $row['id'] ) : '';
+			if ( '' === $id ) {
+				$id = sanitize_title( $name );
+			}
+			if ( '' === $id || isset( $seen_id[ $id ] ) ) {
+				continue;
+			}
+			$seen_id[ $id ] = true;
+			$groups[]       = [
+				'id'   => $id,
+				'name' => $name,
+			];
+		}
+
+		return $groups;
 	}
 
 	private function do_settings_fields( $fields ) {

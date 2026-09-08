@@ -1,4 +1,11 @@
 <?php
+/**
+ * Main plugin bootstrap class.
+ *
+ * @package Rtwpvs
+ */
+
+namespace Rtwpvs;
 
 use Rtwpvs\Controllers\BlackFridayV2;
 use Rtwpvs\Controllers\Hooks;
@@ -13,182 +20,171 @@ use Rtwpvs\Controllers\ThemeSupport;
 use Rtwpvs\Controllers\Notifications;
 use Rtwpvs\Controllers\ProductMetaBox;
 
-require_once RTWPVS_PLUGIN_PATH . 'vendor/autoload.php';
+/**
+ * Class WooProductVariationSwatches
+ */
+final class WooProductVariationSwatches {
+	protected static $_instance = null;
 
-if ( ! class_exists( 'WooProductVariationSwatches' ) ) :
-	final class WooProductVariationSwatches {
-		protected static $_instance = null;
+	private $_settings_api;
 
-		private $_settings_api;
+	protected $plugin_id = 'rtwpvs';
 
-		protected $plugin_id = 'rtwpvs';
-
-		public static function get_instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
-			}
-
-			return self::$_instance;
+	public static function get_instance() {
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self();
 		}
 
-		public function __construct() {
-			$this->hooks();
-			do_action( 'rtwpvs_loaded', $this );
+		return self::$_instance;
+	}
+
+	public function __construct() {
+		$this->hooks();
+		do_action( 'rtwpvs_loaded', $this );
+	}
+
+	public function hooks() {
+		$this->load_plugin_textdomain(); // Load text domain
+		Notifications::init();
+		// new Offer();
+		new BlackFridayV2();
+		Review::init();
+		if ( $this->is_valid_php_version() && $this->is_wc_active() ) {
+			// Must precede the defaults sync: seeding `default_dropdown_to` first
+			// would make the legacy migration skip itself and drop the old value.
+			add_action( 'init', [ Install::class, 'maybe_migrate_dropdown_setting' ], 3 );
+			add_action( 'init', [ Install::class, 'maybe_sync_defaults' ], 4 );
+			add_action( 'init', [ $this, 'settings_api' ], 5 );
+			new ScriptLoader();
+			new ProductMetaBox();
+			AppliedHook::init();
+			Hooks::init();
+			InitHooks::init();
+			new ThemeSupport();
+		}
+	}
+
+	public function settings_api() {
+		if ( ! $this->_settings_api ) {
+			$this->_settings_api = new SettingsAPI();
 		}
 
-		public function hooks() {
-			$this->load_plugin_textdomain(); // Load text domain
-			Notifications::init();
-			// new Offer();
-			new BlackFridayV2();
-			Review::init();
-			if ( $this->is_valid_php_version() && $this->is_wc_active() ) {
-				add_action( 'admin_init', [ Install::class, 'maybe_migrate_dropdown_setting' ] );
-				add_action( 'init', [ $this, 'settings_api' ], 5 );
-				new ScriptLoader();
-				new ProductMetaBox();
-				AppliedHook::init();
-				Hooks::init();
-				InitHooks::init();
-				new ThemeSupport();
-			}
+		return $this->_settings_api;
+	}
+
+	public function get_transient_name( $id, $type ) {
+		$transient_name = false;
+		if ( $type === 'attribute-html' ) {
+			$transient_name = sprintf( '%s_attribute_html_%s', $this->plugin_id, $id );
+		} elseif ( $type === 'attribute-taxonomy' ) {
+			$transient_name = sprintf( '%s_attribute_taxonomy_%s', $this->plugin_id, $id );
 		}
 
-		public function settings_api() {
-			if ( ! $this->_settings_api ) {
-				$this->_settings_api = new SettingsAPI();
-			}
-
-			return $this->_settings_api;
-		}
-
-		public function get_transient_name( $id, $type ) {
-			$transient_name = false;
-			if ( $type === 'attribute-html' ) {
-				$transient_name = sprintf( '%s_attribute_html_%s', $this->plugin_id, $id );
-			} elseif ( $type === 'attribute-taxonomy' ) {
-				$transient_name = sprintf( '%s_attribute_taxonomy_%s', $this->plugin_id, $id );
-			}
-
-			return apply_filters( 'rtwpvs_transient_name', $transient_name, $type, $id );
-		}
-
-		/**
-		 * @return bool
-		 */
-		public function is_valid_php_version() {
-			return version_compare( PHP_VERSION, '5.6.0', '>=' );
-		}
-
-		/**
-		 * @return bool
-		 */
-		public function is_wc_active() {
-			return class_exists( 'WooCommerce' );
-		}
-
-		/**
-		 * @return bool
-		 */
-		public function is_valid_wc_version() {
-			return version_compare( WC_VERSION, '3.2', '>' );
-		}
-
-		/**
-		 * Load Localisation files.
-		 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
-		 * Locales found in:
-		 *      - WP_LANG_DIR/woo-product-variation-swatches/woo-product-variation-swatches-LOCALE.mo
-		 *      - WP_LANG_DIR/plugins/woo-product-variation-swatches-LOCALE.mo.
-		 */
-		public function load_plugin_textdomain() {
-			$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
-			$locale = apply_filters( 'plugin_locale', $locale, 'woo-product-variation-swatches' );
-			unload_textdomain( 'woo-product-variation-swatches' );
-			load_textdomain( 'woo-product-variation-swatches', WP_LANG_DIR . '/woo-product-variation-swatches/woo-product-variation-swatches-' . $locale . '.mo' );
-			load_plugin_textdomain( 'woo-product-variation-swatches', false, trailingslashit( RTWPVS_PLUGIN_DIRNAME ) . 'languages' );
-		}
-
-		/**
-		 * @param      $id
-		 * @param null $givenDefault
-		 *
-		 * @return string
-		 */
-		public function get_option( $id, $givenDefault = null ) {
-			if ( ! $this->_settings_api ) {
-				$this->settings_api();
-			}
-
-			return $this->_settings_api->get_option( $id, $givenDefault );
-		}
-
-		public function update_option( $id, $value ) {
-			if ( ! $this->_settings_api ) {
-				$this->settings_api();
-			}
-
-			return $this->_settings_api->update_option( $id, $value );
-		}
-
-		public function get_assets_uri( $file ) {
-			$file = ltrim( $file, '/' );
-
-			return trailingslashit( RTWPVS_PLUGIN_URI . 'assets' ) . $file;
-		}
-
-		public function get_images_uri( $file ) {
-			$file = ltrim( $file, '/' );
-
-			return trailingslashit( RTWPVS_PLUGIN_URI . 'assets/images' ) . $file;
-		}
-
-		public function get_template_path() {
-			return apply_filters( 'rtwpvs_template_path', untrailingslashit( RTWPVS_PLUGIN_PATH ) . '-pro/templates' );
-		}
-
-		public function get_template_file_path( $file_name ) {
-			$file_name = ltrim( $file_name, '/' );
-
-			return trailingslashit( $this->get_template_path() ) . $file_name . '.php';
-		}
-
-		public function get_views_file_path( $file ) {
-			$file = ltrim( $file, '/' );
-
-			return untrailingslashit( RTWPVS_PLUGIN_PATH ) . '-pro/views/' . $file . '.php';
-		}
-
-		public function locate_template( $name ) {
-			// Look within passed path within the theme - this is priority.
-			$template = [
-				"woo-product-variation-swatches-pro/$name.php",
-			];
-
-			if ( ! $template_file = locate_template( $template ) ) {
-				$template_file = $this->get_template_file_path( $name );
-			}
-
-			return apply_filters( 'rtwpvs_locate_template', $template_file, $name );
-		}
-
-		public function locate_views( $name ) {
-			$template_file = $this->get_views_file_path( $name );
-
-			return apply_filters( 'rtwpvs_locate_views', $template_file, $name );
-		}
+		return apply_filters( 'rtwpvs_transient_name', $transient_name, $type, $id );
 	}
 
 	/**
-	 * @return WooProductVariationSwatches|null
+	 * @return bool
 	 */
-	function rtwpvs() {
-		return WooProductVariationSwatches::get_instance();
+	public function is_valid_php_version() {
+		return version_compare( PHP_VERSION, '5.6.0', '>=' );
 	}
 
-	register_activation_hook( RTWPVS_PLUGIN_FILE, [ Install::class, 'activate' ] );
-	register_deactivation_hook( RTWPVS_PLUGIN_FILE, [ Install::class, 'deactivate' ] );
+	/**
+	 * @return bool
+	 */
+	public function is_wc_active() {
+		return class_exists( 'WooCommerce' );
+	}
 
-	add_action( 'plugins_loaded', 'rtwpvs' );
+	/**
+	 * @return bool
+	 */
+	public function is_valid_wc_version() {
+		return version_compare( WC_VERSION, '3.2', '>' );
+	}
 
-endif;
+	/**
+	 * Load Localisation files.
+	 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
+	 * Locales found in:
+	 *      - WP_LANG_DIR/woo-product-variation-swatches/woo-product-variation-swatches-LOCALE.mo
+	 *      - WP_LANG_DIR/plugins/woo-product-variation-swatches-LOCALE.mo.
+	 */
+	public function load_plugin_textdomain() {
+		$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+		$locale = apply_filters( 'plugin_locale', $locale, 'woo-product-variation-swatches' );
+		unload_textdomain( 'woo-product-variation-swatches' );
+		load_textdomain( 'woo-product-variation-swatches', WP_LANG_DIR . '/woo-product-variation-swatches/woo-product-variation-swatches-' . $locale . '.mo' );
+		load_plugin_textdomain( 'woo-product-variation-swatches', false, trailingslashit( RTWPVS_PLUGIN_DIRNAME ) . 'languages' );
+	}
+
+	/**
+	 * @param      $id
+	 * @param null $givenDefault
+	 *
+	 * @return string
+	 */
+	public function get_option( $id, $givenDefault = null ) {
+		if ( ! $this->_settings_api ) {
+			$this->settings_api();
+		}
+
+		return $this->_settings_api->get_option( $id, $givenDefault );
+	}
+
+	public function update_option( $id, $value ) {
+		if ( ! $this->_settings_api ) {
+			$this->settings_api();
+		}
+
+		return $this->_settings_api->update_option( $id, $value );
+	}
+
+	public function get_assets_uri( $file ) {
+		$file = ltrim( $file, '/' );
+
+		return trailingslashit( RTWPVS_PLUGIN_URI . 'assets' ) . $file;
+	}
+
+	public function get_images_uri( $file ) {
+		$file = ltrim( $file, '/' );
+
+		return trailingslashit( RTWPVS_PLUGIN_URI . 'assets/images' ) . $file;
+	}
+
+	public function get_template_path() {
+		return apply_filters( 'rtwpvs_template_path', untrailingslashit( RTWPVS_PLUGIN_PATH ) . '-pro/templates' );
+	}
+
+	public function get_template_file_path( $file_name ) {
+		$file_name = ltrim( $file_name, '/' );
+
+		return trailingslashit( $this->get_template_path() ) . $file_name . '.php';
+	}
+
+	public function get_views_file_path( $file ) {
+		$file = ltrim( $file, '/' );
+
+		return untrailingslashit( RTWPVS_PLUGIN_PATH ) . '-pro/views/' . $file . '.php';
+	}
+
+	public function locate_template( $name ) {
+		// Look within passed path within the theme - this is priority.
+		$template = [
+			"woo-product-variation-swatches-pro/$name.php",
+		];
+
+		if ( ! $template_file = locate_template( $template ) ) {
+			$template_file = $this->get_template_file_path( $name );
+		}
+
+		return apply_filters( 'rtwpvs_locate_template', $template_file, $name );
+	}
+
+	public function locate_views( $name ) {
+		$template_file = $this->get_views_file_path( $name );
+
+		return apply_filters( 'rtwpvs_locate_views', $template_file, $name );
+	}
+}

@@ -39,10 +39,42 @@ class TermMeta {
 		}
 		$new_columns['rtwpvs-meta-preview'] = '';
 
-		return array_merge( $new_columns, $columns );
+		$columns = array_merge( $new_columns, $columns );
+
+		// Add a "Group" column before Count. Groups are a Pro feature, so on free
+		// installs the header carries a [Pro] badge as an upgrade teaser.
+		$label = esc_html__( 'Group', 'woo-product-variation-swatches' );
+		if ( ! function_exists( 'rtwpvsp' ) ) {
+			$label .= ' <span class="rtwpvs-pro" style="display:inline-block;padding:0 6px;border-radius:3px;background:#8c54ff;color:#fff;font-size:10px;font-weight:600;line-height:18px;vertical-align:middle;">' . esc_html__( 'Pro', 'woo-product-variation-swatches' ) . '</span>';
+		}
+
+		$with_group = [];
+		foreach ( $columns as $col_key => $col_label ) {
+			if ( 'posts' === $col_key ) {
+				$with_group['rtwpvs-group'] = $label;
+			}
+			$with_group[ $col_key ] = $col_label;
+		}
+		if ( ! isset( $with_group['rtwpvs-group'] ) ) {
+			$with_group['rtwpvs-group'] = $label;
+		}
+
+		return $with_group;
 	}
 
 	public function taxonomy_column( $columns, $column, $term_id ) {
+		// Group column: show the assigned group's name (resolved from its id).
+		if ( 'rtwpvs-group' === $column ) {
+			$map = Options::get_groups_map();
+			$id  = sanitize_key( (string) get_term_meta( $term_id, 'rtwpvs_term_group', true ) );
+
+			return ( '' !== $id && isset( $map[ $id ] ) ) ? esc_html( $map[ $id ]['name'] ) : '—';
+		}
+
+		if ( 'rtwpvs-meta-preview' !== $column ) {
+			return $columns;
+		}
+
 		$attribute = Functions::get_wc_attribute_taxonomy( $this->taxonomy );
 		if ( ! $attribute ) {
 			return $columns;
@@ -97,6 +129,10 @@ class TermMeta {
 
 		if ( $taxonomy == $this->taxonomy ) {
 			foreach ( $this->fields as $field ) {
+				// Never persist Pro-only fields (e.g. group) on free installs.
+				if ( ! empty( $field['is_pro'] ) && ! function_exists( 'rtwpvsp' ) ) {
+					continue;
+				}
 				$need_to_remove_checkbox_for_unselected = true;
 				foreach ( $_POST as $post_key => $post_value ) {
 					if ( $field['id'] == $post_key ) {
@@ -167,6 +203,15 @@ class TermMeta {
 
 			$field['id'] = esc_html( $field['id'] );
 
+			// Pro-only fields render as a disabled [Pro] teaser on free installs.
+			$is_pro_locked = ! empty( $field['is_pro'] ) && ! function_exists( 'rtwpvsp' );
+			if ( $is_pro_locked && isset( $field['label'] ) ) {
+				$field['label'] .= ' [Pro]';
+			}
+			// Flag consumed by field_start()/field_end() to wrap the control in a
+			// disabled <fieldset> so every input/button inside is non-editable.
+			$field['is_pro_locked'] = $is_pro_locked;
+
 			if ( ! $term ) {
 				$field['value'] = isset( $field['default'] ) ? $field['default'] : '';
 			} else {
@@ -232,7 +277,7 @@ class TermMeta {
 					ob_start();
 					?>
 					<select name="<?php echo esc_attr( $field['id'] ); ?>" id="<?php echo esc_attr( $field['id'] ); ?>"
-							class="<?php echo esc_attr( $css_class ); ?>" <?php echo sanitize_text_field( $field['multiple'] ); ?>>
+							class="<?php echo esc_attr( $css_class ); ?>" <?php echo sanitize_text_field( $field['multiple'] ); ?> <?php echo $is_pro_locked ? 'disabled' : ''; ?>>
 						<?php
 						foreach ( $field['options'] as $key => $option ) {
 							echo '<option' . selected( $field['value'], $key, false ) . ' value="' . $key . '">' . $option . '</option>';
@@ -295,11 +340,15 @@ class TermMeta {
 		if ( isset( $field['class'] ) ) {
 			$classes[] = $field['class'];
 		}
+		$locked_open = ! empty( $field['is_pro_locked'] )
+			? '<fieldset class="rtwpvs-pro-locked" disabled style="border:0;margin:0;padding:0;opacity:.6;min-width:0;">'
+			: '';
 		ob_start();
 		if ( ! $term ) {
 			?>
 			<div <?php echo sanitize_text_field( $depends ); ?> class="form-field <?php echo esc_attr( implode( ' ', $classes ) ); ?> <?php echo empty( $field['required'] ) ? '' : 'form-required'; ?>">
 			<label for="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['label'] ); ?></label>
+			<?php echo $locked_open; ?>
 			<?php
 		} else {
 			?>
@@ -307,6 +356,7 @@ class TermMeta {
 			<th scope="row"><label
 						for="<?php echo esc_attr( $field['id'] ); ?>"><?php echo esc_html( $field['label'] ); ?></label></th>
 			<td>
+			<?php echo $locked_open; ?>
 			<?php
 		}
 		echo ob_get_clean();
@@ -328,14 +378,17 @@ class TermMeta {
 
 	private static function field_end( $field, $term ) {
 
+		$locked_close = ! empty( $field['is_pro_locked'] ) ? '</fieldset>' : '';
 		ob_start();
 		if ( ! $term ) {
 			?>
+			<?php echo $locked_close; ?>
 			<p><?php echo wp_kses_post( $field['desc'] ); ?></p>
 			</div>
 			<?php
 		} else {
 			?>
+			<?php echo $locked_close; ?>
 			<p class="description"><?php echo wp_kses_post( $field['desc'] ); ?></p></td>
 			</tr>
 			<?php

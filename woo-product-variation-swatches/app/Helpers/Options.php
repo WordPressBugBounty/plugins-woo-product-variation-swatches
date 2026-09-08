@@ -22,23 +22,177 @@ class Options {
 		return $types;
 	}
 
+	/**
+	 * Return the user-defined attribute groups as a normalized list.
+	 *
+	 * Groups are managed on the Settings > Groups tab (each group is just a Name)
+	 * and stored in the `rtwpvs` option under `groups`. Each group has a stable
+	 * `id` (terms reference this, so the name can be edited without orphaning
+	 * assignments), and a `key` slug derived from the name for use as a CSS hook.
+	 * The id falls back to a name slug for legacy groups saved without one, and
+	 * duplicate ids / keys are de-duplicated (first occurrence wins).
+	 *
+	 * @return array<int,array{id:string,key:string,name:string}>
+	 */
+	public static function get_groups() {
+		// Attribute groups are a Pro-only feature; free installs expose none, so
+		// the term selector, term column, frontend grouping and per-product
+		// override all no-op automatically.
+		if ( ! function_exists( 'rtwpvsp' ) ) {
+			return apply_filters( 'rtwpvs_groups', [] );
+		}
+
+		$raw      = rtwpvs()->get_option( 'groups' );
+		$out      = [];
+		$seen_id  = [];
+		$seen_key = [];
+
+		if ( is_array( $raw ) ) {
+			foreach ( $raw as $group ) {
+				if ( ! is_array( $group ) ) {
+					continue;
+				}
+				$name = isset( $group['name'] ) ? trim( (string) $group['name'] ) : '';
+				if ( '' === $name ) {
+					continue;
+				}
+				$id = isset( $group['id'] ) ? sanitize_key( $group['id'] ) : '';
+				if ( '' === $id ) {
+					// Legacy fallback: reuse a stored key, else a slug of the name.
+					$id = isset( $group['key'] ) ? sanitize_key( $group['key'] ) : sanitize_title( $name );
+				}
+				if ( isset( $seen_id[ $id ] ) ) {
+					continue;
+				}
+
+				// Derive the CSS slug from the name and keep it unique.
+				$base = sanitize_title( $name );
+				$base = '' !== $base ? $base : $id;
+				$key  = $base;
+				$n    = 2;
+				while ( isset( $seen_key[ $key ] ) ) {
+					$key = $base . '-' . $n;
+					$n++;
+				}
+
+				$seen_id[ $id ]   = true;
+				$seen_key[ $key ] = true;
+				$out[]            = [
+					'id'   => $id,
+					'key'  => $key,
+					'name' => $name,
+				];
+			}
+		}
+
+		return apply_filters( 'rtwpvs_groups', $out );
+	}
+
+	/**
+	 * Group options for a <select>: stable id => group name.
+	 *
+	 * @return array<string,string>
+	 */
+	public static function get_group_options() {
+		$options = [];
+		foreach ( self::get_groups() as $group ) {
+			$options[ $group['id'] ] = $group['name'];
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Groups indexed by their stable id for resolving a stored reference to its
+	 * current key/name.
+	 *
+	 * @return array<string,array{key:string,name:string}>
+	 */
+	public static function get_groups_map() {
+		$map = [];
+		foreach ( self::get_groups() as $group ) {
+			$map[ $group['id'] ] = [
+				'key'  => $group['key'],
+				'name' => $group['name'],
+			];
+		}
+
+		return $map;
+	}
+
 	public static function get_taxonomy_meta_fields( $field_id = false ) {
 
-		$fields        = [];
-		$common_fields = apply_filters( 'rtwpvs_custom_tooltip', [] );
+		$fields = [];
+
+		// Tooltip fields are a Pro feature. Defined here (marked is_pro) so free
+		// installs render them as locked [Pro] teasers instead of hiding them; Pro
+		// unlocks them via the function_exists() check in TermMeta. Same approach as
+		// the "Group" selector below.
+		$tooltip_fields = [
+			[
+				'label'   => esc_html__( 'Show Tooltip', 'woo-product-variation-swatches' ),
+				'desc'    => esc_html__( 'Individually show hide tooltip.', 'woo-product-variation-swatches' ),
+				'id'      => 'rtwpvs_attribute_tooltip',
+				'type'    => 'select',
+				'is_pro'  => true,
+				'options' => apply_filters(
+					'rtwpvs_tooltip_option',
+					[
+						'text'  => esc_html__( 'Text', 'woo-product-variation-swatches' ),
+						'image' => esc_html__( 'Image', 'woo-product-variation-swatches' ),
+						'no'    => esc_html__( 'No', 'woo-product-variation-swatches' ),
+					]
+				),
+			],
+			[
+				'label'  => esc_html__( 'Tooltip Text', 'woo-product-variation-swatches' ),
+				'desc'   => esc_html__( 'By default tooltip text will be the term name.', 'woo-product-variation-swatches' ),
+				'id'     => 'rtwpvs_attribute_tooltip_text',
+				'type'   => 'text',
+				'class'  => 'rtwpvs-hidden',
+				'is_pro' => true,
+			],
+			[
+				'label'  => esc_html__( 'Tooltip Image', 'woo-product-variation-swatches' ),
+				'desc'   => esc_html__( 'Choose an image for tooltip.', 'woo-product-variation-swatches' ),
+				'id'     => 'rtwpvs_attribute_tooltip_image',
+				'type'   => 'image',
+				'class'  => 'rtwpvs-hidden',
+				'is_pro' => true,
+			],
+		];
+		$common_fields = apply_filters( 'rtwpvs_custom_tooltip', $tooltip_fields );
+
+		// Color field + Dual Color (Pro). Dual Color / Secondary Color are marked
+		// is_pro so they stay visible as locked [Pro] teasers on free installs.
+		$color_fields = [
+			[
+				'label' => esc_html__( 'Color', 'woo-product-variation-swatches' ),
+				'desc'  => esc_html__( 'Choose a color', 'woo-product-variation-swatches' ),
+				'id'    => 'product_attribute_color',
+				'type'  => 'color',
+			],
+			[
+				'label'         => esc_html__( 'Dual Color', 'woo-product-variation-swatches' ),
+				'trigger_label' => esc_html__( 'Enable', 'woo-product-variation-swatches' ),
+				'id'            => 'is_dual_color',
+				'type'          => 'checkbox',
+				'is_pro'        => true,
+			],
+			[
+				'label'      => esc_html__( 'Secondary Color', 'woo-product-variation-swatches' ),
+				'desc'       => esc_html__( 'Add term secondary color', 'woo-product-variation-swatches' ),
+				'id'         => 'secondary_color',
+				'type'       => 'color',
+				'is_pro'     => true,
+				'dependency' => [
+					[ '#is_dual_color' => [ 'type' => 'equal', 'value' => 'yes' ] ],
+				],
+			],
+		];
 
 		$fields['color'] = array_merge(
-			apply_filters(
-				'rtwpvs_get_taxonomy_meta_color',
-				[
-					[
-						'label' => esc_html__( 'Color', 'woo-product-variation-swatches' ),
-						'desc'  => esc_html__( 'Choose a color', 'woo-product-variation-swatches' ),
-						'id'    => 'product_attribute_color',
-						'type'  => 'color',
-					],
-				]
-			),
+			apply_filters( 'rtwpvs_get_taxonomy_meta_color', $color_fields ),
 			$common_fields
 		);
 
@@ -55,6 +209,29 @@ class Options {
 		);
 		$fields['button'] = $common_fields;
 		$fields['radio']  = $common_fields;
+
+		// Append the "Group" selector to every swatch type so any global
+		// attribute term can be assigned to a user-defined group.
+		// Attribute groups are a Pro feature. The "Group" selector is shown on all
+		// versions (marked is_pro so free installs render it as a locked [Pro]
+		// teaser); options are only populated for Pro via get_group_options().
+		$groups_url  = admin_url( 'admin.php?page=' . \Rtwpvs\Controllers\SettingsAPI::PAGE_SLUG ) . '#/groups';
+		$group_field = [
+			'label'   => esc_html__( 'Group', 'woo-product-variation-swatches' ),
+			'desc'    => sprintf(
+				/* translators: %s: link to the Swatch Groups settings page. */
+				esc_html__( 'Assign this term to a group. Groups are managed under %s.', 'woo-product-variation-swatches' ),
+				'<a href="' . esc_url( $groups_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Product Swatches → Swatch Groups', 'woo-product-variation-swatches' ) . '</a>'
+			),
+			'id'      => 'rtwpvs_term_group',
+			'type'    => 'select',
+			'is_pro'  => true,
+			'options' => [ '' => esc_html__( '— No group —', 'woo-product-variation-swatches' ) ] + self::get_group_options(),
+		];
+		foreach ( $fields as $type => $type_fields ) {
+			$fields[ $type ]   = is_array( $type_fields ) ? $type_fields : [];
+			$fields[ $type ][] = $group_field;
+		}
 
 		$fields = apply_filters( 'rtwpvs_get_product_taxonomy_meta_fields', $fields );
 
@@ -86,12 +263,20 @@ class Options {
 							'id'      => 'style',
 							'type'    => 'radio',
 							'title'   => esc_html__( 'Shape style', 'woo-product-variation-swatches' ),
-							'desc'    => esc_html__( 'Attribute Shape Style', 'woo-product-variation-swatches' ),
+							'desc'    => esc_html__( 'Shape of Color and Image swatches: Squared (slightly rounded corners) or Rounded (circle). Button and Radio swatches are not affected.', 'woo-product-variation-swatches' ),
 							'options' => [
-								'rounded' => esc_html__( 'Rounded Shape', 'woo-product-variation-swatches' ),
-								'squared' => esc_html__( 'Squared Shape ( Recommended )', 'woo-product-variation-swatches' ),
+                                'squared' => esc_html__( 'Squared Shape ( Recommended )', 'woo-product-variation-swatches' ),
+                                'rounded' => esc_html__( 'Rounded Shape', 'woo-product-variation-swatches' ),
 							],
 							'default' => 'squared',
+						],
+						[
+							'id'      => 'color_swatch_label',
+							'type'    => 'checkbox',
+							'is_pro'  => true,
+							'title'   => esc_html__( 'Show Color Swatches with Label', 'woo-product-variation-swatches' ),
+							'desc'    => esc_html__( 'Display the term name beside the color as a pill on the product details page (e.g. a green dot with "Green"). A matching option for shop / archive pages is on the Archive / Shop tab.', 'woo-product-variation-swatches' ),
+							'default' => false,
 						],
 						[
 							'id'      => 'shape_style_checkmark',
@@ -102,12 +287,29 @@ class Options {
 							'default' => false,
 						],
 						[
+							'id'        => 'checkmark_position',
+							'type'      => 'select',
+							'is_pro'    => true,
+							'title'     => esc_html__( 'Checkmark Position', 'woo-product-variation-swatches' ),
+							'desc'      => esc_html__( 'Position of the checkmark icon on the selected swatch.', 'woo-product-variation-swatches' ),
+							'options'   => [
+								'top-left'      => esc_html__( 'Top Left', 'woo-product-variation-swatches' ),
+								'top-right'     => esc_html__( 'Top Right', 'woo-product-variation-swatches' ),
+								'center-center' => esc_html__( 'Center Center', 'woo-product-variation-swatches' ),
+								'bottom-left'   => esc_html__( 'Bottom Left', 'woo-product-variation-swatches' ),
+								'bottom-right'  => esc_html__( 'Bottom Right', 'woo-product-variation-swatches' ),
+							],
+							'default'   => 'center-center',
+							// Only visible when the checkmark shape is enabled.
+							'condition' => [ 'field' => 'shape_style_checkmark', 'value' => true ],
+						],
+						[
 							'id'      => 'default_dropdown_to',
 							'type'    => 'radio',
-							'title'   => esc_html__( 'Auto Convert Dropdown', 'woo-product-variation-swatches' ),
+							'title'   => esc_html__( 'Auto Convert Dropdown To Swatch', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Automatically convert the default WooCommerce dropdown into the selected swatch type.', 'woo-product-variation-swatches' ),
 							'options' => [
-								'none'   => esc_html__( 'Keep Default Dropdown', 'woo-product-variation-swatches' ),
+								'none'   => esc_html__( 'Default', 'woo-product-variation-swatches' ),
 								'button' => esc_html__( 'Button', 'woo-product-variation-swatches' ),
 								'image'  => esc_html__( 'Image', 'woo-product-variation-swatches' ) . ( function_exists( 'rtwpvsp' ) ? '' : ' [Pro]' ),
 							],
@@ -117,7 +319,7 @@ class Options {
 							'id'      => 'attribute_on_click_behavior',
 							'is_pro'  => true,
 							'type'    => 'checkbox',
-							'title'   => esc_html__( 'Attribute Click Behavior', 'woo-product-variation-swatches' ),
+							'title'   => esc_html__( 'Selected variation name beside label', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Show the selected term name next to the attribute label (e.g. "Color: Gray") when a swatch is selected.', 'woo-product-variation-swatches' ),
 							'default' => false,
 						],
@@ -131,6 +333,14 @@ class Options {
 							'default' => 0,
 						],
 						[
+							'id'      => 'lazy_load_swatch_images',
+							'type'    => 'checkbox',
+							'is_pro'  => true,
+							'title'   => esc_html__( 'Lazy-load swatch images', 'woo-product-variation-swatches' ),
+							'desc'    => esc_html__( 'Defer loading of image swatches and tooltip images until needed (native browser lazy-loading). Improves initial page load, especially on shop/archive pages and for hover tooltips.', 'woo-product-variation-swatches' ),
+							'default' => false,
+						],
+						[
 							'id'      => 'attribute_image_size',
 							'type'    => 'select',
 							'title'   => esc_html__( 'Attribute image size', 'woo-product-variation-swatches' ),
@@ -141,7 +351,7 @@ class Options {
 						[
 							'id'    => 'title_color_image_size',
 							'type'  => 'title',
-							'title' => esc_html__( 'Color & Image Swatch Size', 'woo-product-variation-swatches' ),
+							'title' => esc_html__( 'Color & Image Swatch', 'woo-product-variation-swatches' ),
 							'desc'  => esc_html__( 'Width and height for color and image type swatches', 'woo-product-variation-swatches' ),
 						],
 						[
@@ -149,7 +359,7 @@ class Options {
 							'type'    => 'number',
 							'title'   => esc_html__( 'Width', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Color & image swatch width', 'woo-product-variation-swatches' ),
-							'default' => 30,
+							'default' => 40,
 							'min'     => 10,
 							'max'     => 200,
 							'suffix'  => 'px',
@@ -159,7 +369,7 @@ class Options {
 							'type'    => 'number',
 							'title'   => esc_html__( 'Height', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Color & image swatch height', 'woo-product-variation-swatches' ),
-							'default' => 30,
+							'default' => 40,
 							'min'     => 10,
 							'max'     => 200,
 							'suffix'  => 'px',
@@ -167,8 +377,8 @@ class Options {
 						[
 							'id'    => 'title_button_size',
 							'type'  => 'title',
-							'title' => esc_html__( 'Button Swatch Size', 'woo-product-variation-swatches' ),
-							'desc'  => esc_html__( 'Size settings for button/label type swatches. Width is flexible based on text content.', 'woo-product-variation-swatches' ),
+							'title' => esc_html__( 'Button Swatch', 'woo-product-variation-swatches' ),
+							'desc'  => esc_html__( 'Min width/height for button/label type swatches on the single product page. Width is flexible based on text content. (Font size is under the Style tab.)', 'woo-product-variation-swatches' ),
 						],
 						[
 							'id'      => 'button_min_width',
@@ -185,19 +395,9 @@ class Options {
 							'type'    => 'number',
 							'title'   => esc_html__( 'Min Height', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Button swatch minimum height', 'woo-product-variation-swatches' ),
-							'default' => 30,
+							'default' => 40,
 							'min'     => 20,
 							'max'     => 200,
-							'suffix'  => 'px',
-						],
-						[
-							'id'      => 'single_font_size',
-							'type'    => 'number',
-							'title'   => esc_html__( 'Font Size', 'woo-product-variation-swatches' ),
-							'desc'    => esc_html__( 'Button swatch font size', 'woo-product-variation-swatches' ),
-							'default' => 16,
-							'min'     => 8,
-							'max'     => 24,
 							'suffix'  => 'px',
 						],
 						[
@@ -249,10 +449,11 @@ class Options {
 							'is_pro'  => true,
 							'type'    => 'radio',
 							'title'   => esc_html__( 'Swatches Display Mode', 'woo-product-variation-swatches' ),
-							'desc'    => esc_html__( 'Default shows the swatches inline. On Hover hides them and slides them up from the bottom of the product when the product is hovered.', 'woo-product-variation-swatches' ),
+							'desc'    => esc_html__( 'Default shows the swatches inline. On Hover hides them and slides them up from the bottom of the product when the product is hovered. Modal keeps the "Select options" button and opens the swatches inside a popup when the button is clicked.', 'woo-product-variation-swatches' ),
 							'options' => [
 								'default' => esc_html__( 'Default', 'woo-product-variation-swatches' ),
-								'hover'   => esc_html__( 'On Hover ( Recommended )', 'woo-product-variation-swatches' ),
+                                'modal'   => esc_html__( 'Modal', 'woo-product-variation-swatches' ),
+                                'hover'   => esc_html__( 'On Hover', 'woo-product-variation-swatches' ),
 							],
 							'default' => 'default',
 						],
@@ -278,6 +479,14 @@ class Options {
 							'type'    => 'checkbox',
 							'title'   => esc_html__( 'Show Attribute Label', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Display the attribute name (e.g. "Color", "Size") above its swatches on the shop / archive pages.', 'woo-product-variation-swatches' ),
+							'default' => false,
+						],
+						[
+							'id'      => 'archive_color_swatch_label',
+							'is_pro'  => true,
+							'type'    => 'checkbox',
+							'title'   => esc_html__( 'Show Color Swatches with Label', 'woo-product-variation-swatches' ),
+							'desc'    => esc_html__( 'Display the term name beside the color as a pill on the shop / archive pages.', 'woo-product-variation-swatches' ),
 							'default' => false,
 						],
 						[
@@ -342,7 +551,7 @@ class Options {
 							'type'    => 'number',
 							'title'   => esc_html__( 'Width', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Color & image swatch width on archive / shop page', 'woo-product-variation-swatches' ),
-							'default' => 30,
+							'default' => 40,
 							'min'     => 10,
 							'max'     => 200,
 							'suffix'  => 'px',
@@ -353,7 +562,7 @@ class Options {
 							'type'    => 'number',
 							'title'   => esc_html__( 'Height', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Color & image swatch height on archive / shop page', 'woo-product-variation-swatches' ),
-							'default' => 30,
+							'default' => 40,
 							'min'     => 10,
 							'max'     => 200,
 							'suffix'  => 'px',
@@ -362,7 +571,7 @@ class Options {
 							'id'    => 'archive_button_size_title',
 							'type'  => 'title',
 							'title' => esc_html__( 'Button Swatch Size', 'woo-product-variation-swatches' ),
-							'desc'  => esc_html__( 'Size settings for button/label type swatches on archive / shop page. Width is flexible based on text content.', 'woo-product-variation-swatches' ),
+							'desc'  => esc_html__( 'Min width/height for button/label type swatches on archive / shop page. Width is flexible based on text content. (Font size is under the Style tab.)', 'woo-product-variation-swatches' ),
 						],
 						[
 							'id'      => 'archive_button_min_width',
@@ -370,7 +579,7 @@ class Options {
 							'type'    => 'number',
 							'title'   => esc_html__( 'Min Width', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Button swatch minimum width on archive / shop page. Expands based on content.', 'woo-product-variation-swatches' ),
-							'default' => 30,
+							'default' => 40,
 							'min'     => 10,
 							'max'     => 200,
 							'suffix'  => 'px',
@@ -381,42 +590,10 @@ class Options {
 							'type'    => 'number',
 							'title'   => esc_html__( 'Min Height', 'woo-product-variation-swatches' ),
 							'desc'    => esc_html__( 'Button swatch minimum height on archive / shop page', 'woo-product-variation-swatches' ),
-							'default' => 25,
+							'default' => 40,
 							'min'     => 10,
 							'max'     => 200,
 							'suffix'  => 'px',
-						],
-						[
-							'id'      => 'archive_swatches_font_size',
-							'is_pro'  => true,
-							'type'    => 'number',
-							'title'   => esc_html__( 'Font Size', 'woo-product-variation-swatches' ),
-							'desc'    => esc_html__( 'Button swatch font size on archive / shop page', 'woo-product-variation-swatches' ),
-							'default' => 16,
-							'min'     => 8,
-							'max'     => 24,
-							'suffix'  => 'px',
-						],
-						[
-							'id'    => 'archive_special_attribute_title',
-							'type'  => 'title',
-							'title' => esc_html__( 'Special Attribute', 'woo-product-variation-swatches' ),
-							'desc'  => esc_html__( 'Show single attribute as catalog mode on shop / archive pages', 'woo-product-variation-swatches' ),
-						],
-						[
-							'id'     => 'archive_swatches_enable_single_attribute',
-							'is_pro' => true,
-							'type'   => 'checkbox',
-							'title'  => esc_html__( 'Show Single Attribute', 'woo-product-variation-swatches' ),
-							'desc'   => esc_html__( 'Show single attribute taxonomies on archive page.', 'woo-product-variation-swatches' ),
-						],
-						[
-							'id'      => 'archive_swatches_single_attribute',
-							'is_pro'  => true,
-							'type'    => 'select',
-							'title'   => esc_html__( 'Chose Attribute', 'woo-product-variation-swatches' ),
-							'desc'    => esc_html__( 'Choose an attribute to show on catalog mode', 'woo-product-variation-swatches' ),
-							'options' => Functions::get_wc_attributes( esc_html__( ' - Choose Attribute - ', 'woo-product-variation-swatches' ) ),
 						],
 						[
 							'id'      => 'archive_swatches_display_event',
@@ -440,6 +617,48 @@ class Options {
 							'desc'    => esc_html__( 'Catalog mode attribute display limit. Default is 0. Means no limit.', 'woo-product-variation-swatches' ),
 							'default' => 0,
 						],
+						[
+							'id'    => 'archive_special_attribute_title',
+							'type'  => 'title',
+							'title' => esc_html__( 'Special Attribute', 'woo-product-variation-swatches' ),
+							'desc'  => esc_html__( 'Show single attribute as catalog mode on shop / archive pages', 'woo-product-variation-swatches' ),
+						],
+						[
+							'id'     => 'archive_swatches_enable_single_attribute',
+							'is_pro' => true,
+							'type'   => 'checkbox',
+							'title'  => esc_html__( 'Show Single Attribute', 'woo-product-variation-swatches' ),
+							'desc'   => esc_html__( 'Show single attribute taxonomies on archive page.', 'woo-product-variation-swatches' ),
+						],
+						[
+							'id'        => 'archive_swatches_single_attribute',
+							'is_pro'    => true,
+							'type'      => 'select',
+							'title'     => esc_html__( 'Chose Attribute', 'woo-product-variation-swatches' ),
+							'desc'      => esc_html__( 'Choose an attribute to show on catalog mode', 'woo-product-variation-swatches' ),
+							'options'   => Functions::get_wc_attributes( esc_html__( ' - Choose Attribute - ', 'woo-product-variation-swatches' ) ),
+							'condition' => [ 'field' => 'archive_swatches_enable_single_attribute', 'value' => true ],
+							'required'  => true,
+						],
+					]
+				),
+			],
+			'groups'          => [
+				'id'     => 'groups',
+				'title'  => esc_html__( 'Swatch Groups', 'woo-product-variation-swatches' ),
+				'desc'   => esc_html__( 'Create attribute groups, then assign each attribute term to a group (Products → Attributes → edit a term). Swatches are displayed grouped under their group name.', 'woo-product-variation-swatches' ),
+				'active' => apply_filters( 'rtwpvs_groups_setting_active', false ),
+				'fields' => apply_filters(
+					'rtwpvs_groups_setting_fields',
+					[
+						[
+							'id'      => 'groups',
+							'type'    => 'repeater',
+							'is_pro'  => true,
+							'title'   => esc_html__( 'Attribute Swatch Groups', 'woo-product-variation-swatches' ),
+							'desc'    => esc_html__( 'Add a group name for each group you want. You can rename a group anytime without losing the terms assigned to it.', 'woo-product-variation-swatches' ),
+							'default' => [],
+						],
 					]
 				),
 			],
@@ -457,6 +676,13 @@ class Options {
                             'title'   => esc_html__( 'Clear on Reselect', 'woo-product-variation-swatches' ),
                             'desc'    => esc_html__( 'Clear selected attribute on select again', 'woo-product-variation-swatches' ),
                             'default' => false,
+                        ],
+                        [
+                            'id'      => 'remove_variations_table',
+                            'type'    => 'checkbox',
+                            'title'   => esc_html__( 'Div-based variations layout', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Replace WooCommerce\'s variations <table> with <div> markup on the single product page. Some themes style the table.variations markup, so verify your product page after enabling.', 'woo-product-variation-swatches' ),
+                            'default' => true,
                         ],
                         [
                             'id'      => 'threshold',
@@ -506,6 +732,12 @@ class Options {
                     'rtwpvs_style_setting_fields',
                     [
                         [
+                            'id'    => 'card_common',
+                            'type'  => 'card',
+                            'title' => esc_html__( 'Global Style Settings', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Styling shared across the single product page and archive / shop pages.', 'woo-product-variation-swatches' ),
+                        ],
+                        [
                             'id'      => 'tooltip_background',
                             'type'    => 'color',
                             'title'   => esc_html__( 'Tooltip background', 'woo-product-variation-swatches' ),
@@ -519,28 +751,6 @@ class Options {
                             'title'   => esc_html__( 'Tooltip text color', 'woo-product-variation-swatches' ),
                             'desc'    => esc_html__( 'Tooltip text color', 'woo-product-variation-swatches' ),
                             'default' => '',
-                        ],
-                        [
-                            'id'      => 'reveal_panel_radius',
-                            'is_pro'  => true,
-                            'type'    => 'number',
-                            'title'   => esc_html__( 'Reveal Panel Corner Radius', 'woo-product-variation-swatches' ),
-                            'desc'    => esc_html__( 'Top corner radius of the archive "Reveal Swatches on Hover" panel. Default is: 3', 'woo-product-variation-swatches' ),
-                            'default' => 3,
-                            'min'     => 0,
-                            'max'     => 50,
-                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
-                        ],
-                        [
-                            'id'      => 'reveal_panel_padding',
-                            'is_pro'  => true,
-                            'type'    => 'number',
-                            'title'   => esc_html__( 'Reveal Panel Inner Padding', 'woo-product-variation-swatches' ),
-                            'desc'    => esc_html__( 'Padding inside the "Reveal Swatches on Hover" panel around the swatches, price and buttons. Default is: 16', 'woo-product-variation-swatches' ),
-                            'default' => 16,
-                            'min'     => 0,
-                            'max'     => 60,
-                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
                         ],
                         [
                             'id'    => 'title_item_styling',
@@ -569,10 +779,32 @@ class Options {
                             'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
                         ],
                         [
+                            'id'      => 'item_border_radius',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Border radius', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Corner radius for all swatch items (and the color label pill). Applies when Shape style is "Squared". Leave blank for the default.', 'woo-product-variation-swatches' ),
+                            'default' => '',
+                            'min'     => 0,
+                            'max'     => 50,
+                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'item_padding',
+                            'is_pro'  => true,
+                            'type'    => 'spacing',
+                            'title'   => esc_html__( 'Button padding', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Inner padding of button/label swatches (top, right, bottom, left). Color and image swatches have their own padding controls. Leave a side blank for its default.', 'woo-product-variation-swatches' ),
+                            'default' => [ 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' ],
+                            'min'     => 0,
+                            'max'     => 40,
+                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
+                        ],
+                        [
                             'id'      => 'text_color',
                             'is_pro'  => true,
                             'type'    => 'color',
-                            'title'   => esc_html__( 'text color', 'woo-product-variation-swatches' ),
+                            'title'   => esc_html__( 'Text color', 'woo-product-variation-swatches' ),
                             'desc'    => esc_html__( 'Swatches attribute item text color. Default is: #000000', 'woo-product-variation-swatches' ),
                             'default' => '#000000',
                             'alpha'   => true,
@@ -581,10 +813,242 @@ class Options {
                             'id'      => 'background_color',
                             'is_pro'  => true,
                             'type'    => 'color',
-                            'title'   => esc_html__( 'background color', 'woo-product-variation-swatches' ),
+                            'title'   => esc_html__( 'Background color', 'woo-product-variation-swatches' ),
                             'desc'    => esc_html__( 'Swatches attribute item background color. Default is: #FFFFFF', 'woo-product-variation-swatches' ),
                             'default' => '#FFFFFF',
                             'alpha'   => true,
+                        ],
+                        [
+                            'id'    => 'title_color_swatch_label_area',
+                            'type'  => 'title',
+                            'title' => esc_html__( 'Color Swatch Label Area', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Label text color and color-area size shown beside the label (when "Show Color Swatches with Label" is enabled)', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'color_swatch_label_color',
+                            'is_pro'  => true,
+                            'type'    => 'color',
+                            'title'   => esc_html__( 'Color swatch label text', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Text color of the label shown beside color swatches (when "Show Color Swatches with Label" is enabled). Default is: #6B6B6B', 'woo-product-variation-swatches' ),
+                            'default' => '#6B6B6B',
+                            'alpha'   => true,
+                        ],
+                        [
+                            'id'      => 'color_swatch_label_font_size',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Label font size', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Font size of the label shown beside color swatches. Default is: 15', 'woo-product-variation-swatches' ),
+                            'default' => 15,
+                            'min'     => 8,
+                            'max'     => 40,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'color_swatch_label_dot_width',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Color area width', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Width of the color area shown beside the label. Default is: 24', 'woo-product-variation-swatches' ),
+                            'default' => 24,
+                            'min'     => 8,
+                            'max'     => 100,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'color_swatch_label_dot_height',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Color area height', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Height of the color area shown beside the label. Default is: 24', 'woo-product-variation-swatches' ),
+                            'default' => 24,
+                            'min'     => 8,
+                            'max'     => 100,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'color_swatch_label_padding',
+                            'is_pro'  => true,
+                            'type'    => 'spacing',
+                            'title'   => esc_html__( 'Padding', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Inner padding of the color-with-label pill (top, right, bottom, left). Leave a side blank for its default.', 'woo-product-variation-swatches' ),
+                            'default' => [ 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' ],
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'    => 'title_radio_swatch_area',
+                            'type'  => 'title',
+                            'title' => esc_html__( 'Radio Swatch', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Label font size and radio input size for radio type swatches', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'radio_label_font_size',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Label font size', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Font size of the radio swatch label. Default is: 14', 'woo-product-variation-swatches' ),
+                            'default' => 14,
+                            'min'     => 8,
+                            'max'     => 40,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'radio_input_width',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Radio input width', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Width of the radio input control. Default is: 18', 'woo-product-variation-swatches' ),
+                            'default' => 18,
+                            'min'     => 8,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'radio_input_height',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Radio input height', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Height of the radio input control. Default is: 18', 'woo-product-variation-swatches' ),
+                            'default' => 18,
+                            'min'     => 8,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'radio_label_input_gap',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Label & input gap', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Gap between the radio input and its label. Default is: 10', 'woo-product-variation-swatches' ),
+                            'default' => 10,
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'radio_group_title_gap',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Group title gap', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Gap between a group title and its radio items (when swatch groups are used). Default is: 8', 'woo-product-variation-swatches' ),
+                            'default' => 8,
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'    => 'title_image_swatch_area',
+                            'type'  => 'title',
+                            'title' => esc_html__( 'Image Swatch', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Inner padding for image type swatches (overrides the general item padding).', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'image_swatch_padding',
+                            'is_pro'  => true,
+                            'type'    => 'spacing',
+                            'title'   => esc_html__( 'Padding', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Inner padding of image swatches (top, right, bottom, left). Leave a side blank for its default.', 'woo-product-variation-swatches' ),
+                            'default' => [ 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' ],
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'    => 'title_select_field_area',
+                            'type'  => 'title',
+                            'title' => esc_html__( 'Select Field', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Styling for the Select (dropdown) swatch type.', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'select_field_font_size',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Font size', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Text size of the select dropdown. Default is: 14', 'woo-product-variation-swatches' ),
+                            'default' => 14,
+                            'min'     => 8,
+                            'max'     => 40,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'select_field_height',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Height', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Height of the select dropdown. Leave blank for auto (padding controls the height).', 'woo-product-variation-swatches' ),
+                            'default' => '',
+                            'min'     => 20,
+                            'max'     => 120,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'select_field_border_color',
+                            'is_pro'  => true,
+                            'type'    => 'color',
+                            'title'   => esc_html__( 'Border color', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Border color of the select dropdown. Default is: #cccccc', 'woo-product-variation-swatches' ),
+                            'default' => '#cccccc',
+                            'alpha'   => true,
+                        ],
+                        [
+                            'id'      => 'select_field_border_radius',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Border radius', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Corner radius of the select dropdown. Default is: 0', 'woo-product-variation-swatches' ),
+                            'default' => 0,
+                            'min'     => 0,
+                            'max'     => 50,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'select_field_padding',
+                            'is_pro'  => true,
+                            'type'    => 'spacing',
+                            'title'   => esc_html__( 'Padding', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Inner padding of the select dropdown (top, right, bottom, left). Leave a side blank for its default.', 'woo-product-variation-swatches' ),
+                            'default' => [ 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' ],
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'    => 'title_clear_link_area',
+                            'type'  => 'title',
+                            'title' => esc_html__( 'Clear Link', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Styling for the "Clear" (reset variations) link shown below the attributes.', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'clear_link_font_size',
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Font size', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Text size of the Clear link. Default is: 14', 'woo-product-variation-swatches' ),
+                            'default' => 14,
+                            'min'     => 8,
+                            'max'     => 40,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'clear_link_padding',
+                            'type'    => 'spacing',
+                            'title'   => esc_html__( 'Padding', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Inner padding of the Clear link (top, right, bottom, left). Leave a side blank for its default.', 'woo-product-variation-swatches' ),
+                            'default' => [ 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' ],
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'      => 'clear_link_margin',
+                            'type'    => 'spacing',
+                            'title'   => esc_html__( 'Margin', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Outer margin of the Clear link (top, right, bottom, left). Leave a side blank for its default.', 'woo-product-variation-swatches' ),
+                            'default' => [ 'top' => '', 'right' => '', 'bottom' => '', 'left' => '' ],
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => 'px',
                         ],
                         [
                             'id'    => 'title_attribute_item_hover_styling',
@@ -600,17 +1064,6 @@ class Options {
                             'desc'    => esc_html__( 'Swatches attribute item hover border color. Default is: #000000', 'woo-product-variation-swatches' ),
                             'default' => '#000000',
                             'alpha'   => true,
-                        ],
-                        [
-                            'id'      => 'hover_border_size',
-                            'is_pro'  => true,
-                            'type'    => 'number',
-                            'title'   => esc_html__( 'Hover border size', 'woo-product-variation-swatches' ),
-                            'desc'    => esc_html__( 'Swatches attribute item hover border size. Default is: 3', 'woo-product-variation-swatches' ),
-                            'default' => 1,
-                            'min'     => 1,
-                            'max'     => 5,
-                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
                         ],
                         [
                             'id'      => 'hover_text_color',
@@ -644,17 +1097,6 @@ class Options {
                             'desc'    => esc_html__( 'Swatches selected item border color. Default is: #000000', 'woo-product-variation-swatches' ),
                             'default' => '#000000',
                             'alpha'   => true,
-                        ],
-                        [
-                            'id'      => 'selected_border_size',
-                            'is_pro'  => true,
-                            'type'    => 'number',
-                            'title'   => esc_html__( 'Border size', 'woo-product-variation-swatches' ),
-                            'desc'    => esc_html__( 'Swatches selected item border size. Default is: 2', 'woo-product-variation-swatches' ),
-                            'default' => 2,
-                            'min'     => 1,
-                            'max'     => 5,
-                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
                         ],
                         [
                             'id'      => 'selected_text_color',
@@ -696,6 +1138,73 @@ class Options {
                             'step'    => '0.1',
                             'min'     => .1,
                             'max'     => 1,
+                        ],
+                        [
+                            'id'    => 'card_archive',
+                            'type'  => 'card',
+                            'title' => esc_html__( 'Archive / Shop Page', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Styling that applies to shop, archive and related / up-sell / cross-sell loops.', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'reveal_panel_radius',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Reveal Panel Corner Radius', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Top corner radius of the archive "Reveal Swatches on Hover" panel. Default is: 3', 'woo-product-variation-swatches' ),
+                            'default' => 3,
+                            'min'     => 0,
+                            'max'     => 50,
+                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'reveal_panel_padding',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Reveal Panel Inner Padding', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Padding inside the "Reveal Swatches on Hover" panel around the swatches, price and buttons. Default is: 16', 'woo-product-variation-swatches' ),
+                            'default' => 16,
+                            'min'     => 0,
+                            'max'     => 60,
+                            'suffix'  => esc_html__( 'px', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'    => 'title_archive_button_swatch_area',
+                            'type'  => 'title',
+                            'title' => esc_html__( 'Button Swatch', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Button/label swatch font size on shop, archive and related/upsell/cross-sell loops. (Min width/height stay under the Archive tab.)', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'archive_swatches_font_size',
+                            'is_pro'  => true,
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Font Size', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Button swatch font size on archive / shop page.', 'woo-product-variation-swatches' ),
+                            'default' => 16,
+                            'min'     => 8,
+                            'max'     => 24,
+                            'suffix'  => 'px',
+                        ],
+                        [
+                            'id'    => 'card_product',
+                            'type'  => 'card',
+                            'title' => esc_html__( 'Product Page', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Styling that applies only to swatches on the single product page.', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'    => 'title_button_swatch_area',
+                            'type'  => 'title',
+                            'title' => esc_html__( 'Button Swatch', 'woo-product-variation-swatches' ),
+                            'desc'  => esc_html__( 'Button/label swatch text on the single product page.', 'woo-product-variation-swatches' ),
+                        ],
+                        [
+                            'id'      => 'single_font_size',
+                            'type'    => 'number',
+                            'title'   => esc_html__( 'Font Size', 'woo-product-variation-swatches' ),
+                            'desc'    => esc_html__( 'Button swatch font size on the single product page.', 'woo-product-variation-swatches' ),
+                            'default' => 16,
+                            'min'     => 8,
+                            'max'     => 24,
+                            'suffix'  => 'px',
                         ],
                     ]
                 ),
@@ -755,13 +1264,23 @@ class Options {
 			],
 			'premium_plugins' => [
 				'id'     => 'premium_plugins',
-				'title'  => esc_html__( 'Related Plugins', 'woo-product-variation-swatches' ),
-				'desc'   => esc_html__( 'You can try our premium plugins', 'woo-product-variation-swatches' ),
+				'title'  => __( 'Our Plugins & Themes', 'woo-product-variation-swatches' ),
+				'desc'   => esc_html__( 'Explore our other WooCommerce plugins and WordPress themes.', 'woo-product-variation-swatches' ),
 				'fields' => apply_filters(
 					'rtwpvs_premium_plugins_setting_fields',
 					[
 						[
-							'id'         => 'premium_feature',
+							'id'     => 'premium_plugins_title',
+							'type'   => 'title',
+							'title'  => esc_html__( 'Our Plugins', 'woo-product-variation-swatches' ),
+							'desc'   => esc_html__( 'Premium WooCommerce plugins from RadiusTheme.', 'woo-product-variation-swatches' ),
+							'action' => [
+								'label' => esc_html__( 'View All', 'woo-product-variation-swatches' ),
+								'url'   => 'https://www.radiustheme.com/wordpress-plugins/',
+							],
+						],
+						[
+							'id'         => 'premium_plugins_list',
 							'type'       => 'feature',
 							'attributes' => [
 								'class' => 'rt-feature',
@@ -770,7 +1289,7 @@ class Options {
 								[
 									'rtsb-pro'   => [
 										'price'     => '$41.00 – $209.00',
-										'title'     => 'ShopBuilder – Elementor WooCommerce Builder Addons',
+										'title'     => 'ShopBuilder - WooCommerce Builder For Elementor',
 										'image_url' => rtwpvs()->get_images_uri( 'shopbuilde.png' ),
 										'url'       => 'https://www.radiustheme.com/downloads/woocommerce-bundle/',
 										'demo_url'  => 'https://shopbuilderwp.com/',
@@ -794,7 +1313,36 @@ class Options {
 										'buy_url'   => 'https://www.radiustheme.com/downloads/woocommerce-variation-images-gallery/',
 										// 'doc_url'   => 'https://www.radiustheme.com/how-to-use-woocommerce-variation-images-gallery-pro/'
 									],
-									'metro'      => [
+									'review-schema' => [
+										'price'     => esc_html__( 'Free', 'woo-product-variation-swatches' ),
+										'title'     => 'Review Schema – Rich Snippets & Structured Data',
+										'image_url' => 'https://ps.w.org/review-schema/assets/icon-256x256.gif',
+										'url'       => 'https://wordpress.org/plugins/review-schema/',
+										'demo_url'  => 'https://www.radiustheme.com/demo/wordpress/plugins/review-schema/',
+										'buy_url'   => 'https://wordpress.org/plugins/review-schema/',
+									],
+								]
+							),
+						],
+						[
+							'id'     => 'premium_themes_title',
+							'type'   => 'title',
+							'title'  => esc_html__( 'Our Themes', 'woo-product-variation-swatches' ),
+							'desc'   => esc_html__( 'Premium WordPress themes from RadiusTheme.', 'woo-product-variation-swatches' ),
+							'action' => [
+								'label' => esc_html__( 'View All', 'woo-product-variation-swatches' ),
+								'url'   => 'https://www.radiustheme.com/wordpress-themes/',
+							],
+						],
+						[
+							'id'         => 'premium_themes_list',
+							'type'       => 'feature',
+							'attributes' => [
+								'class' => 'rt-feature',
+							],
+							'html'       => Functions::get_product_list_html(
+								[
+									'metro' => [
 										'title'     => 'Metro – Minimal WooCommerce WordPress Theme',
 										'image_url' => rtwpvs()->get_images_uri( 'metro.jpg' ),
 										'url'       => 'https://www.radiustheme.com/downloads/metro-minimal-woocommerce-wordpress-theme/',
@@ -810,7 +1358,56 @@ class Options {
 			],
 		];
 
+		$fields = self::maybe_add_license_section( $fields );
+
 		return apply_filters( 'rtwpvs_settings_fields', $fields );
+	}
+
+	/**
+	 * Append the License section when the Pro plugin is active.
+	 *
+	 * The license key/status live in the free plugin settings, so the tab is
+	 * defined here and only surfaced once Pro is installed and loaded.
+	 *
+	 * @param array $sections Settings sections keyed by tab id.
+	 *
+	 * @return array
+	 */
+	private static function maybe_add_license_section( $sections ) {
+		if ( ! function_exists( 'rtwpvsp' ) ) {
+			return $sections;
+		}
+
+		$license = [
+			'license' => [
+				'id'     => 'license',
+				'title'  => esc_html__( 'License', 'woo-product-variation-swatches' ),
+				'desc'   => esc_html__( 'Add your licence code here', 'woo-product-variation-swatches' ),
+				'active' => apply_filters( 'rtwpvs_license_setting_active', false ),
+				'fields' => apply_filters(
+					'rtwpvs_license_setting_fields',
+					[
+						[
+							'id'    => 'license_key',
+							'type'  => 'license',
+							'title' => esc_html__( 'Licence key', 'woo-product-variation-swatches' ),
+							'desc'  => esc_html__( 'Enter your license key and save settings to activate Pro features and updates.', 'woo-product-variation-swatches' ),
+						],
+					]
+				),
+			],
+		];
+
+		// Place the License tab right after the "Tools" tab.
+		$keys     = array_keys( $sections );
+		$position = array_search( 'tools', $keys, true );
+		$position = ( false === $position ) ? count( $sections ) : $position + 1;
+
+		return array_merge(
+			array_slice( $sections, 0, $position, true ),
+			$license,
+			array_slice( $sections, $position, null, true )
+		);
 	}
 
 	public static function get_archive_swatches_positions() {

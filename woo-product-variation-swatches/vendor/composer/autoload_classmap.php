@@ -23,4 +23,5 @@ return array(
     'Rtwpvs\\Helpers\\Functions' => $baseDir . '/app/Helpers/Functions.php',
     'Rtwpvs\\Helpers\\Options' => $baseDir . '/app/Helpers/Options.php',
     'Rtwpvs\\Models\\Field' => $baseDir . '/app/Models/Field.php',
+    'Rtwpvs\\WooProductVariationSwatches' => $baseDir . '/app/WooProductVariationSwatches.php',
 );

@@ -1,0 +1,15 @@
+{
+  "name": "mahbubur/woo-product-variation-swatches",
+  "authors": [
+    {
+      "name": "Md. Mahbubur rahman",
+      "email": "mahbubur001@gmail.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Rtwpvs\\": "app"
+    }
+  }
+}

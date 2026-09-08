@@ -38,6 +38,7 @@ class ComposerStaticInitfbb707a75eeecdca1fc39e24f7e3a0d0
         'Rtwpvs\\Helpers\\Functions' => __DIR__ . '/../..' . '/app/Helpers/Functions.php',
         'Rtwpvs\\Helpers\\Options' => __DIR__ . '/../..' . '/app/Helpers/Options.php',
         'Rtwpvs\\Models\\Field' => __DIR__ . '/../..' . '/app/Models/Field.php',
+        'Rtwpvs\\WooProductVariationSwatches' => __DIR__ . '/../..' . '/app/WooProductVariationSwatches.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

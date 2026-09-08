@@ -236,6 +236,13 @@ class Functions {
 		$data             = '';
 		$more             = 0;
 		$is_archive       = ( isset( $args['is_archive'] ) && $args['is_archive'] );
+		// User-defined attribute groups indexed by stable id => [ key, name ], for
+		// resolving a term's stored group reference to its current key/label.
+		$groups_map       = Options::get_groups_map();
+		// Pro: render color swatches as a pill with the term name beside the color.
+		// Controlled independently for shop/archive vs the single product page.
+		$color_label_option = $is_archive ? 'archive_color_swatch_label' : 'color_swatch_label';
+		$show_color_label   = function_exists( 'rtwpvsp' ) && (bool) rtwpvs()->get_option( $color_label_option );
 		if ( ! empty( $options ) && $product ) {
 			$name          = uniqid( wc_variation_attribute_name( $attribute ) );
 			$display_count = 0;
@@ -302,7 +309,15 @@ class Functions {
 							}
 						}
 
-						$data .= sprintf( '<div %1$s class="rtwpvs-term rtwpvs-%2$s-term %2$s-variable-term-%3$s %4$s" title="%5$s" data-term="%3$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term->slug ), esc_attr( $selected_class ), $text_tooltip );
+						// Group: per-product override wins, else the term's global group
+						// assignment. Both store the group id; key/label come from config.
+						$group_ref = isset( $term_data['data'][ $term->slug ]['group_key'] ) ? sanitize_key( (string) $term_data['data'][ $term->slug ]['group_key'] ) : '';
+						if ( '' === $group_ref ) {
+							$group_ref = sanitize_key( (string) get_term_meta( $term->term_id, 'rtwpvs_term_group', true ) );
+						}
+						$group_key   = ( '' !== $group_ref && isset( $groups_map[ $group_ref ] ) ) ? $groups_map[ $group_ref ]['key'] : '';
+						$group_label = ( '' !== $group_ref && isset( $groups_map[ $group_ref ] ) ) ? $groups_map[ $group_ref ]['name'] : '';
+						$data       .= sprintf( '<div %1$s class="rtwpvs-term rtwpvs-%2$s-term %2$s-variable-term-%3$s %4$s" title="%5$s" data-term="%3$s" data-rtwpvs-group="%6$s" data-rtwpvs-group-label="%7$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term->slug ), esc_attr( $selected_class ), $text_tooltip, esc_attr( $group_key ), esc_attr( $group_label ) );
 						switch ( $term_type ) :
 							case 'color':
 								$global_color           = sanitize_hex_color( get_term_meta( $term->term_id, 'product_attribute_color', true ) );
@@ -316,6 +331,9 @@ class Functions {
 									$data .= sprintf( '%4$s<span class="rtwpvs-term-span rtwpvs-term-span-%1$s rtwpvs-term-span-dual-color" style="background: linear-gradient(-45deg, %2$s 0%%, %2$s 50%%, %3$s 50%%, %3$s 100%%);"></span>', esc_attr( $type ), esc_attr( $secondary_color ), esc_attr( $color ), $image_tooltip );
 								} else {
 									$data .= sprintf( '%s<span class="rtwpvs-term-span rtwpvs-term-span-%s" style="background-color:%s;"></span>', $image_tooltip, esc_attr( $term_type ), esc_attr( $color ) );
+								}
+								if ( $show_color_label ) {
+									$data .= sprintf( '<span class="rtwpvs-term-label">%s</span>', esc_html( $term->name ) );
 								}
 								break;
 
@@ -411,7 +429,12 @@ class Functions {
 						}
 					}
 
-					$data .= sprintf( '<div %1$s class="rtwpvs-term rtwpvs-%2$s-term %2$s-variable-term-%3$s %4$s" title="%5$s" data-term="%3$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term_name ), esc_attr( $selected_class ), esc_html( $term_name ) );
+					// Custom (non-taxonomy) option: only a per-product group override is
+					// possible; the stored id resolves to the current key/label.
+					$group_ref   = isset( $term_data['data'][ $option ]['group_key'] ) ? sanitize_key( (string) $term_data['data'][ $option ]['group_key'] ) : '';
+					$group_key   = ( '' !== $group_ref && isset( $groups_map[ $group_ref ] ) ) ? $groups_map[ $group_ref ]['key'] : '';
+					$group_label = ( '' !== $group_ref && isset( $groups_map[ $group_ref ] ) ) ? $groups_map[ $group_ref ]['name'] : '';
+					$data       .= sprintf( '<div %1$s class="rtwpvs-term rtwpvs-%2$s-term %2$s-variable-term-%3$s %4$s" title="%5$s" data-term="%3$s" data-rtwpvs-group="%6$s" data-rtwpvs-group-label="%7$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term_name ), esc_attr( $selected_class ), esc_html( $term_name ), esc_attr( $group_key ), esc_attr( $group_label ) );
 
 					switch ( $term_type ) :
 						case 'color':
@@ -424,6 +447,9 @@ class Functions {
 								$data .= sprintf( '%4$s<span class="rtwpvs-term-span rtwpvs-term-span-%1$s rtwpvs-term-span-dual-color" style="background: linear-gradient(-45deg, %2$s 0%%, %2$s 50%%, %3$s 50%%, %3$s 100%%);"></span>', esc_attr( $type ), esc_attr( $secondary_color ), esc_attr( $color ), $image_tooltip );
 							} else {
 								$data .= sprintf( '<span class="rtwpvs-term-span rtwpvs-term-span-%s" style="background-color:%s;"></span>', esc_attr( $term_type ), esc_attr( $color ) );
+							}
+							if ( $show_color_label ) {
+								$data .= sprintf( '<span class="rtwpvs-term-label">%s</span>', esc_html( $term_name ) );
 							}
 
 							break;
@@ -473,18 +499,161 @@ class Functions {
 			}
 		}
 
+		// Group terms under sub-headings when any term has a group assigned.
+		$data     = self::group_terms_html( $data );
 		$contents = apply_filters( 'rtwpvs_variable_term', $data, $type, $options, $args, $term_data );
 
 		$attribute = $args['attribute'];
 
-		$css_classes = apply_filters( 'rtwpvs_variable_terms_wrapper_class', [ "{$type}-variable-wrapper" ], $type, $args, $term_data );
+		// Context scope class so size/font settings can target the right display
+		// without leaking across contexts: archive/shop/loop swatches get
+		// `rtwpvs-archive-swatches`, single product detail swatches get
+		// `rtwpvs-single-swatches`. (`.rtwpvs` itself is the <body> class, so it
+		// can't distinguish the two — see InitHooks::body_class().)
+		$context_class = ! empty( $args['is_archive'] ) ? 'rtwpvs-archive-swatches' : 'rtwpvs-single-swatches';
+
+		$css_classes = apply_filters( 'rtwpvs_variable_terms_wrapper_class', [ "{$type}-variable-wrapper", $context_class ], $type, $args, $term_data );
 		// $more
 		if ( $more ) {
 			$css_classes[] = 'has-more-variation';
 		}
+		if ( $show_color_label && 'color' === $type ) {
+			$css_classes[] = 'rtwpvs-color-with-label';
+		}
 		$data = sprintf( '<div class="rtwpvs-terms-wrapper %s" data-attribute_name="%s">%s</div>', trim( implode( ' ', array_unique( $css_classes ) ) ), esc_attr( wc_variation_attribute_name( $attribute ) ), $contents );
 
 		return apply_filters( 'rtwpvs_variable_items_wrapper', $data, $contents, $type, $args, $term_data );
+	}
+
+	/**
+	 * Regroup the flat term markup into per-group sections.
+	 *
+	 * Each term carries a `data-rtwpvs-group` attribute (set from the per-product
+	 * "Group" field). When at least one term has a non-empty group, the terms are
+	 * bucketed by group name (in first-seen order) and each named group is wrapped
+	 * with a sub-heading. Ungrouped terms and any trailing "more" markup are kept
+	 * after the groups. If no term has a group, the markup is returned unchanged so
+	 * existing products behave exactly as before.
+	 *
+	 * @param string $html Flat concatenated term markup.
+	 * @return string
+	 */
+	private static function group_terms_html( $html ) {
+		// Fast path: nothing to do unless at least one term has a non-empty group key.
+		if ( '' === $html || ! preg_match( '/data-rtwpvs-group="[^"]+"/', $html ) ) {
+			return $html;
+		}
+
+		list( $blocks, $tail ) = self::split_term_blocks( $html );
+
+		// Bucket terms by their group KEY; remember the first non-empty group LABEL
+		// seen for each key (the heading shown on the front-end).
+		$buckets   = [];
+		$labels    = [];
+		$has_group = false;
+		foreach ( $blocks as $block ) {
+			$key = '';
+			if ( preg_match( '/data-rtwpvs-group="([^"]*)"/', $block, $m ) ) {
+				$key = trim( html_entity_decode( $m[1], ENT_QUOTES ) );
+			}
+			if ( '' !== $key ) {
+				$has_group = true;
+				if ( empty( $labels[ $key ] ) && preg_match( '/data-rtwpvs-group-label="([^"]*)"/', $block, $lm ) ) {
+					$labels[ $key ] = trim( html_entity_decode( $lm[1], ENT_QUOTES ) );
+				}
+			}
+			$buckets[ $key ][] = $block;
+		}
+
+		// No usable group → leave the markup untouched.
+		if ( ! $has_group ) {
+			return $html;
+		}
+
+		$grouped   = '';
+		$ungrouped = '';
+		foreach ( $buckets as $key => $items ) {
+			$inner = implode( '', $items );
+			if ( '' === $key ) {
+				$ungrouped .= $inner;
+				continue;
+			}
+			// Heading falls back to the key when no label is set.
+			$heading  = ! empty( $labels[ $key ] ) ? $labels[ $key ] : $key;
+			$grouped .= sprintf(
+				'<div class="rtwpvs-term-group" data-group-key="%s"><span class="rtwpvs-term-group-label">%s</span><div class="rtwpvs-term-group-items">%s</div></div>',
+				esc_attr( $key ),
+				esc_html( $heading ),
+				$inner
+			);
+		}
+
+		if ( '' !== $ungrouped ) {
+			$grouped .= sprintf( '<div class="rtwpvs-term-group rtwpvs-term-group--ungrouped">%s</div>', $ungrouped );
+		}
+
+		return $grouped . $tail;
+	}
+
+	/**
+	 * Split flat term markup into an array of top-level `.rtwpvs-term` <div>
+	 * blocks plus any leftover (e.g. the "+N More" span), preserving order.
+	 * Uses depth tracking so nested <div>s inside a term never break the split.
+	 *
+	 * @param string $html Flat term markup.
+	 * @return array{0: string[], 1: string} [ term blocks, trailing/leftover markup ]
+	 */
+	private static function split_term_blocks( $html ) {
+		$blocks = [];
+		$tail   = '';
+		$len    = strlen( $html );
+		$i      = 0;
+
+		while ( $i < $len ) {
+			$open = strpos( $html, '<div', $i );
+			if ( false === $open ) {
+				$tail .= substr( $html, $i );
+				break;
+			}
+			// Anything before the next <div> (e.g. a "more" span) is leftover.
+			if ( $open > $i ) {
+				$tail .= substr( $html, $i, $open - $i );
+			}
+
+			// Walk forward tracking <div> depth to find this block's close.
+			$depth = 0;
+			$j     = $open;
+			$close = false;
+			while ( $j < $len ) {
+				$next_open  = strpos( $html, '<div', $j );
+				$next_close = strpos( $html, '</div>', $j );
+				if ( false === $next_close ) {
+					break;
+				}
+				if ( false !== $next_open && $next_open < $next_close ) {
+					$depth++;
+					$j = $next_open + 4;
+				} else {
+					$depth--;
+					$j = $next_close + 6;
+					if ( 0 === $depth ) {
+						$close = $j;
+						break;
+					}
+				}
+			}
+
+			if ( false === $close ) {
+				// Malformed — bail out, keep the remainder verbatim.
+				$tail .= substr( $html, $open );
+				break;
+			}
+
+			$blocks[] = substr( $html, $open, $close - $open );
+			$i        = $close;
+		}
+
+		return [ $blocks, $tail ];
 	}
 
 	public static function get_product_attributes_array( $attributes ) {
@@ -521,14 +690,15 @@ class Functions {
 				$demo_url        = isset( $product['demo_url'] ) ? $product['demo_url'] : null;
 				$feature_list    = null;
 				$info_html       = sprintf(
-					'<div class="rt-product-info">%s%s%s</div>',
+					'<div class="rt-product-info">%s%s%s%s</div>',
 					$title ? sprintf( "<h3 class='rt-product-title'><a href='%s' target='_blank'>%s</a></h3>", esc_url( $url ), $title ) : null,
+					$price ? sprintf( '<div class="rt-product-price">%s</div>', esc_html( $price ) ) : null,
 					$feature_list,
 					$buy_url || $demo_url || $doc_url ?
 						sprintf(
 							'<div class="rt-product-action">%s%s%s</div>',
-							$buy_url ? sprintf( '<a class="rt-admin-btn" href="%s" target="_blank">%s</a>', esc_url( $buy_url ), esc_html__( 'Buy', 'woo-product-variation-swatches' ) ) : null,
-							$demo_url ? sprintf( '<a class="rt-admin-btn" href="%s" target="_blank">%s</a>', esc_url( $demo_url ), esc_html__( 'Demo', 'woo-product-variation-swatches' ) ) : null,
+							$buy_url ? sprintf( '<a class="rt-admin-btn rt-admin-btn--buy" href="%s" target="_blank">%s</a>', esc_url( $buy_url ), esc_html__( 'Buy', 'woo-product-variation-swatches' ) ) : null,
+							$demo_url ? sprintf( '<a class="rt-admin-btn rt-admin-btn--demo" href="%s" target="_blank">%s</a>', esc_url( $demo_url ), esc_html__( 'Demo', 'woo-product-variation-swatches' ) ) : null,
 							$doc_url ? sprintf( '<a class="rt-doc button" href="%s" target="_blank">%s</a>', esc_url( $doc_url ), esc_html__( 'Documentation', 'woo-product-variation-swatches' ) ) : null
 						)
 						: null
@@ -582,10 +752,11 @@ class Functions {
 	 * @return bool
 	 */
 	static function archive_swatches_has_more( $count ) {
-		$limit                   = absint( rtwpvs()->get_option( 'archive_swatches_display_limit' ) );
-		$enable_single_attribute = (bool) rtwpvs()->get_option( 'archive_swatches_enable_single_attribute' );
+		// The display limit applies on archive pages independently of the
+		// "Show Single Attribute" (catalog) mode. 0 means no limit.
+		$limit = absint( rtwpvs()->get_option( 'archive_swatches_display_limit' ) );
 
-		if ( $limit === 0 || ! $enable_single_attribute ) {
+		if ( $limit === 0 ) {
 			return false;
 		}
 

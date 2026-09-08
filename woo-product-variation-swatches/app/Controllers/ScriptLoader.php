@@ -11,7 +11,10 @@ class ScriptLoader {
 	private $version;
 
 	public function __construct() {
-		$this->suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		// The build emits both unminified (rtwpvs.js) and minified (rtwpvs.min.js)
+		// bundles. Always load the minified twins — the same files in every
+		// environment (no dev/production split).
+		$this->suffix  = '.min';
 		$this->version = defined( 'WP_DEBUG' ) ? time() : RTWPVS_VERSION;
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 15 );
@@ -36,10 +39,16 @@ class ScriptLoader {
 			'reselect_clear'                           => rtwpvs()->get_option( 'clear_on_reselect' ),
             'term_beside_label'                        => function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'attribute_on_click_behavior' ),
 			'archive_swatches'                         => rtwpvs()->get_option( 'archive_swatches' ),
-			'enable_ajax_archive_variation'            => rtwpvs()->get_option( 'enable_ajax_archive_variation' ),
-			'archive_swatches_enable_single_attribute' => rtwpvs()->get_option( 'archive_swatches_enable_single_attribute' ),
+			// Cast to real booleans: get_option() returns the string "0"/"1", and
+			// "0" is TRUTHY in JavaScript — passing it raw makes `!param` / `if(param)`
+			// checks in frontend.js behave backwards (e.g. the archive add-to-cart
+			// text swap never fires). json_encode of a PHP bool gives true/false.
+			'enable_ajax_archive_variation'            => (bool) rtwpvs()->get_option( 'enable_ajax_archive_variation' ),
+			'archive_swatches_enable_single_attribute' => (bool) rtwpvs()->get_option( 'archive_swatches_enable_single_attribute' ),
 			'archive_swatches_single_attribute'        => rtwpvs()->get_option( 'archive_swatches_single_attribute' ),
 			'archive_swatches_display_event'           => rtwpvs()->get_option( 'archive_swatches_display_event', 'click' ),
+			'archive_swatches_display_mode'            => function_exists( 'rtwpvsp' ) ? rtwpvs()->get_option( 'archive_swatches_reveal_hover', 'default' ) : 'default',
+			'i18n_modal_close'                         => esc_html__( 'Close', 'woo-product-variation-swatches' ),
 			'archive_image_selector'                   => rtwpvs()->get_option( 'archive_swatches_image_selector', '.attachment-woocommerce_thumbnail, .wp-post-image' ),
 			'archive_add_to_cart_text'                 => apply_filters( 'rtwpvs_archive_add_to_cart_text', '' ),
 			'archive_add_to_cart_select_options'       => apply_filters( 'rtwpvs_archive_add_to_cart_select_options', '' ),
@@ -57,7 +66,7 @@ class ScriptLoader {
 			return;
 		}
 		if ( rtwpvs()->get_option( 'load_scripts' ) ) {
-			if ( is_shop() && ! class_exists( 'Rtwpvsp' ) ) {
+			if ( is_shop() && ! function_exists( 'rtwpvsp' ) ) {
 				return;
 			}
 			if ( is_shop() && ! rtwpvs()->get_option( 'archive_swatches' ) ) {
@@ -71,7 +80,9 @@ class ScriptLoader {
 				}
 			}
 			*/
-			if ( is_product() || is_shop() || is_product_taxonomy() ) {
+			// is_product() also carries related & up-sell loops; is_cart() carries
+			// cross-sell loops — both need the base swatch assets to render.
+			if ( is_product() || is_shop() || is_product_taxonomy() || is_cart() ) {
 				$this->load_scripts();
 			}
 
@@ -97,7 +108,20 @@ class ScriptLoader {
 		global $post;
 		$screen    = get_current_screen();
 		$screen_id = $screen ? $screen->id : '';
-		if ( ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'product' && isset( $_GET['taxonomy'] ) ) || $screen_id === 'product' || ( ( isset( $_GET['page'] ) && $_GET['page'] == "wc-settings" ) && ( isset( $_GET['tab'] ) && $_GET['tab'] == "rtwpvs" ) ) ) {
+
+		$is_settings_page = ( $screen_id === 'woocommerce_page_rtwpvs-settings' )
+			|| ( ( isset( $_GET['page'] ) && $_GET['page'] === 'wc-settings' ) && ( isset( $_GET['tab'] ) && $_GET['tab'] === 'rtwpvs' ) );
+		$is_term_screen   = isset( $_GET['post_type'] ) && $_GET['post_type'] === 'product' && isset( $_GET['taxonomy'] );
+		$is_product_edit  = $screen_id === 'product';
+
+		// React settings app (WooCommerce > Settings > Product Swatches).
+		if ( $is_settings_page ) {
+			$this->enqueue_settings_app();
+
+			return;
+		}
+
+		if ( $is_term_screen || $is_product_edit ) {
 
 			wp_enqueue_style( 'wp-color-picker' );
 			if ( apply_filters( 'rtwpvs_disable_alpha_color_picker', false ) ) {
@@ -133,6 +157,17 @@ class ScriptLoader {
 		}
 	}
 
+	/**
+	 * Enqueue the React settings stylesheet.
+	 *
+	 * The JS bundle and its data are printed directly in the settings tab
+	 * markup (see SettingsAPI::global_settings) so optimization/security
+	 * plugins can't strip the enqueued script on this screen.
+	 */
+	private function enqueue_settings_app() {
+		wp_enqueue_style( 'rtwpvs-settings', rtwpvs()->get_assets_uri( "css/settings{$this->suffix}.css" ), [], $this->version );
+	}
+
 	public function add_inline_style() {
 		if ( apply_filters( 'rtwpvs_disable_inline_style', false ) ) {
 			return;
@@ -151,26 +186,56 @@ class ScriptLoader {
 		$reveal_panel_padding = rtwpvs()->get_option( 'reveal_panel_padding' );
 		$reveal_panel_padding = is_numeric( $reveal_panel_padding ) ? $reveal_panel_padding : 16;
 
+		// Clear (reset variations) link — free feature; the link is WooCommerce core.
+		$clear_link_font_size = absint( rtwpvs()->get_option( 'clear_link_font_size', 14 ) );
+		$clear_pad_css        = '';
+		$clear_link_padding   = rtwpvs()->get_option( 'clear_link_padding' );
+		if ( is_array( $clear_link_padding ) ) {
+			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $side ) {
+				if ( isset( $clear_link_padding[ $side ] ) && '' !== $clear_link_padding[ $side ] && is_numeric( $clear_link_padding[ $side ] ) ) {
+					$clear_pad_css .= sprintf( 'padding-%s:%dpx !important;', $side, absint( $clear_link_padding[ $side ] ) );
+				}
+			}
+		}
+		$clear_margin_css  = '';
+		$clear_link_margin = rtwpvs()->get_option( 'clear_link_margin' );
+		if ( is_array( $clear_link_margin ) ) {
+			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $side ) {
+				if ( isset( $clear_link_margin[ $side ] ) && '' !== $clear_link_margin[ $side ] && is_numeric( $clear_link_margin[ $side ] ) ) {
+					$clear_margin_css .= sprintf( 'margin-%s:%dpx !important;', $side, absint( $clear_link_margin[ $side ] ) );
+				}
+			}
+		}
+
 		ob_start();
 		?>
         <style type="text/css">
-            .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term):not(.rtwpvs-button-term) {
+            <?php // Scoped to `.rtwpvs-single-swatches` (product detail context only) so the
+                  // single-product size/font settings never leak onto archive/shop loops,
+                  // which carry `.rtwpvs-archive-swatches` and are sized by the pro plugin. ?>
+            .rtwpvs .rtwpvs-single-swatches.rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term):not(.rtwpvs-button-term) {
                 width: <?php echo esc_attr($width); ?>px;
                 height: <?php echo esc_attr($height); ?>px;
             }
 
-            .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term {
+            .rtwpvs .rtwpvs-single-swatches.rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term {
                 min-width: <?php echo esc_attr($button_min_width); ?>px;
                 min-height: <?php echo esc_attr($button_min_height); ?>px;
             }
 
-            .rtwpvs .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term span {
+            .rtwpvs .rtwpvs-single-swatches.rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term span {
                 font-size: <?php echo esc_attr($font_size); ?>px;
             }
 
             .rtwpvs-product .rtwpvs-archive-variation-wrapper.rtwpvs-reveal-hover {
                 border-radius: <?php echo esc_attr($reveal_panel_radius); ?>px <?php echo esc_attr($reveal_panel_radius); ?>px 0 0;
                 padding: <?php echo esc_attr($reveal_panel_padding); ?>px;
+            }
+
+            /* Clear (reset variations) link styling. */
+            .rtwpvs .reset_variations {
+                font-size: <?php echo esc_attr( $clear_link_font_size ); ?>px !important;
+                <?php echo $clear_pad_css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php echo $clear_margin_css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
             }
 
             <?php if($tooltip_background): ?>

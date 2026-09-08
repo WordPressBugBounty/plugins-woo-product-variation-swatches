@@ -116,6 +116,7 @@
 }
 #rtwpvs-settings-container .rt-doc-wrapper .rt-doc-box {
   background-color: #ffffff;
+  -webkit-box-shadow: 0 1px 18px 0 rgba(0, 0, 0, 0.08);
   box-shadow: 0 1px 18px 0 rgba(0, 0, 0, 0.08);
   border-radius: 4px;
   padding: 15px;
@@ -153,6 +154,8 @@
 #rtwpvs-settings-container .rt-doc-wrapper .rt-doc-box .item-content p a {
   color: #5d3dfd;
   text-decoration: underline;
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
 
@@ -456,8 +459,18 @@ body .rt-admin-btn:hover {
 }
 
 .animate-spin {
+  -webkit-animation: rt-spin 2s infinite linear;
   animation: rt-spin 2s infinite linear;
   display: inline-block;
+}
+
+@-webkit-keyframes rt-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
 @keyframes rt-spin {
   0% {
@@ -475,6 +488,7 @@ body .rt-admin-btn:hover {
 }
 .rtvs-document-box {
   background-color: #ffffff;
+  -webkit-box-shadow: 0 1px 18px 0 rgba(0, 0, 0, 0.08);
   box-shadow: 0 1px 18px 0 rgba(0, 0, 0, 0.08);
   border-radius: 4px;
   padding: 30px 20px;
@@ -506,6 +520,8 @@ body .rt-admin-btn:hover {
 }
 
 .rtvs-document-box .rtvs-box-content {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
 }
 
@@ -573,7 +589,6 @@ body .rt-admin-btn:hover {
 .rtvs-tooltip .rtvs-tooltiptext {
   visibility: hidden;
   min-width: 80px;
-  width: -moz-max-content;
   width: max-content;
   max-width: 300px;
   background-color: black;

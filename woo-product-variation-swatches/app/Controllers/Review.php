@@ -12,38 +12,71 @@ class Review {
 
 		// $black_friday = mktime(0, 0, 0, 11, 22, 2021) <= $current && $current <= mktime(0, 0, 0, 12, 6, 2021);
 		if ( ! ( $start <= $current && $current <= $end ) ) {
-			register_activation_hook(RTWPVS_PLUGIN_FILE, [__CLASS__, 'rtvs_activation_time']);
 			add_action('admin_init', [__CLASS__, 'rtvs_check_installation_time']);
 			add_action('admin_init', [__CLASS__, 'rtvs_spare_me'], 5);
 		}
 	}
 
-	// add plugin activation time
+	/**
+	 * Days to wait after install before asking for a review.
+	 */
+	const REVIEW_DELAY_DAYS = 10;
+
+	/**
+	 * Days to wait after the user clicks "Remind Me Later".
+	 */
+	const REMIND_DELAY_DAYS = 15;
+
+	/**
+	 * Record the activation time.
+	 *
+	 * Registered from the main plugin file so it runs on the activation request.
+	 */
 	public static function rtvs_activation_time() {
-		$get_activation_time = strtotime('now');
-		add_option('rtvs_plugin_activation_time', $get_activation_time); // replace         your_plugin with Your plugin name
+		add_option('rtvs_plugin_activation_time', time());
 	}
 
-	//check if review notice should be shown or not
+	/**
+	 * Decide whether the review notice is due yet.
+	 *
+	 * The notice is only shown once the install (or "remind me later") delay has
+	 * actually elapsed. A missing timestamp is stamped with the current time
+	 * rather than treated as 0, which would make every comparison pass and show
+	 * the notice on day one.
+	 */
 	public static function rtvs_check_installation_time() {
-        
-		// Added Lines Start
+
 		$nobug = get_option('rtvs_spare_me', '0');
 
-		if ( $nobug == '1' || $nobug == '3') {
-			return; 
+		// Dismissed for good, or already rated.
+		if ( '1' === $nobug || '3' === $nobug ) {
+			return;
 		}
 
-		$install_date = get_option('rtvs_plugin_activation_time');
-		$past_date    = strtotime('-10 days');
+		$now = time();
 
-		$remind_time = get_option('rtvs_remind_me');
-		$remind_due  = strtotime('+15 days', $remind_time);
-		$now         = strtotime('now');
-        
-		if ( $now >= $remind_due) {
-			add_action('admin_notices', [__CLASS__, 'rtvs_display_admin_notice']);
-		} elseif ( ($past_date >= $install_date) && $nobug !== '2') {
+		// "Remind me later" was clicked: that timestamp drives the next prompt.
+		$remind_time = (int) get_option('rtvs_remind_me');
+
+		if ( $remind_time > 0 ) {
+			if ( $now >= strtotime('+' . self::REMIND_DELAY_DAYS . ' days', $remind_time) ) {
+				add_action('admin_notices', [__CLASS__, 'rtvs_display_admin_notice']);
+			}
+
+			return;
+		}
+
+		$install_date = (int) get_option('rtvs_plugin_activation_time');
+
+		// No activation timestamp (activated before this was tracked): start the
+		// clock now instead of prompting straight away.
+		if ( $install_date <= 0 ) {
+			update_option('rtvs_plugin_activation_time', $now);
+
+			return;
+		}
+
+		if ( '2' !== $nobug && $now >= strtotime('+' . self::REVIEW_DELAY_DAYS . ' days', $install_date) ) {
 			add_action('admin_notices', [__CLASS__, 'rtvs_display_admin_notice']);
 		}
 	}
@@ -74,7 +107,7 @@ class Review {
 			$dont_disturb = esc_url(add_query_arg( $args + [ 'rtvs_spare_me' => '1' ] , self::rtvs_current_admin_url()));
 			$remind_me    = esc_url(add_query_arg( $args + [ 'rtvs_remind_me' => '1' ] , self::rtvs_current_admin_url()));
 			$rated        = esc_url(add_query_arg( $args + [ 'rtvs_rated' => '1' ] , self::rtvs_current_admin_url()));
-			$reviewurl    = esc_url('https://wordpress.org/support/plugin/woo-product-variation-swatches/reviews/?filter=5#new-post');
+			$reviewurl    = esc_url('https://wordpress.org/support/plugin/woo-product-variation-swatches/reviews/?#new-post');
 
 			printf(__('<div class="notice rtvs-review-notice rtvs-review-notice--extended"> 
                 <div class="rtvs-review-notice_content">

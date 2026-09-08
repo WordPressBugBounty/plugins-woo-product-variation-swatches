@@ -69,7 +69,7 @@ class Offer {
 				<div class="notice notice-info is-dismissible" data-woobundlebfdismissable="woobundle_black_friday_offer_2024"
 					 style="display:grid;grid-template-columns: 100px auto;padding-top: 20px; padding-bottom: 22px;">
 					<img alt="<?php echo esc_attr( $plugin_name ); ?>"
-						 src="<?php echo rtwpvs()->get_assets_uri( 'images/icon-128x128.png' ); ?>" width="74px"
+						 src="<?php echo rtwpvs()->get_assets_uri( 'images/icon-256x256.png' ); ?>" width="74px"
 						 height="74px" style="grid-row: 1 / 4; align-self: center;justify-self: center"/>
 					<h3 style="margin:0; position: relative;display: flex; align-items: center;">WooCommerce Bundle [Black Friday <img style="width: 40px;position: relative; " src="<?php echo rtwpvs()->get_assets_uri( 'images/deal.gif' ); ?>">]</h3>
 
@@ -144,7 +144,7 @@ class Offer {
 				<div class="notice notice-info is-dismissible" data-rtwpvsdismissable="rtwpvs_offer_july_2022"
 					style="display:grid;grid-template-columns: 100px auto;padding-top: 25px; padding-bottom: 22px;">
 					<img alt="<?php echo esc_attr( $plugin_name ); ?>"
-						src="<?php echo rtwpvs()->get_assets_uri( 'images/icon-128x128.png' ); ?>" width="74px"
+						src="<?php echo rtwpvs()->get_assets_uri( 'images/icon-256x256.png' ); ?>" width="74px"
 						height="74px" style="grid-row: 1 / 4; align-self: center;justify-self: center"/>
 					<h3 style="margin:0;"><?php echo sprintf( '%s Lifetime Deal!!', $plugin_name ); ?></h3>
 
