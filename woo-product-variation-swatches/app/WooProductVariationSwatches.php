@@ -19,6 +19,7 @@ use Rtwpvs\Controllers\ScriptLoader;
 use Rtwpvs\Controllers\ThemeSupport;
 use Rtwpvs\Controllers\Notifications;
 use Rtwpvs\Controllers\ProductMetaBox;
+use Rtwpvs\Controllers\DeactivationFeedback;
 
 /**
  * Class WooProductVariationSwatches
@@ -49,6 +50,11 @@ final class WooProductVariationSwatches {
 		// new Offer();
 		new BlackFridayV2();
 		Review::init();
+		// Registered before the WooCommerce gate so the deactivation feedback
+		// modal is still available when WooCommerce is inactive.
+		if ( is_admin() ) {
+			DeactivationFeedback::init();
+		}
 		if ( $this->is_valid_php_version() && $this->is_wc_active() ) {
 			// Must precede the defaults sync: seeding `default_dropdown_to` first
 			// would make the legacy migration skip itself and drop the old value.

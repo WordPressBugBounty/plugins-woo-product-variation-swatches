@@ -26,7 +26,7 @@ class Hooks {
 		// Registered unconditionally; the setting is checked inside the callback so we
 		// don't call get_option() this early (that would force the settings API to
 		// build during its own construction and recurse).
-		add_filter( 'woocommerce_locate_template', [ __CLASS__, 'override_variable_template' ], 20, 3 );
+		add_filter( 'woocommerce_locate_template', [ __CLASS__, 'override_variable_template' ], 20, 4 );
 		add_action( 'admin_init', [ __CLASS__, 'after_plugin_active' ] );
 
 		add_filter( 'wp_get_attachment_image_attributes', [
@@ -68,6 +68,7 @@ class Hooks {
 		add_action( 'woocommerce_attribute_added', [ __CLASS__, 'delete_transient_at_attribute_added' ], 20, 2 );
 
 		add_filter( 'pre_update_option_rtwpvs', [ __CLASS__, 'delete_transient_at_update_option' ], 10, 2 );
+		add_filter( 'pre_update_option_rtwpvs', [ __CLASS__, 'maybe_clear_template_cache' ], 10, 2 );
 		add_action( 'rtwpvs_after_term_meta_saved', [ __CLASS__, 'delete_transient_at_term_meta_saved' ], 20, 2 );
 		add_action( 'init', [ __CLASS__, 'delete_transient_at_force' ] );
 	}
@@ -75,23 +76,89 @@ class Hooks {
 	/**
 	 * Point WooCommerce at the plugin's div-based variable add-to-cart template.
 	 *
-	 * Only the variations add-to-cart template is redirected; every other template
-	 * keeps its normal resolution (theme override → WooCommerce core).
+	 * Only the variations add-to-cart template is redirected, and only when
+	 * WooCommerce resolved its own core template. A theme (or another plugin)
+	 * that ships `single-product/add-to-cart/variable.php` always wins: this
+	 * filter runs after WooCommerce has already looked in the theme, so
+	 * replacing a non-core path would silently discard that override.
 	 *
 	 * @param string $template      Located template path.
 	 * @param string $template_name Template name being located.
 	 * @param string $template_path Base template path.
+	 * @param string $default_path  WooCommerce core template directory. Passed
+	 *                              since WooCommerce 9.5; resolved from WC() on
+	 *                              older versions.
 	 * @return string
 	 */
-	static function override_variable_template( $template, $template_name, $template_path ) {
-		if ( 'single-product/add-to-cart/variable.php' === $template_name && rtwpvs()->get_option( 'remove_variations_table' ) ) {
-			$override = RTWPVS_PLUGIN_PATH . 'templates/' . $template_name;
-			if ( file_exists( $override ) ) {
-				return $override;
-			}
+	static function override_variable_template( $template, $template_name, $template_path, $default_path = '' ) {
+		if ( 'single-product/add-to-cart/variable.php' !== $template_name ) {
+			return $template;
 		}
 
-		return $template;
+		if ( ! rtwpvs()->get_option( 'remove_variations_table' ) ) {
+			return $template;
+		}
+
+		if ( ! self::is_core_template( $template, $template_name, $default_path ) ) {
+			return $template;
+		}
+
+		$override = RTWPVS_PLUGIN_PATH . 'templates/' . $template_name;
+
+		return file_exists( $override ) ? $override : $template;
+	}
+
+	/**
+	 * Whether the located template is WooCommerce's own bundled template.
+	 *
+	 * @param string $template      Located template path.
+	 * @param string $template_name Template name being located.
+	 * @param string $default_path  WooCommerce core template directory, if known.
+	 * @return bool
+	 */
+	private static function is_core_template( $template, $template_name, $default_path = '' ) {
+		if ( ! $default_path && function_exists( 'WC' ) ) {
+			$default_path = WC()->plugin_path() . '/templates/';
+		}
+
+		if ( ! $default_path ) {
+			// Without a reliable core path, leave the resolved template alone.
+			return false;
+		}
+
+		$core     = wp_normalize_path( trailingslashit( $default_path ) . $template_name );
+		$resolved = wp_normalize_path( (string) $template );
+
+		return $core === $resolved;
+	}
+
+	/**
+	 * Flush WooCommerce's template-path cache when the layout setting changes.
+	 *
+	 * `wc_get_template()` caches the located path in the `woocommerce` cache
+	 * group under a key that does not include plugin settings, so on sites with
+	 * a persistent object cache the previous template would keep being served
+	 * after the setting is toggled (or reset by the migration). Only
+	 * WooCommerce's own template keys are cleared — never the whole cache.
+	 *
+	 * @param mixed $value     Settings about to be stored.
+	 * @param mixed $old_value Settings currently stored.
+	 * @return mixed Unmodified $value.
+	 */
+	static function maybe_clear_template_cache( $value, $old_value ) {
+		if ( ! function_exists( 'wc_clear_template_cache' ) ) {
+			return $value;
+		}
+
+		$key = 'remove_variations_table';
+		$new = is_array( $value ) && isset( $value[ $key ] ) ? (string) $value[ $key ] : '';
+		$old = is_array( $old_value ) && isset( $old_value[ $key ] ) ? (string) $old_value[ $key ] : '';
+
+		if ( $new !== $old ) {
+			wc_clear_template_cache();
+		}
+
+		return $value;
 	}
 
 	static function delete_transient_at_force() {

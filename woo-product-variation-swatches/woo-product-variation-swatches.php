@@ -4,7 +4,7 @@
  * Plugin Name:             Variation Swatches for WooCommerce
  * Plugin URI:              https://radiustheme.com
  * Description:             Variation Swatches for WooCommerce change beautiful colors, images and buttons variation swatches for WooCommerce product attributes.
- * Version:                 2.5.0
+ * Version:                 2.5.1
  * Author:                  RadiusTheme
  * Author URI:              https://radiustheme.com
  * Requires at least:       6.0
@@ -29,7 +29,7 @@ if (!defined('RTWPVS_PLUGIN_FILE')) {
 
 // Define RTCL_PLUGIN_FILE.
 if (!defined('RTWPVS_VERSION')) {
-	define('RTWPVS_VERSION', '2.5.0');
+	define('RTWPVS_VERSION', '2.5.1');
 }
 
 define( 'RTWPVS_PLUGIN_PATH', plugin_dir_path(__FILE__) );

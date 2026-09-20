@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Variation Swatches for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Variation Swatches for WooCommerce 2.5.0\n"
+"Project-Id-Version: Variation Swatches for WooCommerce 2.5.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-product-variation-swatches\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-08T10:09:32+00:00\n"
+"POT-Creation-Date: 2026-09-20T11:13:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-product-variation-swatches\n"
@@ -36,55 +36,125 @@ msgstr ""
 msgid "RadiusTheme"
 msgstr ""
 
-#: app/Controllers/Hooks.php:452
+#: app/Controllers/DeactivationFeedback.php:71
+msgid "Bug or issue detected."
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:72
+msgid "I no longer need the plugin"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:73
+msgid "I found a better plugin"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:74
+msgid "I couldn't get the plugin to work"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:75
+msgid "It's a temporary deactivation"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:104
+msgid "Quick Feedback"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:108
+msgid "Having trouble?"
+msgstr ""
+
+#. translators: %s: Support ticket link.
+#: app/Controllers/DeactivationFeedback.php:112
+#, php-format
+msgid "For faster and more accurate support, please %s — our support agent will personally review and resolve your issue."
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:117
+msgid "open a support ticket"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:124
+msgid "If you’d prefer not to open a support ticket, please take a moment to share why you’re deactivating Variation Swatches for WooCommerce:"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:141
+msgid "Please share the plugin name"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:151
+msgid "Please let us know about any issues you are facing with the plugin. How can we improve the plugin?"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:155
+msgid "Write something here. How can we improve the plugin?"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:584
+msgid "Choose the reason"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:590
+msgid "Please provide more details regarding the issue so we can address it in future updates."
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:658
+msgid "Submit & Deactivate"
+msgstr ""
+
+#: app/Controllers/DeactivationFeedback.php:662
+msgid "Skip & Deactivate"
+msgstr ""
+
+#: app/Controllers/Hooks.php:519
 msgid "Select terms"
 msgstr ""
 
-#: app/Controllers/Hooks.php:465
+#: app/Controllers/Hooks.php:532
 msgid "Select all"
 msgstr ""
 
-#: app/Controllers/Hooks.php:466
+#: app/Controllers/Hooks.php:533
 msgid "Select none"
 msgstr ""
 
-#: app/Controllers/Hooks.php:475
+#: app/Controllers/Hooks.php:542
 #, php-format
 msgid "Add new %s"
 msgstr ""
 
-#: app/Controllers/Hooks.php:475
-#: app/Controllers/Hooks.php:477
+#: app/Controllers/Hooks.php:542
+#: app/Controllers/Hooks.php:544
 msgid "Add new"
 msgstr ""
 
-#: app/Controllers/Hooks.php:517
+#: app/Controllers/Hooks.php:584
 msgid "Swatch groups (per-product override)"
 msgstr ""
 
-#: app/Controllers/Hooks.php:523
+#: app/Controllers/Hooks.php:590
 msgid "Select terms and update the product to assign per-product groups. Terms use their global group by default."
 msgstr ""
 
-#: app/Controllers/Hooks.php:538
+#: app/Controllers/Hooks.php:605
 msgid "None"
 msgstr ""
 
 #. translators: %s: global group name.
-#: app/Controllers/Hooks.php:550
+#: app/Controllers/Hooks.php:617
 #, php-format
 msgid "Use global group (%s)"
 msgstr ""
 
-#: app/Controllers/Hooks.php:569
+#: app/Controllers/Hooks.php:636
 msgid "Overrides apply to this product only and are saved when you update the product."
 msgstr ""
 
-#: app/Controllers/Hooks.php:603
+#: app/Controllers/Hooks.php:670
 msgid "View cart"
 msgstr ""
 
-#: app/Controllers/Hooks.php:604
+#: app/Controllers/Hooks.php:671
 #: app/Controllers/ThemeSupport.php:52
 #: app/Controllers/ThemeSupport.php:72
 #: app/Controllers/ThemeSupport.php:85
@@ -93,7 +163,7 @@ msgstr ""
 msgid "Add to cart"
 msgstr ""
 
-#: app/Controllers/Hooks.php:605
+#: app/Controllers/Hooks.php:672
 #: app/Controllers/ThemeSupport.php:48
 #: app/Controllers/ThemeSupport.php:68
 #: app/Controllers/ThemeSupport.php:81
@@ -419,7 +489,7 @@ msgid "Radio"
 msgstr ""
 
 #: app/Helpers/Options.php:13
-#: app/Helpers/Options.php:961
+#: app/Helpers/Options.php:965
 msgid "Select Field"
 msgstr ""
 
@@ -436,7 +506,7 @@ msgid "Text"
 msgstr ""
 
 #: app/Helpers/Options.php:143
-#: app/Helpers/Options.php:1437
+#: app/Helpers/Options.php:1441
 msgid "No"
 msgstr ""
 
@@ -624,7 +694,7 @@ msgstr ""
 
 #: app/Helpers/Options.php:370
 #: app/Helpers/Options.php:563
-#: app/Helpers/Options.php:979
+#: app/Helpers/Options.php:983
 msgid "Height"
 msgstr ""
 
@@ -633,8 +703,8 @@ msgid "Color & image swatch height"
 msgstr ""
 
 #: app/Helpers/Options.php:380
-#: app/Helpers/Options.php:1173
-#: app/Helpers/Options.php:1196
+#: app/Helpers/Options.php:1177
+#: app/Helpers/Options.php:1200
 msgid "Button Swatch"
 msgstr ""
 
@@ -717,12 +787,12 @@ msgid "On Hover"
 msgstr ""
 
 #: app/Helpers/Options.php:464
-#: app/Helpers/Options.php:707
+#: app/Helpers/Options.php:711
 msgid "Variation URL"
 msgstr ""
 
 #: app/Helpers/Options.php:465
-#: app/Helpers/Options.php:708
+#: app/Helpers/Options.php:712
 msgid "Generate URL based on selected variation attributes."
 msgstr ""
 
@@ -891,7 +961,7 @@ msgid "Advanced"
 msgstr ""
 
 #: app/Helpers/Options.php:668
-#: app/Helpers/Options.php:729
+#: app/Helpers/Options.php:733
 msgid "Advanced change some visual styles"
 msgstr ""
 
@@ -911,553 +981,553 @@ msgstr ""
 msgid "Replace WooCommerce's variations <table> with <div> markup on the single product page. Some themes style the table.variations markup, so verify your product page after enabling."
 msgstr ""
 
-#: app/Helpers/Options.php:690
+#: app/Helpers/Options.php:694
 msgid "Ajax variation threshold"
 msgstr ""
 
-#: app/Helpers/Options.php:691
+#: app/Helpers/Options.php:695
 msgid "Default value is <code>30</code>, If you want all product variation set it to <code>1</code> then all variation will be load via ajax.<br><span style=\"color: red\">Note: It's recommended to keep this number between 30 - 40.</span>"
 msgstr ""
 
-#: app/Helpers/Options.php:699
+#: app/Helpers/Options.php:703
 msgid "Out of stock for variation"
 msgstr ""
 
-#: app/Helpers/Options.php:700
+#: app/Helpers/Options.php:704
 msgid "Disable out of stock for variation product attribute item<br><span style=\"color: red\">Note: Will not work if you set Ajax variation threshold to 1.</span>"
 msgstr ""
 
-#: app/Helpers/Options.php:714
-#: app/Helpers/Options.php:1122
+#: app/Helpers/Options.php:718
+#: app/Helpers/Options.php:1126
 msgid "Attribute behavior"
 msgstr ""
 
-#: app/Helpers/Options.php:715
+#: app/Helpers/Options.php:719
 msgid "Disabled attribute will be hide / blur."
 msgstr ""
 
-#: app/Helpers/Options.php:715
+#: app/Helpers/Options.php:719
 msgid " Note: This feature will be operational for variation quantities below the \"Ajax variation threshold."
 msgstr ""
 
-#: app/Helpers/Options.php:717
+#: app/Helpers/Options.php:721
 msgid "Blur with cross"
 msgstr ""
 
-#: app/Helpers/Options.php:718
+#: app/Helpers/Options.php:722
 msgid "Blur without cross"
 msgstr ""
 
-#: app/Helpers/Options.php:719
+#: app/Helpers/Options.php:723
 msgid "Hide"
 msgstr ""
 
-#: app/Helpers/Options.php:728
+#: app/Helpers/Options.php:732
 msgid "Style"
 msgstr ""
 
-#: app/Helpers/Options.php:737
+#: app/Helpers/Options.php:741
 msgid "Global Style Settings"
 msgstr ""
 
-#: app/Helpers/Options.php:738
+#: app/Helpers/Options.php:742
 msgid "Styling shared across the single product page and archive / shop pages."
 msgstr ""
 
-#: app/Helpers/Options.php:743
+#: app/Helpers/Options.php:747
 msgid "Tooltip background"
 msgstr ""
 
-#: app/Helpers/Options.php:744
+#: app/Helpers/Options.php:748
 msgid "Tooltip background color"
 msgstr ""
 
-#: app/Helpers/Options.php:751
-#: app/Helpers/Options.php:752
+#: app/Helpers/Options.php:755
+#: app/Helpers/Options.php:756
 msgid "Tooltip text color"
 msgstr ""
 
-#: app/Helpers/Options.php:758
+#: app/Helpers/Options.php:762
 msgid "Attribute item styling"
 msgstr ""
 
-#: app/Helpers/Options.php:759
+#: app/Helpers/Options.php:763
 msgid "Change attribute item display style"
 msgstr ""
 
-#: app/Helpers/Options.php:765
-#: app/Helpers/Options.php:990
-#: app/Helpers/Options.php:1096
+#: app/Helpers/Options.php:769
+#: app/Helpers/Options.php:994
+#: app/Helpers/Options.php:1100
 msgid "Border color"
 msgstr ""
 
-#: app/Helpers/Options.php:766
+#: app/Helpers/Options.php:770
 msgid "Swatches item border color. Default is: #eeeeee"
 msgstr ""
 
-#: app/Helpers/Options.php:774
+#: app/Helpers/Options.php:778
 msgid "Border size"
 msgstr ""
 
-#: app/Helpers/Options.php:775
+#: app/Helpers/Options.php:779
 msgid "Swatches attribute item border size. Default is: 1"
 msgstr ""
 
-#: app/Helpers/Options.php:779
-#: app/Helpers/Options.php:790
-#: app/Helpers/Options.php:801
-#: app/Helpers/Options.php:1157
-#: app/Helpers/Options.php:1168
+#: app/Helpers/Options.php:783
+#: app/Helpers/Options.php:794
+#: app/Helpers/Options.php:805
+#: app/Helpers/Options.php:1161
+#: app/Helpers/Options.php:1172
 msgid "px"
 msgstr ""
 
-#: app/Helpers/Options.php:785
-#: app/Helpers/Options.php:999
+#: app/Helpers/Options.php:789
+#: app/Helpers/Options.php:1003
 msgid "Border radius"
 msgstr ""
 
-#: app/Helpers/Options.php:786
+#: app/Helpers/Options.php:790
 msgid "Corner radius for all swatch items (and the color label pill). Applies when Shape style is \"Squared\". Leave blank for the default."
 msgstr ""
 
-#: app/Helpers/Options.php:796
+#: app/Helpers/Options.php:800
 msgid "Button padding"
 msgstr ""
 
-#: app/Helpers/Options.php:797
+#: app/Helpers/Options.php:801
 msgid "Inner padding of button/label swatches (top, right, bottom, left). Color and image swatches have their own padding controls. Leave a side blank for its default."
 msgstr ""
 
-#: app/Helpers/Options.php:807
-#: app/Helpers/Options.php:1105
+#: app/Helpers/Options.php:811
+#: app/Helpers/Options.php:1109
 msgid "Text color"
 msgstr ""
 
-#: app/Helpers/Options.php:808
+#: app/Helpers/Options.php:812
 msgid "Swatches attribute item text color. Default is: #000000"
 msgstr ""
 
-#: app/Helpers/Options.php:816
-#: app/Helpers/Options.php:1114
+#: app/Helpers/Options.php:820
+#: app/Helpers/Options.php:1118
 msgid "Background color"
 msgstr ""
 
-#: app/Helpers/Options.php:817
+#: app/Helpers/Options.php:821
 msgid "Swatches attribute item background color. Default is: #FFFFFF"
 msgstr ""
 
-#: app/Helpers/Options.php:824
+#: app/Helpers/Options.php:828
 msgid "Color Swatch Label Area"
 msgstr ""
 
-#: app/Helpers/Options.php:825
+#: app/Helpers/Options.php:829
 msgid "Label text color and color-area size shown beside the label (when \"Show Color Swatches with Label\" is enabled)"
 msgstr ""
 
-#: app/Helpers/Options.php:831
+#: app/Helpers/Options.php:835
 msgid "Color swatch label text"
 msgstr ""
 
-#: app/Helpers/Options.php:832
+#: app/Helpers/Options.php:836
 msgid "Text color of the label shown beside color swatches (when \"Show Color Swatches with Label\" is enabled). Default is: #6B6B6B"
 msgstr ""
 
-#: app/Helpers/Options.php:840
-#: app/Helpers/Options.php:890
+#: app/Helpers/Options.php:844
+#: app/Helpers/Options.php:894
 msgid "Label font size"
 msgstr ""
 
-#: app/Helpers/Options.php:841
+#: app/Helpers/Options.php:845
 msgid "Font size of the label shown beside color swatches. Default is: 15"
 msgstr ""
 
-#: app/Helpers/Options.php:851
+#: app/Helpers/Options.php:855
 msgid "Color area width"
 msgstr ""
 
-#: app/Helpers/Options.php:852
+#: app/Helpers/Options.php:856
 msgid "Width of the color area shown beside the label. Default is: 24"
 msgstr ""
 
-#: app/Helpers/Options.php:862
+#: app/Helpers/Options.php:866
 msgid "Color area height"
 msgstr ""
 
-#: app/Helpers/Options.php:863
+#: app/Helpers/Options.php:867
 msgid "Height of the color area shown beside the label. Default is: 24"
 msgstr ""
 
-#: app/Helpers/Options.php:873
-#: app/Helpers/Options.php:951
-#: app/Helpers/Options.php:1010
-#: app/Helpers/Options.php:1036
+#: app/Helpers/Options.php:877
+#: app/Helpers/Options.php:955
+#: app/Helpers/Options.php:1014
+#: app/Helpers/Options.php:1040
 msgid "Padding"
 msgstr ""
 
-#: app/Helpers/Options.php:874
+#: app/Helpers/Options.php:878
 msgid "Inner padding of the color-with-label pill (top, right, bottom, left). Leave a side blank for its default."
 msgstr ""
 
-#: app/Helpers/Options.php:883
+#: app/Helpers/Options.php:887
 msgid "Radio Swatch"
 msgstr ""
 
-#: app/Helpers/Options.php:884
+#: app/Helpers/Options.php:888
 msgid "Label font size and radio input size for radio type swatches"
 msgstr ""
 
-#: app/Helpers/Options.php:891
+#: app/Helpers/Options.php:895
 msgid "Font size of the radio swatch label. Default is: 14"
 msgstr ""
 
-#: app/Helpers/Options.php:901
+#: app/Helpers/Options.php:905
 msgid "Radio input width"
 msgstr ""
 
-#: app/Helpers/Options.php:902
+#: app/Helpers/Options.php:906
 msgid "Width of the radio input control. Default is: 18"
 msgstr ""
 
-#: app/Helpers/Options.php:912
+#: app/Helpers/Options.php:916
 msgid "Radio input height"
 msgstr ""
 
-#: app/Helpers/Options.php:913
+#: app/Helpers/Options.php:917
 msgid "Height of the radio input control. Default is: 18"
 msgstr ""
 
-#: app/Helpers/Options.php:923
+#: app/Helpers/Options.php:927
 msgid "Label & input gap"
 msgstr ""
 
-#: app/Helpers/Options.php:924
+#: app/Helpers/Options.php:928
 msgid "Gap between the radio input and its label. Default is: 10"
 msgstr ""
 
-#: app/Helpers/Options.php:934
+#: app/Helpers/Options.php:938
 msgid "Group title gap"
 msgstr ""
 
-#: app/Helpers/Options.php:935
+#: app/Helpers/Options.php:939
 msgid "Gap between a group title and its radio items (when swatch groups are used). Default is: 8"
 msgstr ""
 
-#: app/Helpers/Options.php:944
+#: app/Helpers/Options.php:948
 msgid "Image Swatch"
 msgstr ""
 
-#: app/Helpers/Options.php:945
+#: app/Helpers/Options.php:949
 msgid "Inner padding for image type swatches (overrides the general item padding)."
 msgstr ""
 
-#: app/Helpers/Options.php:952
+#: app/Helpers/Options.php:956
 msgid "Inner padding of image swatches (top, right, bottom, left). Leave a side blank for its default."
 msgstr ""
 
-#: app/Helpers/Options.php:962
+#: app/Helpers/Options.php:966
 msgid "Styling for the Select (dropdown) swatch type."
 msgstr ""
 
-#: app/Helpers/Options.php:968
-#: app/Helpers/Options.php:1026
+#: app/Helpers/Options.php:972
+#: app/Helpers/Options.php:1030
 msgid "Font size"
 msgstr ""
 
-#: app/Helpers/Options.php:969
+#: app/Helpers/Options.php:973
 msgid "Text size of the select dropdown. Default is: 14"
 msgstr ""
 
-#: app/Helpers/Options.php:980
+#: app/Helpers/Options.php:984
 msgid "Height of the select dropdown. Leave blank for auto (padding controls the height)."
 msgstr ""
 
-#: app/Helpers/Options.php:991
+#: app/Helpers/Options.php:995
 msgid "Border color of the select dropdown. Default is: #cccccc"
 msgstr ""
 
-#: app/Helpers/Options.php:1000
+#: app/Helpers/Options.php:1004
 msgid "Corner radius of the select dropdown. Default is: 0"
 msgstr ""
 
-#: app/Helpers/Options.php:1011
+#: app/Helpers/Options.php:1015
 msgid "Inner padding of the select dropdown (top, right, bottom, left). Leave a side blank for its default."
 msgstr ""
 
-#: app/Helpers/Options.php:1020
+#: app/Helpers/Options.php:1024
 msgid "Clear Link"
 msgstr ""
 
-#: app/Helpers/Options.php:1021
+#: app/Helpers/Options.php:1025
 msgid "Styling for the \"Clear\" (reset variations) link shown below the attributes."
 msgstr ""
 
-#: app/Helpers/Options.php:1027
+#: app/Helpers/Options.php:1031
 msgid "Text size of the Clear link. Default is: 14"
 msgstr ""
 
-#: app/Helpers/Options.php:1037
+#: app/Helpers/Options.php:1041
 msgid "Inner padding of the Clear link (top, right, bottom, left). Leave a side blank for its default."
 msgstr ""
 
-#: app/Helpers/Options.php:1046
+#: app/Helpers/Options.php:1050
 msgid "Margin"
 msgstr ""
 
-#: app/Helpers/Options.php:1047
+#: app/Helpers/Options.php:1051
 msgid "Outer margin of the Clear link (top, right, bottom, left). Leave a side blank for its default."
 msgstr ""
 
-#: app/Helpers/Options.php:1056
+#: app/Helpers/Options.php:1060
 msgid "Attribute item Hover Styling"
 msgstr ""
 
-#: app/Helpers/Options.php:1057
+#: app/Helpers/Options.php:1061
 msgid "Change attribute item hover display style"
 msgstr ""
 
-#: app/Helpers/Options.php:1063
+#: app/Helpers/Options.php:1067
 msgid "Hover border color"
 msgstr ""
 
-#: app/Helpers/Options.php:1064
+#: app/Helpers/Options.php:1068
 msgid "Swatches attribute item hover border color. Default is: #000000"
 msgstr ""
 
-#: app/Helpers/Options.php:1072
+#: app/Helpers/Options.php:1076
 msgid "Hover text color"
 msgstr ""
 
-#: app/Helpers/Options.php:1073
+#: app/Helpers/Options.php:1077
 msgid "Swatches attribute item hover text color. Default is: #000000"
 msgstr ""
 
-#: app/Helpers/Options.php:1081
+#: app/Helpers/Options.php:1085
 msgid "Hover background color"
 msgstr ""
 
-#: app/Helpers/Options.php:1082
+#: app/Helpers/Options.php:1086
 msgid "Swatches attribute item hover background color. Default is: #FFFFFF"
 msgstr ""
 
-#: app/Helpers/Options.php:1089
+#: app/Helpers/Options.php:1093
 msgid "Attribute item Selected Styling"
 msgstr ""
 
-#: app/Helpers/Options.php:1090
+#: app/Helpers/Options.php:1094
 msgid "Change attribute selected item display style"
 msgstr ""
 
-#: app/Helpers/Options.php:1097
+#: app/Helpers/Options.php:1101
 msgid "Swatches selected item border color. Default is: #000000"
 msgstr ""
 
-#: app/Helpers/Options.php:1106
+#: app/Helpers/Options.php:1110
 msgid "Swatches item selected text color. Default is: #000000"
 msgstr ""
 
-#: app/Helpers/Options.php:1115
+#: app/Helpers/Options.php:1119
 msgid "Swatches item selected background color. Default is: #FFFFFF"
 msgstr ""
 
-#: app/Helpers/Options.php:1123
+#: app/Helpers/Options.php:1127
 msgid "This will work for (blur and blur-no-cross)"
 msgstr ""
 
-#: app/Helpers/Options.php:1128
+#: app/Helpers/Options.php:1132
 msgid "Cross background color"
 msgstr ""
 
-#: app/Helpers/Options.php:1129
+#: app/Helpers/Options.php:1133
 msgid "Cross background color for disabled item"
 msgstr ""
 
-#: app/Helpers/Options.php:1135
+#: app/Helpers/Options.php:1139
 msgid "Blur Opacity"
 msgstr ""
 
-#: app/Helpers/Options.php:1136
+#: app/Helpers/Options.php:1140
 msgid "Blur Opacity for disabled item range[.1 to 1]"
 msgstr ""
 
-#: app/Helpers/Options.php:1145
+#: app/Helpers/Options.php:1149
 msgid "Archive / Shop Page"
 msgstr ""
 
-#: app/Helpers/Options.php:1146
+#: app/Helpers/Options.php:1150
 msgid "Styling that applies to shop, archive and related / up-sell / cross-sell loops."
 msgstr ""
 
-#: app/Helpers/Options.php:1152
+#: app/Helpers/Options.php:1156
 msgid "Reveal Panel Corner Radius"
 msgstr ""
 
-#: app/Helpers/Options.php:1153
+#: app/Helpers/Options.php:1157
 msgid "Top corner radius of the archive \"Reveal Swatches on Hover\" panel. Default is: 3"
 msgstr ""
 
-#: app/Helpers/Options.php:1163
+#: app/Helpers/Options.php:1167
 msgid "Reveal Panel Inner Padding"
 msgstr ""
 
-#: app/Helpers/Options.php:1164
+#: app/Helpers/Options.php:1168
 msgid "Padding inside the \"Reveal Swatches on Hover\" panel around the swatches, price and buttons. Default is: 16"
 msgstr ""
 
-#: app/Helpers/Options.php:1174
+#: app/Helpers/Options.php:1178
 msgid "Button/label swatch font size on shop, archive and related/upsell/cross-sell loops. (Min width/height stay under the Archive tab.)"
 msgstr ""
 
-#: app/Helpers/Options.php:1180
-#: app/Helpers/Options.php:1202
+#: app/Helpers/Options.php:1184
+#: app/Helpers/Options.php:1206
 msgid "Font Size"
 msgstr ""
 
-#: app/Helpers/Options.php:1181
+#: app/Helpers/Options.php:1185
 msgid "Button swatch font size on archive / shop page."
 msgstr ""
 
-#: app/Helpers/Options.php:1190
+#: app/Helpers/Options.php:1194
 msgid "Product Page"
 msgstr ""
 
-#: app/Helpers/Options.php:1191
+#: app/Helpers/Options.php:1195
 msgid "Styling that applies only to swatches on the single product page."
 msgstr ""
 
-#: app/Helpers/Options.php:1197
+#: app/Helpers/Options.php:1201
 msgid "Button/label swatch text on the single product page."
 msgstr ""
 
-#: app/Helpers/Options.php:1203
+#: app/Helpers/Options.php:1207
 msgid "Button swatch font size on the single product page."
 msgstr ""
 
-#: app/Helpers/Options.php:1214
+#: app/Helpers/Options.php:1218
 msgid "Tools"
 msgstr ""
 
-#: app/Helpers/Options.php:1215
+#: app/Helpers/Options.php:1219
 msgid "Tools define some system tasks"
 msgstr ""
 
-#: app/Helpers/Options.php:1223
+#: app/Helpers/Options.php:1227
 msgid "Enable to delete all data"
 msgstr ""
 
-#: app/Helpers/Options.php:1224
+#: app/Helpers/Options.php:1228
 msgid "Enable / Disable Allow to delete all data for WooCommerce Product variation plugin during delete this plugin"
 msgstr ""
 
-#: app/Helpers/Options.php:1229
+#: app/Helpers/Options.php:1233
 msgid "Performance"
 msgstr ""
 
-#: app/Helpers/Options.php:1230
+#: app/Helpers/Options.php:1234
 msgid "Improve your site performance."
 msgstr ""
 
-#: app/Helpers/Options.php:1231
+#: app/Helpers/Options.php:1235
 #, php-format
 msgid "You can remove all cache from here. <a href=\"%s\">Clear all cache</a>"
 msgstr ""
 
-#: app/Helpers/Options.php:1244
+#: app/Helpers/Options.php:1248
 msgid "Load Scripts"
 msgstr ""
 
-#: app/Helpers/Options.php:1245
+#: app/Helpers/Options.php:1249
 msgid "Only <strong>Single product</strong> and <strong>Product archive</strong> pages. [if unchecked then it will load the scripts to all over the site]"
 msgstr ""
 
-#: app/Helpers/Options.php:1251
+#: app/Helpers/Options.php:1255
 msgid "Defer Load JS"
 msgstr ""
 
-#: app/Helpers/Options.php:1252
+#: app/Helpers/Options.php:1256
 msgid "Defer Load JS for PageSpeed Score"
 msgstr ""
 
-#: app/Helpers/Options.php:1258
+#: app/Helpers/Options.php:1262
 msgid "Use Cache"
 msgstr ""
 
-#: app/Helpers/Options.php:1259
+#: app/Helpers/Options.php:1263
 msgid "Use Transient Cache for PageSpeed Score"
 msgstr ""
 
-#: app/Helpers/Options.php:1267
+#: app/Helpers/Options.php:1271
 msgid "Our Plugins & Themes"
 msgstr ""
 
-#: app/Helpers/Options.php:1268
+#: app/Helpers/Options.php:1272
 msgid "Explore our other WooCommerce plugins and WordPress themes."
 msgstr ""
 
-#: app/Helpers/Options.php:1275
+#: app/Helpers/Options.php:1279
 msgid "Our Plugins"
 msgstr ""
 
-#: app/Helpers/Options.php:1276
+#: app/Helpers/Options.php:1280
 msgid "Premium WooCommerce plugins from RadiusTheme."
 msgstr ""
 
-#: app/Helpers/Options.php:1278
-#: app/Helpers/Options.php:1333
+#: app/Helpers/Options.php:1282
+#: app/Helpers/Options.php:1337
 msgid "View All"
 msgstr ""
 
-#: app/Helpers/Options.php:1317
+#: app/Helpers/Options.php:1321
 msgid "Free"
 msgstr ""
 
-#: app/Helpers/Options.php:1330
+#: app/Helpers/Options.php:1334
 msgid "Our Themes"
 msgstr ""
 
-#: app/Helpers/Options.php:1331
+#: app/Helpers/Options.php:1335
 msgid "Premium WordPress themes from RadiusTheme."
 msgstr ""
 
-#: app/Helpers/Options.php:1384
+#: app/Helpers/Options.php:1388
 msgid "License"
 msgstr ""
 
-#: app/Helpers/Options.php:1385
+#: app/Helpers/Options.php:1389
 msgid "Add your licence code here"
 msgstr ""
 
-#: app/Helpers/Options.php:1393
+#: app/Helpers/Options.php:1397
 msgid "Licence key"
 msgstr ""
 
-#: app/Helpers/Options.php:1394
+#: app/Helpers/Options.php:1398
 msgid "Enter your license key and save settings to activate Pro features and updates."
 msgstr ""
 
-#: app/Helpers/Options.php:1415
+#: app/Helpers/Options.php:1419
 msgid "After item title and price"
 msgstr ""
 
-#: app/Helpers/Options.php:1416
+#: app/Helpers/Options.php:1420
 msgid "Before item title and price"
 msgstr ""
 
-#: app/Helpers/Options.php:1417
+#: app/Helpers/Options.php:1421
 msgid "After select options button"
 msgstr ""
 
-#: app/Helpers/Options.php:1426
+#: app/Helpers/Options.php:1430
 msgid "Left"
 msgstr ""
 
-#: app/Helpers/Options.php:1427
+#: app/Helpers/Options.php:1431
 msgid "Right"
 msgstr ""
 
-#: app/Helpers/Options.php:1428
+#: app/Helpers/Options.php:1432
 msgid "Center"
 msgstr ""
 
-#: app/Helpers/Options.php:1438
+#: app/Helpers/Options.php:1442
 msgid "Yes"
 msgstr ""

@@ -20,6 +20,23 @@ class Install {
 	 */
 	private static $layout_types = [ 'title', 'feature', 'card' ];
 
+	/**
+	 * Settings that must never be auto-seeded into an existing installation.
+	 *
+	 * Seeding materializes a default into the stored options, which turns a
+	 * schema default into live behaviour for sites that never chose it. That is
+	 * harmless for presentational values but not for settings that change the
+	 * rendered markup, so those are seeded on fresh installs only. On an existing
+	 * install the key simply stays absent and resolves to the schema default.
+	 *
+	 * Values already stored are never touched here or anywhere else: a saved `1`
+	 * may be a deliberate choice and is indistinguishable from one the 2.5.0
+	 * defaults sync wrote, so it is always preserved.
+	 *
+	 * @var array
+	 */
+	private static $never_seed_on_existing = [ 'remove_variations_table' ];
+
 
 	public static function deactivate( $network_deactivating ) {
 		delete_option( 'rtwpvs_pro_activate' );
@@ -257,6 +274,11 @@ class Install {
 					continue;
 				}
 				if ( array_key_exists( $field['id'], $options ) ) {
+					continue;
+				}
+				// Markup-changing settings are seeded on fresh installs only, so a
+				// default can never switch the feature on for an existing shop.
+				if ( ! empty( $original ) && in_array( $field['id'], self::$never_seed_on_existing, true ) ) {
 					continue;
 				}
 

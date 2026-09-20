@@ -682,7 +682,11 @@ class Options {
                             'type'    => 'checkbox',
                             'title'   => esc_html__( 'Div-based variations layout', 'woo-product-variation-swatches' ),
                             'desc'    => esc_html__( 'Replace WooCommerce\'s variations <table> with <div> markup on the single product page. Some themes style the table.variations markup, so verify your product page after enabling.', 'woo-product-variation-swatches' ),
-                            'default' => true,
+                            // Opt-in: changing the markup can break theme styling, so the
+                            // feature stays off until the shop owner enables it. Existing
+                            // stored values are never rewritten — see
+                            // Install::$never_seed_on_existing.
+                            'default' => false,
                         ],
                         [
                             'id'      => 'threshold',
