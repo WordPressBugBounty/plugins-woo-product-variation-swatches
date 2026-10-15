@@ -19,6 +19,8 @@ use Rtwpvs\Controllers\ScriptLoader;
 use Rtwpvs\Controllers\ThemeSupport;
 use Rtwpvs\Controllers\Notifications;
 use Rtwpvs\Controllers\ProductMetaBox;
+use Rtwpvs\Controllers\ProCompatibility;
+use Rtwpvs\Controllers\ProductSwatchesTab;
 use Rtwpvs\Controllers\DeactivationFeedback;
 
 /**
@@ -67,6 +69,11 @@ final class WooProductVariationSwatches {
 			Hooks::init();
 			InitHooks::init();
 			new ThemeSupport();
+			// Product-data tab hooks only fire on the product edit screen.
+			ProductSwatchesTab::init( $this );
+			if ( is_admin() ) {
+				ProCompatibility::init();
+			}
 		}
 	}
 
@@ -159,8 +166,61 @@ final class WooProductVariationSwatches {
 		return trailingslashit( RTWPVS_PLUGIN_URI . 'assets/images' ) . $file;
 	}
 
+	/**
+	 * Pro compatibility API versions this Free release explicitly supports.
+	 *
+	 * Policy: only listed versions are 'api'. A Pro without a valid RTWPVSP_API
+	 * (missing, malformed, < 1) is 'legacy' (Pro 2.3.x and older keep working);
+	 * a valid but unlisted, e.g. newer, version is 'incompatible' until a Free
+	 * release adds it here.
+	 *
+	 * @var int[]
+	 */
+	const SUPPORTED_PRO_API = [ 1 ];
+
+	/**
+	 * Directory holding the Pro plugin's templates, for inclusion.
+	 *
+	 * Returns the real Pro directory when it resolves (see
+	 * get_pro_template_dir()); otherwise Free's placeholder directory, whose
+	 * empty templates make legacy Pro's wc_get_template() calls harmless instead
+	 * of including a root-level path.
+	 *
+	 * @return string Absolute directory path without trailing slash.
+	 */
 	public function get_template_path() {
-		return apply_filters( 'rtwpvs_template_path', untrailingslashit( RTWPVS_PLUGIN_PATH ) . '-pro/templates' );
+		$dir = $this->get_pro_template_dir();
+
+		return '' !== $dir ? $dir : $this->get_placeholder_template_dir();
+	}
+
+	/**
+	 * Real Pro templates directory, or '' when it cannot be resolved.
+	 *
+	 * API-aware Pro supplies its own directory through `rtwpvs_template_path`.
+	 * For legacy Pro the historical `<free-dir>-pro/templates` sibling is used,
+	 * but only when it exists. A filtered path that is not a directory, or that
+	 * is Free's own placeholder directory, counts as unresolved.
+	 *
+	 * @return string
+	 */
+	public function get_pro_template_dir() {
+		$dir = untrailingslashit( (string) apply_filters( 'rtwpvs_template_path', $this->get_legacy_pro_dir( 'templates' ) ) );
+
+		if ( '' === $dir || ! is_dir( $dir ) || $dir === $this->get_placeholder_template_dir() ) {
+			return '';
+		}
+
+		return $dir;
+	}
+
+	/**
+	 * Free-owned directory with empty stand-ins for Pro's templates.
+	 *
+	 * @return string
+	 */
+	public function get_placeholder_template_dir() {
+		return RTWPVS_PLUGIN_PATH . 'app/Compat/templates';
 	}
 
 	public function get_template_file_path( $file_name ) {
@@ -169,10 +229,102 @@ final class WooProductVariationSwatches {
 		return trailingslashit( $this->get_template_path() ) . $file_name . '.php';
 	}
 
+	/**
+	 * Directory holding the Pro plugin's admin views.
+	 *
+	 * Resolved like get_template_path(), through the `rtwpvs_views_path` filter.
+	 *
+	 * @return string Absolute directory path without trailing slash, or ''.
+	 */
+	public function get_views_path() {
+		return (string) apply_filters( 'rtwpvs_views_path', $this->get_legacy_pro_dir( 'views' ) );
+	}
+
 	public function get_views_file_path( $file ) {
 		$file = ltrim( $file, '/' );
+		$dir  = $this->get_views_path();
 
-		return untrailingslashit( RTWPVS_PLUGIN_PATH ) . '-pro/views/' . $file . '.php';
+		return '' === $dir ? '' : trailingslashit( $dir ) . $file . '.php';
+	}
+
+	/**
+	 * Legacy Pro sibling directory (`<free-dir>-pro/<sub>`) when it exists.
+	 *
+	 * Kept for Pro 2.3.x and older, which do not declare their own paths.
+	 *
+	 * @param string $sub Sub directory: 'templates' or 'views'.
+	 *
+	 * @return string Absolute directory path, or '' when it does not exist.
+	 */
+	private function get_legacy_pro_dir( $sub ) {
+		$dir = untrailingslashit( RTWPVS_PLUGIN_PATH ) . '-pro/' . $sub;
+
+		return is_dir( $dir ) ? $dir : '';
+	}
+
+	/**
+	 * Detected Pro compatibility mode.
+	 *
+	 * - 'none'         No Pro plugin loaded.
+	 * - 'legacy'       Pro loaded without a valid `RTWPVSP_API` (Pro 2.3.x and older).
+	 * - 'api'          Pro declares a version listed in SUPPORTED_PRO_API.
+	 * - 'incompatible' Pro declares a valid but unsupported (e.g. newer) version.
+	 *
+	 * Evaluated on every call (cheap) so plugin load order never matters; all
+	 * plugin files are loaded before `plugins_loaded`, when this class boots.
+	 *
+	 * @return string
+	 */
+	public function pro_mode() {
+		return self::resolve_pro_mode( function_exists( 'rtwpvsp' ), defined( 'RTWPVSP_API' ) ? constant( 'RTWPVSP_API' ) : null );
+	}
+
+	/**
+	 * Pro API version when Pro runs in 'api' mode, otherwise 0.
+	 *
+	 * @return int
+	 */
+	public function pro_api_version() {
+		return 'api' === $this->pro_mode() ? self::normalize_api_version( constant( 'RTWPVSP_API' ) ) : 0;
+	}
+
+	/**
+	 * Pure mode resolver (separated for testing).
+	 *
+	 * @param bool  $pro_present Whether the Pro plugin is loaded.
+	 * @param mixed $api         Value of RTWPVSP_API, or null when undefined.
+	 *
+	 * @return string 'none', 'legacy', 'api' or 'incompatible'.
+	 */
+	public static function resolve_pro_mode( $pro_present, $api ) {
+		if ( ! $pro_present ) {
+			return 'none';
+		}
+
+		$version = self::normalize_api_version( $api );
+		if ( $version < 1 ) {
+			return 'legacy';
+		}
+
+		return in_array( $version, self::SUPPORTED_PRO_API, true ) ? 'api' : 'incompatible';
+	}
+
+	/**
+	 * Normalize a declared API version to a positive integer (0 when invalid).
+	 *
+	 * @param mixed $api Declared API version.
+	 *
+	 * @return int
+	 */
+	private static function normalize_api_version( $api ) {
+		if ( is_int( $api ) ) {
+			return max( 0, $api );
+		}
+		if ( is_string( $api ) && ctype_digit( $api ) ) {
+			return (int) $api;
+		}
+
+		return 0;
 	}
 
 	public function locate_template( $name ) {
@@ -189,8 +341,14 @@ final class WooProductVariationSwatches {
 	}
 
 	public function locate_views( $name ) {
-		$template_file = $this->get_views_file_path( $name );
+		$template_file = apply_filters( 'rtwpvs_locate_views', $this->get_views_file_path( $name ), $name );
 
-		return apply_filters( 'rtwpvs_locate_views', $template_file, $name );
+		// Pro includes this path directly: never hand back a missing file, which
+		// would be a fatal error. An admin notice reports the unresolved view.
+		if ( '' === $template_file || ! is_readable( $template_file ) ) {
+			return RTWPVS_PLUGIN_PATH . 'app/Compat/missing-pro-view.php';
+		}
+
+		return $template_file;
 	}
 }

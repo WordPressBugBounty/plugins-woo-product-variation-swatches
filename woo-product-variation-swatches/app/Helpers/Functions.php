@@ -116,6 +116,14 @@ class Functions {
 	 */
 	static function generate_variation_attribute_option_html( $args, $html = null ) {
 
+		/**
+		 * Fires before swatches render, so assets can be enqueued on demand
+		 * (e.g. product grids on pages excluded by the "Load Swatch Files Only Where Needed" option).
+		 *
+		 * @param array $args Swatch arguments.
+		 */
+		do_action( 'rtwpvs_render_swatches', $args );
+
 		$args             = wp_parse_args(
 			$args,
 			[
@@ -317,7 +325,7 @@ class Functions {
 						}
 						$group_key   = ( '' !== $group_ref && isset( $groups_map[ $group_ref ] ) ) ? $groups_map[ $group_ref ]['key'] : '';
 						$group_label = ( '' !== $group_ref && isset( $groups_map[ $group_ref ] ) ) ? $groups_map[ $group_ref ]['name'] : '';
-						$data       .= sprintf( '<div %1$s class="rtwpvs-term rtwpvs-%2$s-term %2$s-variable-term-%3$s %4$s" title="%5$s" data-term="%3$s" data-rtwpvs-group="%6$s" data-rtwpvs-group-label="%7$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term->slug ), esc_attr( $selected_class ), $text_tooltip, esc_attr( $group_key ), esc_attr( $group_label ) );
+						$data       .= sprintf( '<div %1$s class="rtwpvs-term rtwpvs-%2$s-term %2$s-variable-term-%3$s %4$s" title="%5$s" data-term="%3$s" data-rtwpvs-group="%6$s" data-rtwpvs-group-label="%7$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term->slug ), esc_attr( $selected_class ), esc_attr( (string) $text_tooltip ), esc_attr( $group_key ), esc_attr( $group_label ) );
 						switch ( $term_type ) :
 							case 'color':
 								$global_color           = sanitize_hex_color( get_term_meta( $term->term_id, 'product_attribute_color', true ) );

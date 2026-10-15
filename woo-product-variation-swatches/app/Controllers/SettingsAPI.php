@@ -3,7 +3,6 @@
 namespace Rtwpvs\Controllers;
 
 use Rtwpvs\Helpers\Options;
-use Rtwpvsp\Controllers\Licensing;
 
 class SettingsAPI {
 
@@ -24,7 +23,8 @@ class SettingsAPI {
 		);
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_tab' ], 50 );
 		add_action( 'woocommerce_settings_tabs_' . $this->setting_id, [ $this, 'settings_tab' ] );
-		add_action( 'woocommerce_update_options_' . $this->setting_id, [ $this, 'update_settings' ] );
+		// The legacy WooCommerce tab no longer saves: settings are persisted only
+		// through the validated `rtwpvs_save_settings` AJAX endpoint.
 		add_action( 'woocommerce_admin_field_' . $this->setting_id, [ $this, 'global_settings' ] );
 		add_action( 'wp_ajax_rtwpvs_save_settings', [ $this, 'ajax_save_settings' ] );
 		add_action( 'wp_ajax_rtwpvs_clear_cache', [ $this, 'ajax_clear_cache' ] );
@@ -126,87 +126,20 @@ class SettingsAPI {
 		woocommerce_admin_fields( $this->get_settings() );
 	}
 
+	/**
+	 * Former WooCommerce settings-tab save handler (no longer hooked).
+	 *
+	 * The legacy save replaced the whole `rtwpvs` option with the posted array
+	 * and could re-run a license activation request. Settings are now saved only
+	 * through the validated `rtwpvs_save_settings` AJAX endpoint, so this is kept
+	 * as a no-op purely for backward compatibility with external callers.
+	 *
+	 * @deprecated 2.5.2 Use the `rtwpvs_save_settings` AJAX endpoint.
+	 *
+	 * @return void
+	 */
 	public function update_settings() {
-		woocommerce_update_options( $this->get_settings() );
-		$this->update_licencing_status();
-	}
-
-	private function update_licencing_status() {
-
-		$license_key    = trim( $this->get_option( 'license_key' ) );
-		$license_status = $this->get_option( 'license_status' );
-		$status         = ( ! empty( $license_status ) && $license_status === 'valid' ) ? true : false;
-		if ( $license_key && ! $status ) {
-			if ( ! class_exists( Licensing::class ) ) {
-				return;
-			}
-			$api_params = [
-				'edd_action' => 'activate_license',
-				'license'    => $license_key,
-				'item_id'    => Licensing::$product_id,
-				'url'        => home_url(),
-			];
-			$response   = wp_remote_post(
-				Licensing::$store_url,
-				[
-					'timeout'   => 15,
-					'sslverify' => false,
-					'body'      => $api_params,
-				]
-			);
-			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				if ( is_wp_error( $response ) && ! empty( $response->get_error_message() ) ) {
-					$message = $response->get_error_message();
-				} elseif ( isset( $response['response'] ) && is_array( $response['response'] ) && isset( $response['response']['message'] ) ) {
-					$message = 'sss' . $response['response']['message'];
-				} else {
-					$message = esc_html__( 'An error occurred, please try again.', 'woo-product-variation-swatches' );
-				}
-			} else {
-				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-
-				if ( false === $license_data->success ) {
-					switch ( $license_data->error ) {
-						case 'expired':
-							$message = sprintf(
-								__( 'Your license key expired on %s.', 'woo-product-variation-swatches' ),
-								date_i18n(
-									get_option( 'date_format' ),
-									strtotime( $license_data->expires, current_time( 'timestamp' ) )
-								)
-							);
-							break;
-						case 'revoked':
-							$message = esc_html__( 'Your license key has been disabled.', 'woo-product-variation-swatches' );
-							break;
-						case 'missing':
-							$message = esc_html__( 'Invalid license.', 'woo-product-variation-swatches' );
-							break;
-						case 'invalid':
-						case 'site_inactive':
-							$message = esc_html__( 'Your license is not active for this URL.', 'woo-product-variation-swatches' );
-							break;
-						case 'item_name_mismatch':
-							$message = esc_html__( 'This appears to be an invalid license key for Variation Swatch Pro.', 'woo-product-variation-swatches' );
-							break;
-						case 'no_activations_left':
-							$message = esc_html__( 'Your license key has reached its activation limit.', 'woo-product-variation-swatches' );
-							break;
-						default:
-							$message = esc_html__( 'An error occurred, please try again.', 'woo-product-variation-swatches' );
-							break;
-					}
-				}
-				// Check if anything passed on a message constituting a failure
-				if ( empty( $message ) && $license_data->license === 'valid' ) {
-					$this->update_option( 'license_status', $license_data->license );
-				} else {
-					$this->update_option( 'license_status', '' );
-				}
-			}
-		} elseif ( ! $license_key && ! $status ) {
-			$this->update_option( 'license_status', '' );
-		}
+		_deprecated_function( __METHOD__, '2.5.2' );
 	}
 
 	public function get_settings() {
@@ -306,6 +239,10 @@ class SettingsAPI {
 	 */
 	public function render_settings_page() {
 		echo '<div class="rtwpvs-settings-page">';
+		// WordPress admin notices are suppressed on this screen
+		// (suppress_admin_notices()); print only this plugin's Pro compatibility
+		// notices here, before the React mount point.
+		ProCompatibility::render_settings_notices();
 		$this->render_settings_app();
 		echo '</div>';
 	}

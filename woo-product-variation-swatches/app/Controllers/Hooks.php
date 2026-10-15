@@ -35,6 +35,9 @@ class Hooks {
 		], 9 );
 
 		add_filter( 'woocommerce_available_variation', [ __CLASS__, 'available_variation' ], 100, 3 );
+		// Runs after third-party callbacks (e.g. Back In Stock Notifier at 999) so they
+		// receive a variation array instead of our `false` and cannot corrupt it.
+		add_filter( 'woocommerce_available_variation', [ __CLASS__, 'remove_out_of_stock_variation' ], 1000, 3 );
 		add_filter( 'post_class', [ __CLASS__, 'product_loop_post_class' ], 25, 3 );
 		add_filter( 'woocommerce_loop_add_to_cart_args', [ __CLASS__, 'loop_add_to_cart_args' ], 20, 2 );
 		add_filter( 'woocommerce_product_add_to_cart_url', [ __CLASS__, 'simple_product_cart_url' ], 10, 2 );
@@ -208,7 +211,7 @@ class Hooks {
 	 *
 	 * @return void
 	 */
-	private static function clear_all_attribute_html_transients() {
+	public static function clear_all_attribute_html_transients() {
 		global $wpdb;
 		$archive_transient_name = '_transient_' . rtwpvs()->get_transient_name( 'archive_%', 'attribute-html' );
 		$product_transient_name = '_transient_' . rtwpvs()->get_transient_name( '%', 'attribute-html' );
@@ -425,7 +428,7 @@ class Hooks {
 	 * @param $product      \WC_Product
 	 * @param $variationObj \WC_Product_Variable
 	 *
-	 * @return bool
+	 * @return array
 	 */
 	static function available_variation( $variation, $product, $variationObj ) {
 		if ( isset( $variation['image']['thumb_src'] ) && ! empty( $variation['image']['thumb_src'] ) ) {
@@ -437,6 +440,23 @@ class Hooks {
 			$variation['image']['thumb_sizes']  = apply_filters( 'rtwpvs_thumb_sizes', $thumb_sizes, $variation, $product, $variationObj );
 		}
 
+		return $variation;
+	}
+
+	/**
+	 * Remove out-of-stock variations from the frontend variation data when
+	 * "Out of stock for variation" is enabled.
+	 *
+	 * Hooked at priority 1000 so callbacks that expect an array (e.g. Back In
+	 * Stock Notifier at 999) run first; WooCommerce then drops the `false`.
+	 *
+	 * @param array|false           $variation    Variation data.
+	 * @param \WC_Product_Variable  $product      Parent product.
+	 * @param \WC_Product_Variation $variationObj Variation object.
+	 *
+	 * @return array|false
+	 */
+	static function remove_out_of_stock_variation( $variation, $product, $variationObj ) {
 		if ( rtwpvs()->get_option( 'disable_out_of_stock' ) && ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() ) ) {
 			return $variationObj->is_in_stock() ? $variation : false;
 		}
@@ -676,7 +696,9 @@ class Hooks {
 				'enable_ajax_add_to_cart' => get_option( 'woocommerce_enable_ajax_add_to_cart' )
 			] );
 
-			if ( function_exists( 'rtwpvsp' ) ) {
+			// Skip when the Pro template directory cannot be resolved (e.g. Pro
+			// installed under a non-default folder); ProCompatibility reports it.
+			if ( function_exists( 'rtwpvsp' ) && '' !== rtwpvs()->get_pro_template_dir() ) {
 				wc_get_template( 'rtwpvs-variation-template.php', [], '', trailingslashit( rtwpvs()->get_template_path() ) );
 			}
 		}

@@ -1245,8 +1245,8 @@ class Options {
 						[
 							'id'      => 'load_scripts',
 							'type'    => 'checkbox',
-							'title'   => esc_html__( 'Load Scripts', 'woo-product-variation-swatches' ),
-							'desc'    => __( 'Only <strong>Single product</strong> and <strong>Product archive</strong> pages. [if unchecked then it will load the scripts to all over the site]', 'woo-product-variation-swatches' ),
+							'title'   => esc_html__( 'Load Swatch Files Only Where Needed', 'woo-product-variation-swatches' ),
+							'desc'    => __( 'When enabled, swatch CSS & JS load only on <strong>product</strong>, <strong>shop</strong>, <strong>category</strong>, <strong>cart</strong> pages and any page that shows swatches (e.g. home page product grids). Improves page speed. When disabled, they load on every page.', 'woo-product-variation-swatches' ),
 							'default' => false,
 						],
 						[

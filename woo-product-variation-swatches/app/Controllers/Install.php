@@ -231,7 +231,7 @@ class Install {
 	 * @return void
 	 */
 	public static function maybe_sync_defaults() {
-		$signature = RTWPVS_VERSION . '|' . ( function_exists( 'rtwpvsp' ) ? 'pro' : 'free' );
+		$signature = self::get_defaults_signature( rtwpvs()->pro_mode(), rtwpvs()->pro_api_version() );
 
 		if ( get_option( self::DEFAULTS_SIGNATURE ) === $signature ) {
 			return;
@@ -239,7 +239,28 @@ class Install {
 
 		self::seed_default_options();
 
+		// Markup/CSS changes between versions: drop swatch HTML and inline CSS
+		// cached by the previous version so it is regenerated with the new classes.
+		Hooks::clear_all_attribute_html_transients();
+		do_action( 'rtwpvs_clear_all_transient' );
+
 		update_option( self::DEFAULTS_SIGNATURE, $signature );
+	}
+
+	/**
+	 * Build the defaults signature: `RTWPVS_VERSION|pro_mode|RTWPVSP_API`.
+	 *
+	 * Any change (Free update, Pro installed/removed/upgraded/downgraded, Pro
+	 * API change) re-runs the non-destructive default sync and clears cached
+	 * swatch markup.
+	 *
+	 * @param string $pro_mode    'none', 'legacy', 'api' or 'incompatible'.
+	 * @param int    $pro_api     Pro API version (0 unless in 'api' mode).
+	 *
+	 * @return string
+	 */
+	public static function get_defaults_signature( $pro_mode, $pro_api ) {
+		return implode( '|', [ RTWPVS_VERSION, (string) $pro_mode, (string) absint( $pro_api ) ] );
 	}
 
 	/**

@@ -18,6 +18,104 @@ class ScriptLoader {
 		$this->version = defined( 'WP_DEBUG' ) ? time() : RTWPVS_VERSION;
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 15 );
+		add_action( 'rtwpvs_render_swatches', [ $this, 'enqueue_on_demand' ] );
+	}
+
+	/**
+	 * Enqueue frontend assets when swatches render on a page the "Load Swatch Files Only Where Needed"
+	 * option skipped (home page, builder/shortcode/block product grids).
+	 * WordPress prints late-enqueued styles and scripts in the footer.
+	 *
+	 * @return void
+	 */
+	public function enqueue_on_demand() {
+		if ( is_admin() || wp_doing_ajax() || ! did_action( 'wp_enqueue_scripts' ) ) {
+			return;
+		}
+		if ( wp_style_is( 'rtwpvs', 'enqueued' ) || ! wp_style_is( 'rtwpvs', 'registered' ) ) {
+			return;
+		}
+		if ( apply_filters( 'rtwpvs_disable_enqueue_scripts', false ) ) {
+			return;
+		}
+		$this->load_scripts();
+	}
+
+	/**
+	 * Frontend parameters localized as `rtwpvs_params`.
+	 *
+	 * Every key is always present so the shared frontend script never reads an
+	 * undefined value. Values backed by Pro settings are only read while a Pro
+	 * plugin is loaded; without Pro (including sites with leftover Pro data)
+	 * neutral defaults are used. Pro may still override anything through the
+	 * `rtwpvs_js_object` filter.
+	 *
+	 * @return array
+	 */
+	public function get_frontend_params() {
+		$params = [
+			'is_product_page'                     => is_product(),
+			'ajax_url'                            => WC()->ajax_url(),
+			'nonce'                               => wp_create_nonce( 'rtwpvs_nonce' ),
+			'reselect_clear'                      => rtwpvs()->get_option( 'clear_on_reselect' ),
+			'i18n_modal_close'                    => esc_html__( 'Close', 'woo-product-variation-swatches' ),
+			'archive_add_to_cart_text'            => apply_filters( 'rtwpvs_archive_add_to_cart_text', '' ),
+			'archive_add_to_cart_select_options'  => apply_filters( 'rtwpvs_archive_add_to_cart_select_options', '' ),
+			'archive_product_price_selector'      => '.price, .wc-block-components-product-price',
+			// In the future it also come from settings.
+			'archive_add_to_cart_button_selector' => '.rtwpvs_add_to_cart, .add_to_cart_button',
+			'has_wc_bundles'                      => (bool) rtwpvs()->get_option( 'WC_Bundles' ),
+		];
+
+		return array_merge( $params, 'none' === rtwpvs()->pro_mode() ? self::get_neutral_pro_params() : self::get_pro_params() );
+	}
+
+	/**
+	 * Neutral values for the Pro-backed parameters (no Pro plugin loaded).
+	 *
+	 * @return array
+	 */
+	public static function get_neutral_pro_params() {
+		return [
+			'term_beside_label'                        => false,
+			'archive_swatches'                         => '',
+			'enable_ajax_archive_variation'            => false,
+			'archive_swatches_enable_single_attribute' => false,
+			'archive_swatches_single_attribute'        => '',
+			'archive_swatches_display_event'           => 'click',
+			'archive_swatches_display_mode'            => 'default',
+			'archive_image_selector'                   => '.attachment-woocommerce_thumbnail, .wp-post-image',
+			'archive_product_wrapper'                  => '.rtwpvs-product',
+			'enable_variation_url'                     => false,
+			'enable_archive_variation_url'             => false,
+		];
+	}
+
+	/**
+	 * Pro-backed parameters read from the shared settings (Pro loaded).
+	 *
+	 * Unchanged from the values legacy Pro (2.3.x) relies on.
+	 *
+	 * @return array
+	 */
+	private static function get_pro_params() {
+		return [
+			'term_beside_label'                        => function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'attribute_on_click_behavior' ),
+			'archive_swatches'                         => rtwpvs()->get_option( 'archive_swatches' ),
+			// Cast to real booleans: get_option() returns the string "0"/"1", and
+			// "0" is TRUTHY in JavaScript — passing it raw makes `!param` / `if(param)`
+			// checks in frontend.js behave backwards (e.g. the archive add-to-cart
+			// text swap never fires). json_encode of a PHP bool gives true/false.
+			'enable_ajax_archive_variation'            => (bool) rtwpvs()->get_option( 'enable_ajax_archive_variation' ),
+			'archive_swatches_enable_single_attribute' => (bool) rtwpvs()->get_option( 'archive_swatches_enable_single_attribute' ),
+			'archive_swatches_single_attribute'        => rtwpvs()->get_option( 'archive_swatches_single_attribute' ),
+			'archive_swatches_display_event'           => rtwpvs()->get_option( 'archive_swatches_display_event', 'click' ),
+			'archive_swatches_display_mode'            => function_exists( 'rtwpvsp' ) ? rtwpvs()->get_option( 'archive_swatches_reveal_hover', 'default' ) : 'default',
+			'archive_image_selector'                   => rtwpvs()->get_option( 'archive_swatches_image_selector', '.attachment-woocommerce_thumbnail, .wp-post-image' ),
+			'archive_product_wrapper'                  => rtwpvs()->get_option( 'archive_product_wrapper_selector', '.rtwpvs-product' ),
+			'enable_variation_url'                     => function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'enable_variation_url' ),
+			'enable_archive_variation_url'             => function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'enable_archive_variation_url' ),
+		];
 	}
 
 	public function enqueue_scripts() {
@@ -32,35 +130,7 @@ class ScriptLoader {
 		wp_register_style( 'rtwpvs', rtwpvs()->get_assets_uri( "/css/rtwpvs{$this->suffix}.css" ), '', $this->version );
 		wp_register_style( 'rtwpvs-tooltip', rtwpvs()->get_assets_uri( "/css/rtwpvs-tooltip{$this->suffix}.css" ), '', $this->version );
 
-		wp_localize_script( 'rtwpvs', 'rtwpvs_params', apply_filters( 'rtwpvs_js_object', [
-			'is_product_page'                          => is_product(),
-			'ajax_url'                                 => WC()->ajax_url(),
-			'nonce'                                    => wp_create_nonce( 'rtwpvs_nonce' ),
-			'reselect_clear'                           => rtwpvs()->get_option( 'clear_on_reselect' ),
-            'term_beside_label'                        => function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'attribute_on_click_behavior' ),
-			'archive_swatches'                         => rtwpvs()->get_option( 'archive_swatches' ),
-			// Cast to real booleans: get_option() returns the string "0"/"1", and
-			// "0" is TRUTHY in JavaScript — passing it raw makes `!param` / `if(param)`
-			// checks in frontend.js behave backwards (e.g. the archive add-to-cart
-			// text swap never fires). json_encode of a PHP bool gives true/false.
-			'enable_ajax_archive_variation'            => (bool) rtwpvs()->get_option( 'enable_ajax_archive_variation' ),
-			'archive_swatches_enable_single_attribute' => (bool) rtwpvs()->get_option( 'archive_swatches_enable_single_attribute' ),
-			'archive_swatches_single_attribute'        => rtwpvs()->get_option( 'archive_swatches_single_attribute' ),
-			'archive_swatches_display_event'           => rtwpvs()->get_option( 'archive_swatches_display_event', 'click' ),
-			'archive_swatches_display_mode'            => function_exists( 'rtwpvsp' ) ? rtwpvs()->get_option( 'archive_swatches_reveal_hover', 'default' ) : 'default',
-			'i18n_modal_close'                         => esc_html__( 'Close', 'woo-product-variation-swatches' ),
-			'archive_image_selector'                   => rtwpvs()->get_option( 'archive_swatches_image_selector', '.attachment-woocommerce_thumbnail, .wp-post-image' ),
-			'archive_add_to_cart_text'                 => apply_filters( 'rtwpvs_archive_add_to_cart_text', '' ),
-			'archive_add_to_cart_select_options'       => apply_filters( 'rtwpvs_archive_add_to_cart_select_options', '' ),
-			'archive_product_wrapper'                  => rtwpvs()->get_option( 'archive_product_wrapper_selector', '.rtwpvs-product' ),
-			'archive_product_price_selector'           => '.price, .wc-block-components-product-price',
-			// In the future it also come from settings.
-			'archive_add_to_cart_button_selector'      => '.rtwpvs_add_to_cart, .add_to_cart_button',
-			// In the future it also come from settings.
-			'enable_variation_url'                     => function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'enable_variation_url' ),
-			'enable_archive_variation_url'             => function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'enable_archive_variation_url' ),
-			'has_wc_bundles'                           => (bool) rtwpvs()->get_option( 'WC_Bundles' ),
-		] ) );
+		wp_localize_script( 'rtwpvs', 'rtwpvs_params', apply_filters( 'rtwpvs_js_object', $this->get_frontend_params() ) );
 
 		if ( apply_filters( 'rtwpvs_disable_enqueue_scripts', false ) ) {
 			return;
@@ -177,6 +247,11 @@ class ScriptLoader {
 		$button_min_width   = rtwpvs()->get_option( 'button_min_width', 40 );
 		$button_min_height  = rtwpvs()->get_option( 'button_min_height', 30 );
 		$font_size          = rtwpvs()->get_option( 'single_font_size', 16 );
+		// Archive fallback sizes (pro overrides). Hard defaults guard against empty options.
+		$archive_width             = absint( $width ) ?: 40;
+		$archive_height            = absint( $height ) ?: 40;
+		$archive_button_min_width  = absint( $button_min_width ) ?: 40;
+		$archive_button_min_height = absint( $button_min_height ) ?: 30;
 		$tooltip_background  = rtwpvs()->get_option( 'tooltip_background' );
 		// Note: do NOT pass a fallback to get_option() here — it treats 0 as empty
 		// and would replace a saved 0 with the fallback. The field's registered
@@ -225,6 +300,19 @@ class ScriptLoader {
 
             .rtwpvs .rtwpvs-single-swatches.rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term span {
                 font-size: <?php echo esc_attr($font_size); ?>px;
+            }
+
+            <?php // Fallback archive sizing so archive swatches never collapse to 0x0 when the
+                  // pro plugin is inactive/outdated. Pro prints later (priority 99) with equal
+                  // specificity, so its archive size settings still win. ?>
+            .rtwpvs .rtwpvs-archive-swatches.rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term):not(.rtwpvs-button-term) {
+                width: <?php echo esc_attr($archive_width); ?>px;
+                height: <?php echo esc_attr($archive_height); ?>px;
+            }
+
+            .rtwpvs .rtwpvs-archive-swatches.rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term {
+                min-width: <?php echo esc_attr($archive_button_min_width); ?>px;
+                min-height: <?php echo esc_attr($archive_button_min_height); ?>px;
             }
 
             .rtwpvs-product .rtwpvs-archive-variation-wrapper.rtwpvs-reveal-hover {

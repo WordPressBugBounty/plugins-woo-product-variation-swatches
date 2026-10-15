@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Variation Swatches for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Variation Swatches for WooCommerce 2.5.1\n"
+"Project-Id-Version: Variation Swatches for WooCommerce 2.5.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-product-variation-swatches\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-20T11:13:22+00:00\n"
+"POT-Creation-Date: 2026-10-15T03:08:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-product-variation-swatches\n"
@@ -106,55 +106,55 @@ msgstr ""
 msgid "Skip & Deactivate"
 msgstr ""
 
-#: app/Controllers/Hooks.php:519
+#: app/Controllers/Hooks.php:539
 msgid "Select terms"
 msgstr ""
 
-#: app/Controllers/Hooks.php:532
+#: app/Controllers/Hooks.php:552
 msgid "Select all"
 msgstr ""
 
-#: app/Controllers/Hooks.php:533
+#: app/Controllers/Hooks.php:553
 msgid "Select none"
 msgstr ""
 
-#: app/Controllers/Hooks.php:542
+#: app/Controllers/Hooks.php:562
 #, php-format
 msgid "Add new %s"
 msgstr ""
 
-#: app/Controllers/Hooks.php:542
-#: app/Controllers/Hooks.php:544
+#: app/Controllers/Hooks.php:562
+#: app/Controllers/Hooks.php:564
 msgid "Add new"
 msgstr ""
 
-#: app/Controllers/Hooks.php:584
+#: app/Controllers/Hooks.php:604
 msgid "Swatch groups (per-product override)"
 msgstr ""
 
-#: app/Controllers/Hooks.php:590
+#: app/Controllers/Hooks.php:610
 msgid "Select terms and update the product to assign per-product groups. Terms use their global group by default."
 msgstr ""
 
-#: app/Controllers/Hooks.php:605
+#: app/Controllers/Hooks.php:625
 msgid "None"
 msgstr ""
 
 #. translators: %s: global group name.
-#: app/Controllers/Hooks.php:617
+#: app/Controllers/Hooks.php:637
 #, php-format
 msgid "Use global group (%s)"
 msgstr ""
 
-#: app/Controllers/Hooks.php:636
+#: app/Controllers/Hooks.php:656
 msgid "Overrides apply to this product only and are saved when you update the product."
 msgstr ""
 
-#: app/Controllers/Hooks.php:670
+#: app/Controllers/Hooks.php:690
 msgid "View cart"
 msgstr ""
 
-#: app/Controllers/Hooks.php:671
+#: app/Controllers/Hooks.php:691
 #: app/Controllers/ThemeSupport.php:52
 #: app/Controllers/ThemeSupport.php:72
 #: app/Controllers/ThemeSupport.php:85
@@ -163,7 +163,7 @@ msgstr ""
 msgid "Add to cart"
 msgstr ""
 
-#: app/Controllers/Hooks.php:672
+#: app/Controllers/Hooks.php:692
 #: app/Controllers/ThemeSupport.php:48
 #: app/Controllers/ThemeSupport.php:68
 #: app/Controllers/ThemeSupport.php:81
@@ -209,73 +209,188 @@ msgstr ""
 msgid "Don't miss out on our biggest sale of the year! Get your "
 msgstr ""
 
-#: app/Controllers/ProductMetaBox.php:21
-#: app/Controllers/ProductMetaBox.php:40
+#: app/Controllers/ProCompatibility.php:215
+#: app/Controllers/ProductSwatchesTab.php:244
+msgid "Variation Swatches for WooCommerce needs an update."
+msgstr ""
+
+#: app/Controllers/ProCompatibility.php:216
+msgid "The installed Pro version uses a newer compatibility API than this version of the free plugin supports. Update Variation Swatches for WooCommerce to the latest version; until then Product Swatches editing shows an update notice."
+msgstr ""
+
+#: app/Controllers/ProCompatibility.php:221
+msgid "Variation Swatches Pro needs to be reinstalled."
+msgstr ""
+
+#. translators: %s: comma-separated list of missing folders (templates, views).
+#: app/Controllers/ProCompatibility.php:224
+#, php-format
+msgid "some Pro files could not be located (%s). Shop swatches and the product \"Product Swatches\" tab may be unavailable. Reinstall Pro or update it to the latest version."
+msgstr ""
+
+#: app/Controllers/ProCompatibility.php:231
+#: app/Controllers/ProductSwatchesTab.php:234
+msgid "Variation Swatches Pro needs an update."
+msgstr ""
+
+#. translators: 1: installed Pro version, 2: required Pro version.
+#: app/Controllers/ProCompatibility.php:234
+#, php-format
+msgid "Version %1$s is installed, but editing Product Swatches requires Variation Swatches Pro %2$s or later. Until Pro is updated that tab shows an update notice; saved settings and your storefront are not affected."
+msgstr ""
+
+#: app/Controllers/ProCompatibility.php:256
+#: app/Controllers/ProductSwatchesTab.php:240
+#: app/Controllers/ProductSwatchesTab.php:246
+#: app/Controllers/ProductSwatchesTab.php:258
+msgid "Go to Plugins"
+msgstr ""
+
+#: app/Controllers/ProductMetaBox.php:269
 msgid "Wrong Nonce"
 msgstr ""
 
-#: app/Controllers/ProductMetaBox.php:25
-#: app/Controllers/ProductMetaBox.php:44
-msgid "Permission denied"
-msgstr ""
-
-#: app/Controllers/ProductMetaBox.php:30
-#: app/Controllers/ProductMetaBox.php:49
+#: app/Controllers/ProductMetaBox.php:274
 msgid "Invalid product"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:51
+#: app/Controllers/ProductMetaBox.php:278
+msgid "Permission denied"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:107
+#: app/Controllers/SettingsAPI.php:45
+#: app/Controllers/SettingsAPI.php:120
+#: app/Controllers/SettingsAPI.php:195
+#: app/Controllers/SettingsAPI.php:196
+msgid "Product Swatches"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:214
+msgid "Your saved Product Swatches settings are kept and keep working on your store."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:218
+msgid "PRO"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:219
+msgid "Product Swatches is a Pro feature."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:220
+msgid "Customize swatches for this product only, without changing your global attribute settings."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:222
+msgid "Choose a swatch type for each attribute of this product"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:223
+msgid "Set custom colors, dual colors and images per term"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:224
+msgid "Add text or image tooltips to individual swatches"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:225
+msgid "Group terms and control how swatches show in the shop"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:228
+#: app/Controllers/SettingsAPI.php:321
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:229
+msgid "View Demo"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:233
+#: app/Controllers/ProductSwatchesTab.php:243
+msgid "UPDATE"
+msgstr ""
+
+#. translators: %s: minimum Pro version.
+#: app/Controllers/ProductSwatchesTab.php:237
+#, php-format
+msgid "Update Variation Swatches Pro to version %s or later to edit Product Swatches here."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:245
+msgid "The installed Pro version needs a newer version of the free plugin. Update Variation Swatches for WooCommerce to edit Product Swatches here."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:249
+msgid "INFO"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:250
+msgid "Product Swatches is available for variable products."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:251
+msgid "Save this product as a variable product to edit its Product Swatches."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:255
+msgid "ERROR"
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:256
+msgid "Product Swatches could not be loaded."
+msgstr ""
+
+#: app/Controllers/ProductSwatchesTab.php:257
+msgid "Some Variation Swatches Pro files are missing. Reinstall or update Variation Swatches Pro."
+msgstr ""
+
+#: app/Controllers/ScriptLoader.php:61
 msgid "Close"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:132
+#: app/Controllers/ScriptLoader.php:202
 msgid "Clear"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:133
+#: app/Controllers/ScriptLoader.php:203
 #: app/Helpers/Options.php:312
 #: app/Helpers/Options.php:454
 msgid "Default"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:134
+#: app/Controllers/ScriptLoader.php:204
 msgid "Select Color"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:135
+#: app/Controllers/ScriptLoader.php:205
 msgid "Clear color"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:136
+#: app/Controllers/ScriptLoader.php:206
 msgid "Select default color"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:137
+#: app/Controllers/ScriptLoader.php:207
 msgid "Color value"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:146
+#: app/Controllers/ScriptLoader.php:216
 #: app/Helpers/Options.php:203
 msgid "Choose an Image"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:147
+#: app/Controllers/ScriptLoader.php:217
 msgid "Use Image"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:148
+#: app/Controllers/ScriptLoader.php:218
 msgid "Add Media"
 msgstr ""
 
-#: app/Controllers/ScriptLoader.php:149
+#: app/Controllers/ScriptLoader.php:219
 msgid "Are you sure to reset"
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:45
-#: app/Controllers/SettingsAPI.php:120
-#: app/Controllers/SettingsAPI.php:262
-#: app/Controllers/SettingsAPI.php:263
-msgid "Product Swatches"
 msgstr ""
 
 #: app/Controllers/SettingsAPI.php:57
@@ -287,12 +402,12 @@ msgid "Settings"
 msgstr ""
 
 #: app/Controllers/SettingsAPI.php:108
-#: app/Helpers/Functions.php:701
+#: app/Helpers/Functions.php:709
 msgid "Demo"
 msgstr ""
 
 #: app/Controllers/SettingsAPI.php:109
-#: app/Helpers/Functions.php:702
+#: app/Helpers/Functions.php:710
 msgid "Documentation"
 msgstr ""
 
@@ -300,141 +415,107 @@ msgstr ""
 msgid "Get Pro"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:163
-#: app/Controllers/SettingsAPI.php:196
-msgid "An error occurred, please try again."
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:172
-#, php-format
-msgid "Your license key expired on %s."
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:180
-msgid "Your license key has been disabled."
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:183
-msgid "Invalid license."
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:187
-msgid "Your license is not active for this URL."
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:190
-msgid "This appears to be an invalid license key for Variation Swatch Pro."
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:193
-msgid "Your license key has reached its activation limit."
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:215
+#: app/Controllers/SettingsAPI.php:148
 msgid "Variation Swatches for WooCommerce Settings"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:378
+#: app/Controllers/SettingsAPI.php:315
 msgid "Variation Swatches"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:379
+#: app/Controllers/SettingsAPI.php:316
 msgid "Save Changes"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:380
+#: app/Controllers/SettingsAPI.php:317
 msgid "Saving…"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:381
+#: app/Controllers/SettingsAPI.php:318
 msgid "Changes Saved"
 msgstr ""
 
 #. translators: %s: field label.
-#: app/Controllers/SettingsAPI.php:382
-#: app/Controllers/SettingsAPI.php:524
+#: app/Controllers/SettingsAPI.php:319
+#: app/Controllers/SettingsAPI.php:461
 #, php-format
 msgid "%s is required."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:383
+#: app/Controllers/SettingsAPI.php:320
 msgid "Please fill the required fields before saving."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:384
-msgid "Upgrade to Pro"
-msgstr ""
-
-#: app/Controllers/SettingsAPI.php:385
+#: app/Controllers/SettingsAPI.php:322
 msgid "License Active"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:386
+#: app/Controllers/SettingsAPI.php:323
 msgid "Invalid Licence"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:387
+#: app/Controllers/SettingsAPI.php:324
 #: app/Controllers/TermMeta.php:48
 msgid "Pro"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:388
+#: app/Controllers/SettingsAPI.php:325
 msgid "This is a premium field. Upgrade to Pro to use it."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:389
+#: app/Controllers/SettingsAPI.php:326
 msgid "Cancel"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:390
-#: app/Controllers/SettingsAPI.php:1018
+#: app/Controllers/SettingsAPI.php:327
+#: app/Controllers/SettingsAPI.php:955
 msgid "Pro field alert!"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:391
-#: app/Controllers/SettingsAPI.php:1019
+#: app/Controllers/SettingsAPI.php:328
+#: app/Controllers/SettingsAPI.php:956
 msgid "Sorry! this is a pro field. To use this field, you need to use pro plugin."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:423
-#: app/Controllers/SettingsAPI.php:538
+#: app/Controllers/SettingsAPI.php:360
+#: app/Controllers/SettingsAPI.php:475
 msgid "Permission denied."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:428
-#: app/Controllers/SettingsAPI.php:543
+#: app/Controllers/SettingsAPI.php:365
+#: app/Controllers/SettingsAPI.php:480
 msgid "Invalid or expired request. Please reload the page."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:433
+#: app/Controllers/SettingsAPI.php:370
 msgid "Invalid payload."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:482
+#: app/Controllers/SettingsAPI.php:419
 msgid "Settings saved."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:553
+#: app/Controllers/SettingsAPI.php:490
 msgid "Cache cleared."
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:657
+#: app/Controllers/SettingsAPI.php:594
 msgid "[Pro]"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:657
+#: app/Controllers/SettingsAPI.php:594
 msgid "This is premium field"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:811
+#: app/Controllers/SettingsAPI.php:748
 msgid "Deactivate License"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:811
+#: app/Controllers/SettingsAPI.php:748
 msgid "Activate License"
 msgstr ""
 
-#: app/Controllers/SettingsAPI.php:1020
+#: app/Controllers/SettingsAPI.php:957
 msgid "Upgrade to pro"
 msgstr ""
 
@@ -453,17 +534,17 @@ msgstr ""
 msgid "Remove image"
 msgstr ""
 
-#: app/Helpers/Functions.php:131
-#: app/Helpers/Functions.php:181
+#: app/Helpers/Functions.php:139
+#: app/Helpers/Functions.php:189
 msgid "Choose an option"
 msgstr ""
 
-#: app/Helpers/Functions.php:700
+#: app/Helpers/Functions.php:708
 msgid "Buy"
 msgstr ""
 
-#: app/Helpers/Functions.php:768
-#: app/Helpers/Functions.php:777
+#: app/Helpers/Functions.php:776
+#: app/Helpers/Functions.php:785
 msgid "More"
 msgstr ""
 
@@ -1432,11 +1513,11 @@ msgid "You can remove all cache from here. <a href=\"%s\">Clear all cache</a>"
 msgstr ""
 
 #: app/Helpers/Options.php:1248
-msgid "Load Scripts"
+msgid "Load Swatch Files Only Where Needed"
 msgstr ""
 
 #: app/Helpers/Options.php:1249
-msgid "Only <strong>Single product</strong> and <strong>Product archive</strong> pages. [if unchecked then it will load the scripts to all over the site]"
+msgid "When enabled, swatch CSS & JS load only on <strong>product</strong>, <strong>shop</strong>, <strong>category</strong>, <strong>cart</strong> pages and any page that shows swatches (e.g. home page product grids). Improves page speed. When disabled, they load on every page."
 msgstr ""
 
 #: app/Helpers/Options.php:1255

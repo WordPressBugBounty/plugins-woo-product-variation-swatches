@@ -4,7 +4,7 @@ Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variat
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -261,6 +261,14 @@ Please report security bugs found in the source code of the undefined plugin thr
 
 
 == Changelog ==
+
+= 2.5.2 (Oct 15, 2026) =
+* Security: Hardened product swatch data saving with capability checks, sanitization, and escaping.
+* New: Swatch CSS & JS now load automatically wherever swatches render (home page, builder, shortcode and block product grids), even with "Load Swatch Files Only Where Needed" enabled.
+* New: Product Swatches tab built into the free plugin, with admin notices when Variation Swatches Pro is outdated, incompatible, or missing files.
+* Fixed: Out-of-stock variation hiding conflicting with Back In Stock Notifier and similar plugins.
+* Fixed: Archive swatches collapsing to zero size when Pro is inactive or outdated.
+* Fixed: Critical error and template warnings after deactivating Variation Swatches Pro.
 
 = 2.5.1 (Sep 20, 2026) =
 * Improvement: Settings Data Default Value  "Div-based variations layout" update.
