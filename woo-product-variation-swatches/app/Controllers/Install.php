@@ -37,6 +37,80 @@ class Install {
 	 */
 	private static $never_seed_on_existing = [ 'remove_variations_table' ];
 
+	/**
+	 * Every checkbox field id that existed in 2.4.0 (frozen; never derive at runtime).
+	 *
+	 * 2.4.0 and older saved settings through WooCommerce's settings form, where an
+	 * unchecked checkbox is omitted from the POST and therefore stored as a missing
+	 * key, which `SettingsAPI::get_option()` reads as "off". The 2.5.x defaults
+	 * sync treats a missing key as "never set" and seeds its default, which turned
+	 * those saved choices back on. Fields introduced in 2.5+ are deliberately not
+	 * listed: for them a missing key really is unset and must receive its default.
+	 *
+	 * @var string[]
+	 */
+	const LEGACY_CHECKBOXES = [
+		'tooltip',
+		'shape_style_checkmark',
+		'attribute_on_click_behavior',
+		'archive_swatches',
+		'enable_archive_variation_url',
+		'enable_ajax_archive_variation',
+		'archive_swatches_label',
+		'archive_swatches_tooltip',
+		'show_clear_on_archive',
+		'archive_swatches_enable_single_attribute',
+		'clear_on_reselect',
+		'disable_out_of_stock',
+		'enable_variation_url',
+		'remove_all_data',
+		'load_scripts',
+		'defer_load_js',
+		'use_cache',
+	];
+
+	/**
+	 * Per-site one-time marker of the legacy checkbox migration (completed or skipped).
+	 *
+	 * @var string
+	 */
+	const LEGACY_MIGRATION_MARKER = 'rtwpvs_legacy_checkbox_migration';
+
+	/**
+	 * Non-autoloaded copy of the settings array as it was before the migration.
+	 *
+	 * @var string
+	 */
+	const LEGACY_SETTINGS_BACKUP = 'rtwpvs_settings_pre25_backup';
+
+	/**
+	 * Key written by every 2.5.x defaults sync and never by 2.4.0 or Pro.
+	 *
+	 * @var string
+	 */
+	const SYNCED_FINGERPRINT_KEY = 'clear_link_font_size';
+
+	/**
+	 * Option row used as a database-level lock around the defaults sync.
+	 *
+	 * @var string
+	 */
+	const SYNC_LOCK = 'rtwpvs_sync_lock';
+
+	/**
+	 * Seconds after which a lock left by a crashed request is considered stale.
+	 *
+	 * @var int
+	 */
+	const SYNC_LOCK_TIMEOUT = 60;
+
+	/**
+	 * Value of the lock row owned by the current request, if any.
+	 *
+	 * @var string
+	 */
+	private static $lock_token = '';
+
 
 	public static function deactivate( $network_deactivating ) {
 		delete_option( 'rtwpvs_pro_activate' );
@@ -228,6 +302,16 @@ class Install {
 	 * the activation hook) and when Pro is activated/deactivated — each of those
 	 * changes the signature. Existing values are never overwritten.
 	 *
+	 * The work runs under a database lock with freshly read options, and the
+	 * one-time legacy checkbox migration always runs before seeding. When that
+	 * migration fails, nothing is seeded and the signature is left untouched so
+	 * a later request retries.
+	 *
+	 * Every write re-checks lock ownership, and settings are only replaced when
+	 * the stored row still matches the snapshot they were computed from (see
+	 * compare_and_swap_settings()). A request that stalled past the lock timeout,
+	 * or raced a concurrent settings save, therefore aborts instead of writing.
+	 *
 	 * @return void
 	 */
 	public static function maybe_sync_defaults() {
@@ -237,14 +321,347 @@ class Install {
 			return;
 		}
 
-		self::seed_default_options();
+		if ( ! self::acquire_sync_lock() ) {
+			return;
+		}
 
-		// Markup/CSS changes between versions: drop swatch HTML and inline CSS
-		// cached by the previous version so it is regenerated with the new classes.
-		Hooks::clear_all_attribute_html_transients();
-		do_action( 'rtwpvs_clear_all_transient' );
+		try {
+			// Another request may have finished the sync after this one loaded its
+			// option cache: re-read from the database before deciding anything.
+			self::refresh_option_cache();
 
-		update_option( self::DEFAULTS_SIGNATURE, $signature );
+			if ( get_option( self::DEFAULTS_SIGNATURE ) === $signature ) {
+				return;
+			}
+
+			if ( ! self::maybe_migrate_legacy_checkboxes() ) {
+				return;
+			}
+
+			if ( ! self::seed_default_options() ) {
+				return;
+			}
+
+			// Markup/CSS changes between versions: drop swatch HTML and inline CSS
+			// cached by the previous version so it is regenerated with the new classes.
+			Hooks::clear_all_attribute_html_transients();
+			do_action( 'rtwpvs_clear_all_transient' );
+
+			if ( self::owns_sync_lock() ) {
+				update_option( self::DEFAULTS_SIGNATURE, $signature );
+			}
+		} finally {
+			self::release_sync_lock();
+		}
+	}
+
+	/**
+	 * One-time migration of checkbox choices saved by 2.4.0 and older.
+	 *
+	 * Eligible: a non-empty `rtwpvs` array, no defaults signature and no
+	 * `clear_link_font_size` key, i.e. settings that no 2.5.x sync has touched.
+	 * For those, every LEGACY_CHECKBOXES id missing from the array is stored as
+	 * `'0'`, which is exactly how 2.4.0 ran it. Existing values are never changed.
+	 *
+	 * Skipped (and marked, so never re-evaluated): fresh installs (no or empty
+	 * array) and 2.5.x installs (signature or fingerprint present).
+	 *
+	 * Detection limits: the signature only exists once a 2.5.x sync has run, and
+	 * the fingerprint only once a 2.5.x sync or save wrote it. A 2.5.x site that
+	 * never synced (WooCommerce inactive the whole time) still holds its 2.4.0
+	 * array and is migrated, which is correct. A site downgraded from 2.5.x to
+	 * 2.4.0 keeps its signature and is not migrated. 2.3.x and 2.4.0 store
+	 * checkboxes identically, so both are treated as pre-2.5. Sites already
+	 * synced by 2.5.0–2.5.2 cannot be recovered: a seeded `'1'` is identical to a
+	 * deliberate one.
+	 *
+	 * @return bool False when an eligible migration could not be stored (retry later).
+	 */
+	private static function maybe_migrate_legacy_checkboxes() {
+		if ( false !== get_option( self::LEGACY_MIGRATION_MARKER ) ) {
+			return true;
+		}
+
+		$raw     = self::read_settings_raw();
+		$options = null === $raw ? false : maybe_unserialize( $raw );
+
+		if ( ! is_array( $options ) || empty( $options ) ) {
+			return self::record_legacy_migration( 'skipped', 'fresh' );
+		}
+
+		if ( false !== get_option( self::DEFAULTS_SIGNATURE ) || array_key_exists( self::SYNCED_FINGERPRINT_KEY, $options ) ) {
+			return self::record_legacy_migration( 'skipped', 'synced' );
+		}
+
+		// First original copy wins (INSERT IGNORE): a retry or a stale request never replaces it.
+		if ( ! self::store_legacy_backup( $raw ) ) {
+			return false;
+		}
+
+		$migrated = [];
+		foreach ( self::LEGACY_CHECKBOXES as $id ) {
+			if ( ! array_key_exists( $id, $options ) ) {
+				$options[ $id ] = '0';
+				$migrated[]     = $id;
+			}
+		}
+
+		if ( $migrated && ! self::compare_and_swap_settings( $raw, apply_filters( 'rtwpvs_update_option', $options ) ) ) {
+			return false;
+		}
+
+		return self::record_legacy_migration( 'migrated', 'pre-2.5', $migrated );
+	}
+
+	/**
+	 * Store the one-time legacy migration marker and confirm it reached the database.
+	 *
+	 * @param string   $status 'migrated' or 'skipped'.
+	 * @param string   $reason 'pre-2.5', 'fresh' or 'synced'.
+	 * @param string[] $keys   Checkbox ids set to '0'.
+	 *
+	 * @return bool
+	 */
+	private static function record_legacy_migration( $status, $reason, array $keys = [] ) {
+		$marker = [
+			'status'  => $status,
+			'reason'  => $reason,
+			'keys'    => $keys,
+			'version' => RTWPVS_VERSION,
+			'time'    => time(),
+		];
+
+		if ( ! self::owns_sync_lock() ) {
+			return false;
+		}
+
+		update_option( self::LEGACY_MIGRATION_MARKER, $marker, false );
+		self::refresh_option_cache();
+
+		return get_option( self::LEGACY_MIGRATION_MARKER ) === $marker;
+	}
+
+	/**
+	 * Take the per-site sync lock; recover it when its holder is older than the timeout.
+	 *
+	 * `add_option()` cannot be used: it runs `INSERT … ON DUPLICATE KEY UPDATE`
+	 * and trusts the in-request cache, so two requests could both "win". An
+	 * `INSERT IGNORE` affects exactly one row only for the request that created
+	 * it (same approach as core's `WP_Upgrader::create_lock()`).
+	 *
+	 * @return bool
+	 */
+	private static function acquire_sync_lock() {
+		global $wpdb;
+
+		$now   = time();
+		$token = $now . ':' . wp_generate_password( 12, false );
+
+		$created = $wpdb->query(
+			$wpdb->prepare(
+				"INSERT IGNORE INTO `{$wpdb->options}` (`option_name`, `option_value`, `autoload`) VALUES (%s, %s, 'no')",
+				self::SYNC_LOCK,
+				$token
+			)
+		);
+
+		if ( 1 === (int) $created ) {
+			self::$lock_token = $token;
+			return true;
+		}
+
+		$held = $wpdb->get_var( $wpdb->prepare( "SELECT `option_value` FROM `{$wpdb->options}` WHERE `option_name` = %s", self::SYNC_LOCK ) );
+
+		if ( null === $held || (int) $held > $now - self::SYNC_LOCK_TIMEOUT ) {
+			return false;
+		}
+
+		// Stale: take it over only if nobody else replaced it in the meantime.
+		$taken = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE `{$wpdb->options}` SET `option_value` = %s WHERE `option_name` = %s AND `option_value` = %s",
+				$token,
+				self::SYNC_LOCK,
+				$held
+			)
+		);
+
+		if ( 1 !== (int) $taken ) {
+			return false;
+		}
+
+		self::$lock_token = $token;
+
+		return true;
+	}
+
+	/**
+	 * Release the sync lock if this request still owns it.
+	 *
+	 * @return void
+	 */
+	private static function release_sync_lock() {
+		global $wpdb;
+
+		if ( '' === self::$lock_token ) {
+			return;
+		}
+
+		$wpdb->delete(
+			$wpdb->options,
+			[
+				'option_name'  => self::SYNC_LOCK,
+				'option_value' => self::$lock_token,
+			]
+		);
+		self::$lock_token = '';
+	}
+
+	/**
+	 * Whether the lock row still holds this request's token (read from the database).
+	 *
+	 * A request that stalled past SYNC_LOCK_TIMEOUT may have been taken over;
+	 * it must then stop writing. This check alone is not atomic with the write
+	 * that follows it, which is why settings also go through
+	 * compare_and_swap_settings().
+	 *
+	 * @return bool
+	 */
+	private static function owns_sync_lock() {
+		global $wpdb;
+
+		if ( '' === self::$lock_token ) {
+			return false;
+		}
+
+		$held = $wpdb->get_var( $wpdb->prepare( "SELECT `option_value` FROM `{$wpdb->options}` WHERE `option_name` = %s", self::SYNC_LOCK ) );
+
+		return self::$lock_token === $held;
+	}
+
+	/**
+	 * Stored `rtwpvs` row exactly as saved in the database, or null when absent.
+	 *
+	 * @return string|null
+	 */
+	private static function read_settings_raw() {
+		global $wpdb;
+
+		return $wpdb->get_var( $wpdb->prepare( "SELECT `option_value` FROM `{$wpdb->options}` WHERE `option_name` = %s", 'rtwpvs' ) );
+	}
+
+	/**
+	 * Store the pre-migration settings once; an existing backup is never replaced.
+	 *
+	 * @param string $raw Serialized settings row as read from the database.
+	 *
+	 * @return bool True when a backup exists afterwards.
+	 */
+	private static function store_legacy_backup( $raw ) {
+		global $wpdb;
+
+		if ( ! self::owns_sync_lock() ) {
+			return false;
+		}
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"INSERT IGNORE INTO `{$wpdb->options}` (`option_name`, `option_value`, `autoload`) VALUES (%s, %s, 'no')",
+				self::LEGACY_SETTINGS_BACKUP,
+				$raw
+			)
+		);
+		self::refresh_option_cache();
+
+		return false !== get_option( self::LEGACY_SETTINGS_BACKUP );
+	}
+
+	/**
+	 * Replace the `rtwpvs` row only if it still equals the snapshot the new value was built from.
+	 *
+	 * The condition is evaluated by the database in the same statement as the
+	 * write (`MD5()` keeps the comparison byte-exact; the column collation is
+	 * case-insensitive), so a settings save that lands between our read and our
+	 * write — from a user, or from another sync request — makes this write fail
+	 * instead of being overwritten. When the row was absent it is only created if
+	 * still absent (INSERT IGNORE). The option filters and actions that
+	 * update_option()/add_option() would run are applied, so cache-clearing
+	 * listeners keep working.
+	 *
+	 * @param string|null $expected_raw Row read before computing $value, null when absent.
+	 * @param mixed       $value        New settings value.
+	 *
+	 * @return bool True when $value is stored (or already equal to the stored value).
+	 */
+	private static function compare_and_swap_settings( $expected_raw, $value ) {
+		global $wpdb;
+
+		if ( ! self::owns_sync_lock() ) {
+			return false;
+		}
+
+		$old_value = null === $expected_raw ? false : maybe_unserialize( $expected_raw );
+		$value     = sanitize_option( 'rtwpvs', $value );
+
+		if ( null !== $expected_raw ) {
+			$value = apply_filters( 'pre_update_option_rtwpvs', $value, $old_value, 'rtwpvs' );
+			$value = apply_filters( 'pre_update_option', $value, 'rtwpvs', $old_value );
+		}
+
+		$serialized = maybe_serialize( $value );
+		if ( null !== $expected_raw && $serialized === $expected_raw ) {
+			return true;
+		}
+
+		if ( null === $expected_raw ) {
+			do_action( 'add_option', 'rtwpvs', $value );
+			$written = $wpdb->query(
+				$wpdb->prepare(
+					"INSERT IGNORE INTO `{$wpdb->options}` (`option_name`, `option_value`, `autoload`) VALUES (%s, %s, 'yes')",
+					'rtwpvs',
+					$serialized
+				)
+			);
+		} else {
+			do_action( 'update_option', 'rtwpvs', $old_value, $value );
+			$written = $wpdb->query(
+				$wpdb->prepare(
+					"UPDATE `{$wpdb->options}` SET `option_value` = %s WHERE `option_name` = %s AND MD5( `option_value` ) = %s",
+					$serialized,
+					'rtwpvs',
+					md5( $expected_raw )
+				)
+			);
+		}
+
+		self::refresh_option_cache();
+
+		if ( 1 !== (int) $written ) {
+			return false;
+		}
+
+		if ( null === $expected_raw ) {
+			do_action( 'add_option_rtwpvs', 'rtwpvs', $value );
+			do_action( 'added_option', 'rtwpvs', $value );
+		} else {
+			do_action( 'update_option_rtwpvs', $old_value, $value, 'rtwpvs' );
+			do_action( 'updated_option', 'rtwpvs', $old_value, $value );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Drop cached copies of the options the sync reads, so the next get_option() hits the database.
+	 *
+	 * @return void
+	 */
+	private static function refresh_option_cache() {
+		wp_cache_delete( 'alloptions', 'options' );
+		wp_cache_delete( 'notoptions', 'options' );
+		foreach ( [ 'rtwpvs', self::DEFAULTS_SIGNATURE, self::LEGACY_MIGRATION_MARKER, self::LEGACY_SETTINGS_BACKUP ] as $option ) {
+			wp_cache_delete( $option, 'options' );
+		}
 	}
 
 	/**
@@ -270,11 +687,15 @@ class Install {
 	 * stores them (scalars cast to string, so a `true` checkbox default becomes
 	 * `'1'`), keeping seeded and user-saved values in one format.
 	 *
-	 * @return void
+	 * Built from the stored row and written with compare_and_swap_settings(), so
+	 * a concurrent settings save is never overwritten by stale defaults.
+	 *
+	 * @return bool False when the write lost a race (the sync is retried later).
 	 */
 	private static function seed_default_options() {
 		$is_pro   = function_exists( 'rtwpvsp' );
-		$options  = get_option( 'rtwpvs' );
+		$raw      = self::read_settings_raw();
+		$options  = null === $raw ? false : maybe_unserialize( $raw );
 		$options  = is_array( $options ) ? $options : [];
 		$original = $options;
 
@@ -307,9 +728,11 @@ class Install {
 			}
 		}
 
-		if ( $options !== $original ) {
-			update_option( 'rtwpvs', apply_filters( 'rtwpvs_update_option', $options ) );
+		if ( $options === $original ) {
+			return true;
 		}
+
+		return self::compare_and_swap_settings( $raw, apply_filters( 'rtwpvs_update_option', $options ) );
 	}
 
 	private static function remove_unused_transient() {

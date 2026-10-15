@@ -4,7 +4,7 @@ Tags: woocommerce variation swatches, woocommerce variation, woocommerce, variat
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -261,6 +261,10 @@ Please report security bugs found in the source code of the undefined plugin thr
 
 
 == Changelog ==
+
+= 2.5.3 (Oct 15, 2026) =
+* Fixed: Settings turned off in version 2.4.0 or earlier (such as tooltips, out-of-stock variation hiding and archive swatches) are now kept off when updating, instead of being switched back on.
+* Improvement: Settings defaults are now applied safely when several requests run at the same time, without overwriting changes saved in the meantime.
 
 = 2.5.2 (Oct 15, 2026) =
 * Security: Hardened product swatch data saving with capability checks, sanitization, and escaping.
